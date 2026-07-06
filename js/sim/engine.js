@@ -541,6 +541,7 @@
       });
     }
 
+    let stickyWinback = [];
     function winbackView() {
       const routeViews = routes.map(r => ({ id: r.id, pool: r.pool }));
       const poolViews = pools.map(p => ({
@@ -549,8 +550,15 @@
         samples: p.window.length,          // evidence = observed traffic
         ttft_p99_ms: costs.percentile(p.window.map(s => s.ttft), 99) ?? p.ttft_ms,
       }));
-      return migrationMod.winback(routeViews, poolViews,
+      const fresh = migrationMod.winback(routeViews, poolViews,
         { ttft_p99_ms: overrides.slo_ttft_ms });
+      /* A recommendation is a directive to the operator — it must not
+         flicker with per-window jitter. Once fired it stays until the route
+         actually moves (or no longer lives on the external pool). */
+      if (fresh.length) stickyWinback = fresh;
+      else stickyWinback = stickyWinback.filter(w =>
+        routes.some(r => r.id === w.route && r.pool === w.from));
+      return stickyWinback;
     }
 
     return {

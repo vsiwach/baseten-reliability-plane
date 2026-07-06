@@ -41,8 +41,9 @@
   function renderMigration(el, m, winback) {
     const wb = winback.length ? winback[0] : null;
     const wbCard = wb ? `
-      <div class="winback card" data-tip="">
-        <h3>WIN-BACK — the ledger found a better home for a monitored route</h3>
+      <div class="winback card your-move" data-tip="">
+        <h3>WIN-BACK — the ledger found a better home for a monitored route
+          <span class="ym-flag">YOUR MOVE</span></h3>
         <div class="wbline"><span class="mono">${esc(wb.route)}</span> runs on
           <span class="mono">${esc(wb.from)}</span> today at <b>${fmt.usd(wb.usd_from)}/Mtok</b>.
           On <span class="mono">${esc(wb.to)}</span> it would hold your SLO

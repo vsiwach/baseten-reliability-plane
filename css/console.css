@@ -88,6 +88,10 @@ button.mini.rev:hover{color:var(--mut)}
 .pass{background:var(--lime);color:var(--ink);border-radius:4px;padding:2px 8px;font-size:10.5px;float:right;font-family:var(--mono)}
 .pass.hold{background:var(--amber)}
 .winback{border-color:var(--lime);background:linear-gradient(0deg,rgba(213,242,110,.05),var(--panel) 60%);margin:0 0 12px}
+.winback.your-move{animation:ympulse 1.8s infinite}
+@keyframes ympulse{50%{box-shadow:0 0 0 4px rgba(213,242,110,.18)}}
+@media (prefers-reduced-motion:reduce){.winback.your-move{animation:none;box-shadow:0 0 0 3px rgba(213,242,110,.25)}}
+.ym-flag{float:right;background:var(--lime);color:var(--ink);border-radius:4px;padding:2px 8px;font-size:10px;letter-spacing:1px}
 .winback h3{color:var(--lime)}
 .wbline{font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:10px}
 .wbline b{color:var(--txt)}

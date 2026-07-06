@@ -206,13 +206,15 @@
           sub: !ready ? 'live p99s, goodput, $/Mtok = $/hr ÷ measured tok/s' : totalSamples > 30 ? 'evidence window full — all numbers LIVE' : 'windows filling with real requests…' },
         { n: 5, t: 'Migrate on evidence', st: promoted ? 'done' : wb.length ? 'now' : 'todo',
           sub: promoted ? 'promoted on a REAL certified cohort — rollback armed'
-            : wb.length ? `evidence ready: −${wb[0].delta_pct}% at equal SLO — win-back card below` : 'appears when live evidence supports it' },
+            : wb.length ? `YOUR MOVE — live evidence ready: −${wb[0].delta_pct}% at equal SLO` : 'appears when live evidence supports it',
+          act: (!promoted && wb.length && st.migration.stage === 'idle') ? 'migrate' : null,
+          actLabel: '▶ Migrate now — evidence ready' },
       ];
       $('setup').innerHTML = steps.map(s => `
         <div class="sstep ${s.st}">
           <div class="shead"><span class="sn">${s.st === 'done' ? '✓' : s.n}</span><span class="st">${s.t}</span></div>
           <div class="ssub">${s.sub}</div>
-          ${s.act ? `<button class="primary" data-live="${s.act}">▶ Deploy workload (real)</button>` : ''}
+          ${s.act ? `<button class="primary" data-live="${s.act}">${s.actLabel || '▶ Deploy workload (real)'}</button>` : ''}
         </div>`).join('');
     }
 
@@ -253,13 +255,21 @@
     // ---- wiring -------------------------------------------------------------------
     document.addEventListener('click', e => {
       const lb = e.target.closest('button[data-live]');
-      if (lb) {
+      if (lb && lb.dataset.live === 'deploy') {
         deploying = true;
         post('/deploy').then(() => {
           const wait = setInterval(() => {
             if (st && st.deployed) { clearInterval(wait); post('/traffic', { action: 'start', rps: 1.5 }); }
           }, 2000);
         });
+        return;
+      }
+      if (lb && lb.dataset.live === 'migrate') {
+        migration = null;
+        post('/migrate', { action: 'start', route: 'voice-agent', target: 'baseten-dedicated' });
+        document.getElementById('panel-migration').scrollIntoView({
+          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          block: 'center' });
         return;
       }
       const btn = e.target.closest('button[data-act]');

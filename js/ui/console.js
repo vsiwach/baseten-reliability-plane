@@ -64,10 +64,17 @@
       : 'workload not deployed';
   }
 
+  let nudged = false;   // one-time "your move" nudge when evidence turns ready
   function tick() {
     if (!paused && deployed) {
       engine.tick(1);
       renderAll();
+      if (!nudged && engine.winbackView().length && !engine.migrationView()) {
+        nudged = true;
+        document.getElementById('panel-migration').scrollIntoView({
+          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          block: 'center' });
+      }
     }
   }
 
@@ -88,6 +95,14 @@
     if (setupBtn && setupBtn.dataset.setup === 'deploy') {
       deployed = true;
       renderAll();
+      return;
+    }
+    if (setupBtn && setupBtn.dataset.setup === 'migrate') {
+      engine.startMigration('in');
+      renderAll();
+      document.getElementById('panel-migration').scrollIntoView({
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'center' });
       return;
     }
     const btn = e.target.closest('button[data-act]');

@@ -23,8 +23,10 @@
           : 'windows filling…' },
       { n: 5, title: 'Migrate on evidence', state: migrated ? 'done' : (winback.length ? 'now' : 'todo'),
         sub: migrated ? `voice-agent now serves on baseten-dedicated — rollback armed`
-          : winback.length ? `evidence ready: −${winback[0].delta_pct}% at equal SLO — see the win-back card`
-          : 'appears when a route would hold its SLO cheaper on your Baseten cluster' },
+          : winback.length ? `YOUR MOVE — evidence ready: −${winback[0].delta_pct}% at equal SLO`
+          : 'appears when a route would hold its SLO cheaper on your Baseten cluster',
+        action: (!migrated && winback.length && !(migration && !migration.finished))
+          ? { id: 'migrate', label: '▶ Migrate now — evidence ready' } : null },
     ];
     el.innerHTML = steps.map(s => `
       <div class="sstep ${s.state}">
