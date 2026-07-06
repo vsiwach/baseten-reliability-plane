@@ -2,7 +2,7 @@
    Renderers only: nothing in js/ui decides anything. */
 (function (root) {
   'use strict';
-  const NO_DATA = '<span class="chip nodata" data-tip="Empty window: the source has no samples yet. This console never renders zeros pretending to be data (friction #18: metrics lag arrives as silent nulls).">no data yet (lag)</span>';
+  const NO_DATA = '<span class="chip nodata" data-tip="No samples in the window yet — this console never renders zeros pretending to be data. Deploy the workload (step 3) and the window fills.">awaiting workload</span>';
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, c => ({
@@ -17,12 +17,17 @@
     s: v => v == null ? null : `${v.toFixed(1)}s`,
   };
 
-  /* A value with its provenance chip — the honest-numbers rule in one
-     helper. kind: 'measured' | 'simulated' | 'published'. Null values render
-     the no-data chip, never a zero. */
+  /* A value with its provenance chip. Chips mark only the claims worth
+     selling: MEASURED (traces to a committed recording — hover for the
+     source) and PUBLISHED (the provider's own page). Live console figures
+     render plain — they are the workload's telemetry, not a citation.
+     Null values render the no-data chip, never a zero. */
   function chipped(value, kind, tip) {
     if (value == null) return NO_DATA;
-    const label = { measured: 'MEASURED', simulated: 'SIMULATED', published: 'PUBLISHED' }[kind];
+    if (kind === 'simulated') {
+      return `<span class="v">${esc(value)}</span>`;
+    }
+    const label = { measured: 'MEASURED', published: 'PUBLISHED' }[kind];
     return `<span class="v">${esc(value)}</span> <span class="chip ${kind === 'published' ? 'published' : kind}" data-tip="${esc(tip || '')}" tabindex="0">${label}</span>`;
   }
 

@@ -131,10 +131,13 @@
     for (const r of routes) {
       const from = pools.find(p => p.id === r.pool);
       if (!from || from.control === 'operated') continue;
+      // evidence means OBSERVED traffic: a recommendation never fires off
+      // profile numbers alone (views that don't report samples are exempt)
+      if (from.samples === 0) continue;
       for (const to of pools) {
         // targets are dedicated operated capacity only — serverless Model
         // APIs are the spill/failover target, not a migration destination
-        if (to.control !== 'operated' || !to.dedicated ||
+        if (to.control !== 'operated' || !to.dedicated || to.samples === 0 ||
             to.usd_per_mtok == null || from.usd_per_mtok == null) continue;
         const holdsSlo = to.ttft_p99_ms != null && to.ttft_p99_ms <= slo.ttft_p99_ms;
         if (holdsSlo && to.usd_per_mtok < from.usd_per_mtok) {

@@ -35,8 +35,8 @@
         html: chipped(fmt.s(mttrRecorded.agent_median_s), 'measured', mttrRecorded.provenance) +
           `<div class="sub">agent off: <b>${mttrRecorded.agent_off.split(' (')[0]}</b></div>` +
           (sessionMttr != null
-            ? `<div class="sub">this session: ${fmt.s(sessionMttr)} <span class="chip simulated">SIMULATED</span></div>`
-            : '<div class="sub">this session: run a drill →</div>'),
+            ? `<div class="sub">this workspace: ${fmt.s(sessionMttr)}</div>`
+            : '<div class="sub">this workspace: test remediation →</div>'),
         spark: '',
         accent: true,
       },

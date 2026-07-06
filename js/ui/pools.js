@@ -12,7 +12,7 @@
   function card(p) {
     const external = p.control !== 'operated';
     const badge = external
-      ? `<span class="badge monitor" data-tip="${esc(LADDER_TIP)}" tabindex="0">MONITOR-ONLY</span>`
+      ? `<span class="badge monitor" data-tip="${esc(LADDER_TIP)}" tabindex="0">SHADOW · READ-ONLY</span>`
       : `<span class="badge operated" data-tip="${esc(LADDER_TIP)}" tabindex="0">OPERATED</span>`;
     const border = p.quarantined ? 'quarantined' : (p.serving ? 'serving' : '');
     const kind = p.source === 'measured' ? 'measured' : 'simulated';

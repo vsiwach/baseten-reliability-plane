@@ -5,20 +5,21 @@
 .col{display:flex;flex-direction:column;gap:0;min-width:0}
 @media(max-width:900px){.grid-main{grid-template-columns:1fr}}
 
-/* drive strip — the five actions in trust order */
-.drive-card{border-color:var(--lime);margin-bottom:12px}
-.drive-card h3{color:var(--lime)}
-#drive{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-@media(max-width:980px){#drive{grid-template-columns:1fr 1fr}}
-.dstep{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
-.dstep.running{border-color:var(--amber)}
-.dstep.done{border-color:var(--lime)}
-.dhead{display:flex;gap:8px;align-items:center;margin-bottom:7px}
-.dn{font-family:var(--mono);font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex:none}
-.dstep.done .dn{color:var(--ink);background:var(--lime);border-color:var(--lime)}
-.dstep.running .dn{color:var(--amber);border-color:var(--amber)}
-button.dact{font-size:12px;padding:6px 10px;flex:1;text-align:left}
-.dwhat{font-size:10.5px;color:var(--dim);line-height:1.55}
+/* your-setup stepper — the console's narrative state */
+.setup-card{border-color:var(--lime);margin-bottom:12px}
+.setup-card h3{color:var(--lime)}
+#setup{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:980px){#setup{grid-template-columns:1fr 1fr}}
+.sstep{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;display:flex;flex-direction:column;gap:7px}
+.sstep.now{border-color:var(--lime)}
+.sstep.todo{opacity:.62}
+.shead{display:flex;gap:8px;align-items:center}
+.sn{font-family:var(--mono);font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.sstep.done .sn{color:var(--ink);background:var(--lime);border-color:var(--lime)}
+.sstep.now .sn{color:var(--lime);border-color:var(--lime)}
+.st{font-size:12px;font-weight:600;color:var(--txt);line-height:1.3}
+.ssub{font-size:10.5px;color:var(--dim);line-height:1.55;flex:1}
+.sstep button{align-self:flex-start;font-size:12px;padding:7px 12px}
 
 /* hero strip */
 #hero{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}

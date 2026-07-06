@@ -1,11 +1,16 @@
 /* console.js — boots the engine and wires the panels. This file owns the
-   clock and the buttons; every decision stays in js/sim. */
+   clock and the buttons; every decision stays in js/sim.
+
+   The console opens in a NAMED state (the setup stepper): existing cloud
+   attached in shadow, Baseten cluster provisioned — and nothing is measured
+   until the operator deploys the workload. The clock only ticks after
+   deploy, so every number on screen is a consequence of an action the
+   operator took. */
 (function (root) {
   'use strict';
   const RP = root.RP;
   const qs = new URLSearchParams(location.search);
   const SEED = Number(qs.get('seed')) || 42;
-  const NODATA = qs.get('nodata');          // e.g. ?nodata=cost kills the $ source
 
   // ---- boot ------------------------------------------------------------------
   const policies = {
@@ -14,66 +19,22 @@
     placement: RP.yaml.parse(RP.policyText.placement),
     failover: RP.yaml.parse(RP.policyText.failover),
   };
-  // honest-numbers demo hook: kill a data source and the UI must say
-  // "no data yet", never zeros (acceptance checklist item)
   const profiles = JSON.parse(JSON.stringify(RP.recorded.profiles));
-  if (NODATA === 'cost') {
-    for (const p of Object.values(profiles)) p.usd_per_mtok = null;
-  }
   const engine = RP.engine.createEngine({ seed: SEED, policies, profiles });
 
   const $ = id => document.getElementById(id);
   let paused = false;
-  let replay = null;                        // {episode, elapsed}
+  let deployed = false;      // step 3 of the setup — nothing ticks before it
   let feedPaused = false;
-  const driveDone = {};                     // stepId -> true once observed done
-
-  /* Drive-strip state, derived from engine views each frame. */
-  function driveState() {
-    const drill = engine.drillView();
-    const rel = engine.releaseView();
-    const mig = engine.migrationView();
-    if (drill && drill.done) driveDone[drill.kind === 'rigged' ? 'rigged' : 'drill'] = true;
-    if (rel && rel.state === 'rolled_back') driveDone.rollout = true;
-    if (mig && mig.finished && mig.verdict === 'PROMOTE_ELIGIBLE') driveDone.migrate = true;
-    if (replay && replay.elapsed >= replay.episode.outcome.mttr_s) driveDone.replay = true;
-    const running = id => ({
-      drill: drill && !drill.done && drill.kind === 'drill',
-      rigged: drill && !drill.done && drill.kind === 'rigged',
-      rollout: rel && rel.state === 'in_progress',
-      migrate: mig && !mig.finished,
-      replay: replay && replay.elapsed < replay.episode.outcome.mttr_s,
-    }[id]);
-    const out = {};
-    for (const s of RP.ui.drive.STEPS) {
-      out[s.id] = running(s.id) ? 'running' : (driveDone[s.id] ? 'done' : 'todo');
-    }
-    return out;
-  }
-
-  function driveAction(id) {
-    replay = null;
-    switch (id) {
-      case 'drill': engine.clearDrill(); engine.runDrill(); break;
-      case 'rigged': engine.clearDrill(); engine.runRiggedDrill(); break;
-      case 'rollout':
-        engine.startRollout();
-        engine.injectRegression();   // one click shows the whole point: the gate catches it
-        break;
-      case 'migrate': engine.startMigration('in'); break;
-      case 'replay': replay = { episode: RP.recorded.replayEpisode, elapsed: 0 }; break;
-    }
-    const step = RP.ui.drive.STEPS.find(s => s.id === id);
-    const el = step && document.querySelector(step.target);
-    if (el) el.scrollIntoView({
-      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      block: 'center',
-    });
-  }
 
   // ---- render loop -------------------------------------------------------------
   function renderAll() {
-    RP.ui.drive.render($('drive'), driveState());
+    RP.ui.setup.render($('setup'), {
+      deployed,
+      samples: engine.heroMetrics().samples || 0,
+      winback: engine.winbackView(),
+      migration: engine.migrationView(),
+    });
     RP.ui.hero.render($('hero'), engine.heroMetrics(), engine.sparksView(),
       RP.recorded.mttr, engine.incidentsView().find(i => !i.live)?.mttr_s ?? null);
     RP.ui.pools.render($('pools'), $('slo-strip'), engine.poolsView(), profiles);
@@ -84,18 +45,15 @@
       incidents: engine.incidentsView(),
       drill: engine.drillView(),
       allowlist: engine.agentView().allowlist,
-      replay,
     });
-    $('sim-clock').textContent = `t+${engine.t}s · seed ${SEED}${paused ? ' · PAUSED' : ''}`;
+    $('sim-clock').textContent = deployed
+      ? `t+${engine.t}s${paused ? ' · PAUSED' : ''}`
+      : 'workload not deployed';
   }
 
   function tick() {
-    if (!paused) {
+    if (!paused && deployed) {
       engine.tick(1);
-      if (replay) {
-        replay.elapsed += 1;
-        if (replay.elapsed > replay.episode.outcome.mttr_s + 4) replay = null;
-      }
       renderAll();
     }
   }
@@ -106,27 +64,26 @@
     $('btn-pause').textContent = paused ? '▶ Resume' : '⏸ Pause';
     renderAll();
   });
-  $('btn-drill').addEventListener('click', () => { replay = null; engine.clearDrill(); engine.runDrill(); renderAll(); });
-  $('btn-rigged').addEventListener('click', () => { replay = null; engine.clearDrill(); engine.runRiggedDrill(); renderAll(); });
-  $('btn-replay').addEventListener('click', () => {
-    replay = { episode: RP.recorded.replayEpisode, elapsed: 0 };
-    renderAll();
-  });
+  $('btn-drill').addEventListener('click', () => { engine.clearDrill(); engine.runDrill(); renderAll(); });
+  $('btn-rigged').addEventListener('click', () => { engine.clearDrill(); engine.runRiggedDrill(); renderAll(); });
   $('btn-rollout').addEventListener('click', () => { engine.startRollout(); renderAll(); });
   $('btn-regression').addEventListener('click', () => { engine.injectRegression(); renderAll(); });
 
-  // drive strip, migration + pool controls are re-rendered nodes → delegate
+  // setup stepper, migration + pool controls are re-rendered nodes → delegate
   document.addEventListener('click', e => {
-    const driveBtn = e.target.closest('button[data-drive]');
-    if (driveBtn) { driveAction(driveBtn.dataset.drive); renderAll(); return; }
+    const setupBtn = e.target.closest('button[data-setup]');
+    if (setupBtn && setupBtn.dataset.setup === 'deploy') {
+      deployed = true;
+      renderAll();
+      return;
+    }
     const btn = e.target.closest('button[data-act]');
     if (!btn) return;
-    const act = btn.dataset.act;
-    if (act === 'migrate') engine.startMigration('in');
-    if (act === 'migrate-out') engine.startMigration('out');   // no-lock-in, same machine
-    if (act === 'rollback') engine.rollbackMigration();
-    if (act === 'quarantine') engine.operatorQuarantine(btn.dataset.pool);
-    if (act === 'reinstate') engine.operatorReinstate(btn.dataset.pool);
+    if (btn.dataset.act === 'migrate') engine.startMigration('in');
+    if (btn.dataset.act === 'migrate-out') engine.startMigration('out');
+    if (btn.dataset.act === 'rollback') engine.rollbackMigration();
+    if (btn.dataset.act === 'quarantine') engine.operatorQuarantine(btn.dataset.pool);
+    if (btn.dataset.act === 'reinstate') engine.operatorReinstate(btn.dataset.pool);
     renderAll();
   });
 

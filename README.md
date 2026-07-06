@@ -19,7 +19,7 @@ drill (watch the guard refuse) → Inject regression (watch the canary roll
 back) → Migrate route (shadow → certify → promote, rollback held).
 
 **Read the story in order** (the site is one linear flow, no side hub):
-[pain points](docs/friction-log.html) → [the turn](onboard.html) →
+[pain points](docs/friction-log.html) → [the turn](index.html#act2) →
 [strategy](docs/strategy.html) → [PRD](docs/prd.html) →
 [the MVP](operate.html).
 
@@ -35,9 +35,9 @@ back) → Migrate route (shadow → certify → promote, rollback held).
    in [baseten-mvp](https://github.com/vsiwach/baseten-mvp), MCP-read metrics
    CSVs in [`data/recorded/`](data/recorded/PROVENANCE.md)).
 3. **This product gives that same technique to the customer**
-   ([onboard.html](onboard.html)): one prompt attaches their clouds read-only,
-   baselines every route, and migrates traffic to Baseten — safely — when the
-   evidence says so.
+   (act 2 on the landing page): one click unfolds the prompt that attaches
+   their clouds read-only, baselines every route, and migrates traffic to
+   Baseten — safely — when the evidence says so.
 
 ## The framing
 

@@ -482,6 +482,7 @@
       const poolViews = pools.map(p => ({
         id: p.id, control: p.control, usd_per_mtok: p.usd_per_mtok,
         dedicated: p.usd_hr != null,      // metered dedicated capacity
+        samples: p.window.length,          // evidence = observed traffic
         ttft_p99_ms: costs.percentile(p.window.map(s => s.ttft), 99) ?? p.ttft_ms,
       }));
       return migrationMod.winback(routeViews, poolViews,

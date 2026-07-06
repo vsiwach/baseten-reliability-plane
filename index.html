@@ -3,46 +3,74 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Baseten Reliability Plane — declare reliability, let agents operate it</title>
-<meta name="description" content="One product surface end to end: pain points → strategy → PRD → live MVP. Four declared policy objects, an SLO-driven incident agent with recorded 8.8s MTTR, and certified cross-provider migration.">
+<title>Baseten Reliability Plane — which cloud is holding your SLOs?</title>
+<meta name="description" content="We tried Baseten by hand, rebuilt onboarding as one prompt, and built the console multicloud inference teams are missing: agents scoring your declared SLOs on every cloud, with certified migration when the evidence says so.">
 <link rel="stylesheet" href="css/tokens.css">
 <style>
-/* landing-only composition; all tokens inherited */
-.heroblk{margin:64px 0 56px}
-.heroblk h1{font-size:clamp(30px,5vw,44px);line-height:1.14;max-width:820px;font-weight:700;text-wrap:balance;letter-spacing:-.01em}
+/* landing composition — one scrolling story, four acts */
+.heroblk{margin:70px 0 26px}
+.heroblk h1{font-size:clamp(30px,5vw,46px);line-height:1.12;max-width:840px;font-weight:700;text-wrap:balance;letter-spacing:-.01em}
 .heroblk h1 em{color:var(--lime);font-style:normal}
-.heroblk .sub{font-size:16px;color:var(--mut);max-width:640px;margin-top:18px;line-height:1.7}
-.heroblk .ctas{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
-.heroblk .ctas a{text-decoration:none;font-weight:600;font-size:14px;border-radius:8px;padding:12px 20px}
-.heroblk .ctas a.go{background:var(--lime);color:var(--ink)}
-.heroblk .ctas a.alt{border:1px solid var(--line);color:var(--mut)}
-.heroblk .ctas a.alt:hover{border-color:var(--dim);color:var(--txt)}
+.heroblk .sub{font-size:16px;color:var(--mut);max-width:660px;margin-top:18px;line-height:1.7}
+.heroblk .down{display:inline-block;margin-top:26px;font-family:var(--mono);font-size:12px;color:var(--lime);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:10px 16px}
+.heroblk .down:hover{border-color:var(--lime)}
 
-.beats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 40px}
-@media(max-width:820px){.beats{grid-template-columns:1fr}}
-.beat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:9px}
-.beat .n{font-family:var(--mono);font-size:10.5px;color:var(--lime);letter-spacing:2px}
-.beat h2{font-size:15.5px;line-height:1.4;text-wrap:balance}
-.beat p{font-size:13px;color:var(--mut);line-height:1.65;flex:1}
-.beat a{font-size:12.5px}
+.act{margin:64px 0}
+.act .n{font-family:var(--mono);font-size:11px;color:var(--lime);letter-spacing:2.5px;margin-bottom:10px}
+.act h2{font-size:24px;line-height:1.3;max-width:720px;text-wrap:balance}
+.act .lede{font-size:14.5px;color:var(--mut);max-width:680px;margin-top:10px;line-height:1.7}
 
-.aud{font-size:14px;color:var(--mut);border-left:2px solid var(--lime);padding-left:16px;line-height:1.75;margin:0 0 48px;max-width:760px}
+/* act 1 — friction synthesis */
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+@media(max-width:760px){.themes{grid-template-columns:1fr}}
+.theme{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.theme h3{font-size:15px;margin-bottom:7px;text-wrap:balance}
+.theme p{font-size:12.5px;color:var(--mut);line-height:1.65}
+.theme .refs{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-top:10px}
+.actfoot{font-size:12.5px;color:var(--dim);margin-top:14px}
 
-/* the console doorway — the surface itself, not a screenshot of it */
-.door{border:1px solid var(--lime);border-radius:12px;background:linear-gradient(0deg,rgba(213,242,110,.045),var(--panel) 70%);padding:22px 22px 20px;margin:0 0 44px}
-.door .lbl{color:var(--lime)}
-.door-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 18px}
-@media(max-width:820px){.door-stats{grid-template-columns:1fr 1fr}}
-.dstat{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
-.dstat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--dim);text-transform:uppercase}
-.dstat .v{font-family:var(--mono);font-size:19px;color:var(--txt);margin:7px 0 5px;font-variant-numeric:tabular-nums}
-.dstat .v b{color:var(--lime);font-weight:500}
-.dstat .s{font-size:10.5px;color:var(--dim);line-height:1.5}
-.door-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.door-foot .note{max-width:520px}
-.door-foot a.go{background:var(--lime);color:var(--ink);border-radius:8px;padding:13px 22px;font-weight:600;font-size:15px;text-decoration:none;white-space:nowrap}
+/* act 2 — one click unfolds the prompt */
+.unfold{margin-top:22px;border:1px solid var(--lime);border-radius:12px;background:linear-gradient(0deg,rgba(213,242,110,.04),var(--panel) 65%)}
+.unfold summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px;padding:20px 22px}
+.unfold summary::-webkit-details-marker{display:none}
+.unfold summary .btn{background:var(--lime);color:var(--ink);border-radius:8px;padding:13px 22px;font-weight:700;font-size:15px;white-space:nowrap}
+.unfold summary .hint{font-size:13px;color:var(--mut);line-height:1.6}
+.unfold[open] summary .btn{background:transparent;color:var(--lime);border:1px solid var(--lime)}
+.unfold .body{padding:0 22px 22px}
+pre.prompt{font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--txt);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;white-space:pre}
+pre.prompt .c{color:var(--dim)}
+.proof{font-size:12.5px;color:var(--mut);line-height:1.7;border-left:2px solid var(--lime);padding-left:14px;margin-top:14px}
+.steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+@media(max-width:760px){.steps4{grid-template-columns:1fr 1fr}}
+.steps4 div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--mut);line-height:1.5}
+.steps4 b{display:block;font-family:var(--mono);font-size:10px;color:var(--lime);margin-bottom:4px;font-weight:500}
 
-footer.ev{margin-top:44px}
+/* act 3 — the thought process */
+.chapters{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.chapter{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px;text-decoration:none}
+.chapter:hover{border-color:var(--lime)}
+.chapter .cn{font-family:var(--mono);font-size:12px;color:var(--lime)}
+.chapter .ct{font-size:15px;font-weight:600;color:var(--txt)}
+.chapter .cd{font-size:12.5px;color:var(--mut);margin-top:3px;line-height:1.55}
+.chapter .go{font-family:var(--mono);font-size:12px;color:var(--lime);white-space:nowrap}
+@media(max-width:640px){.chapter{grid-template-columns:1fr}.chapter .go{display:none}}
+
+/* the mvp diagram */
+.mvpfig{margin-top:22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px}
+.mvpfig .fl{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--lime);margin-bottom:14px}
+svg text{font-family:'IBM Plex Mono',monospace}
+.commit{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.commit{grid-template-columns:1fr}}
+.commit div{border:1px solid var(--line);border-radius:8px;padding:11px 13px;font-size:11.5px;color:var(--mut);line-height:1.6}
+.commit b{color:var(--txt)}
+
+/* act 4 — the console */
+.door{border:1px solid var(--lime);border-radius:12px;background:#101009;padding:26px;margin-top:22px}
+.door .scen{font-size:15px;color:var(--txt);line-height:1.75;max-width:720px}
+.door .scen b{color:var(--lime)}
+.door .go{display:inline-block;background:var(--lime);color:var(--ink);border-radius:8px;padding:14px 26px;font-weight:700;font-size:16px;text-decoration:none;margin-top:18px}
+.door .thesis{font-size:12.5px;color:var(--mut);margin-top:16px;border-top:1px dashed var(--line);padding-top:12px;max-width:720px;line-height:1.7}
+footer.ev{margin-top:56px}
 </style>
 </head>
 <body>
@@ -50,103 +78,194 @@ footer.ev{margin-top:44px}
 
 <header class="topbar">
   <div class="brand">RELIABILITY PLANE</div>
-  <nav aria-label="Site">
-    <a href="onboard.html">Onboard</a>
-    <a href="docs/strategy.html">Strategy</a>
-    <a href="docs/prd.html">PRD</a>
-    <a href="operate.html">Console</a>
-  </nav>
 </header>
 
 <div class="heroblk">
-  <h1>Reliability you <em>declare</em>. Agents that <em>operate</em> it. Evidence you can <em>rerun</em>.</h1>
-  <p class="sub">One product surface end to end for Baseten's inference platform:
-  four declared policy objects, one glanceable operate screen, an SLO-driven incident
-  agent, and certified cross-provider migration.</p>
-  <div class="ctas">
-    <a class="go" href="operate.html">Open the console</a>
-    <a class="alt" href="docs/friction-log.html">Start the story at the pain points</a>
-  </div>
+  <h1>Which of your clouds is actually <em>holding your SLOs</em> — and what would it cost to move?</h1>
+  <p class="sub">Multicloud inference teams can't answer that today. We built the console that can:
+  agents continuously score the benchmarks <b>you</b> declared, on every cloud you run — and traffic
+  moves only on that evidence.</p>
+  <a class="down" href="#act1">↓ THE STORY — how we got here</a>
 </div>
 
-<h3 class="lbl" style="margin:0 0 4px">THE STORY, IN ORDER</h3>
-<nav class="flow" aria-label="The story in order" style="margin-bottom:40px">
-  <a href="docs/friction-log.html">01 · PAIN POINTS</a>
-  <a href="onboard.html">02 · THE TURN</a>
-  <a href="docs/strategy.html">03 · STRATEGY</a>
-  <a href="docs/prd.html">04 · PRD</a>
-  <a href="operate.html">05 · THE MVP</a>
-</nav>
+<!-- ACT 1 -->
+<section class="act" id="act1">
+  <div class="n">01 · WE GOT OUR HANDS DIRTY</div>
+  <h2>Six dedicated-deploy attempts on Baseten, logged first-hand. Four patterns kept repeating.</h2>
+  <div class="themes">
+    <div class="theme">
+      <h3>You can't tell slow from stuck from doomed</h3>
+      <p>A first deploy sat 30 minutes in silent scheduling limbo, then died as INACTIVE — no queue
+      position, no "waiting for capacity," no reason. GPU families turn out to be org-gated, but you
+      learn it only after packaging and uploading.</p>
+      <div class="refs">friction #6 · #13</div>
+    </div>
+    <div class="theme">
+      <h3>Failures you can't triage</h3>
+      <p>BUILD_FAILED with zero API-visible logs. A fixed-RAM SKU that OOM-crash-loops an 8B model
+      with no pre-flight warning. A green build that dies at import time. Three attempts, three
+      distinct failure layers — none diagnosable programmatically.</p>
+      <div class="refs">friction #7 · #12 · #14</div>
+    </div>
+    <div class="theme">
+      <h3>State that lies</h3>
+      <p>A failed first deploy kept the production pointer — the healthy fix served 500s until a
+      manual promote. Metrics arrive as silent nulls indistinguishable from "never served," and the
+      metrics endpoint rate-limits a single dashboard user.</p>
+      <div class="refs">friction #15 · #18 · #19 · #10</div>
+    </div>
+    <div class="theme">
+      <h3>The fast path is hidden</h3>
+      <p>One opt-in config stanza (BDN weight caching) cut cold start from 360s to 148s — measured.
+      Nothing at push time suggests it. The platform's best behavior is opt-in and undiscoverable
+      exactly where a new customer would quit.</p>
+      <div class="refs">friction #17 · #2 · #5</div>
+    </div>
+  </div>
+  <p class="actfoot">Every pattern above carries committed evidence — per-request CSVs, deployment
+  IDs, timestamps. <a href="docs/friction-log.html">The full 16-entry log →</a></p>
+</section>
 
-<div class="beats">
-  <div class="beat">
-    <div class="n">01 · THE FRICTION</div>
-    <h2>We onboarded to Baseten by hand and logged every friction</h2>
-    <p>16 Baseten entries, each with committed evidence: a deploy that died silently in
-    <span class="mono">DEPLOYING</span>, un-triageable build failures, a production pointer
-    left on a dead deploy, 429s with no <span class="mono">Retry-After</span>.</p>
-    <a href="docs/friction-log.html">Read the pain points →</a>
-  </div>
-  <div class="beat">
-    <div class="n">02 · THE TURN</div>
-    <h2>Then we onboarded again through Baseten's own agent surface — and it worked</h2>
-    <p>The same workspace that fought us manually attached, baselined, and deployed through
-    Baseten's MCP server and agent skills — evidence committed in
-    <span class="mono">data/recorded/</span>.</p>
-    <a href="onboard.html">See the agentic path →</a>
-  </div>
-  <div class="beat">
-    <div class="n">03 · THE PRODUCT</div>
-    <h2>This gives that same technique to the customer</h2>
-    <p>One prompt onboards you into a console measuring the SLOs you care about — p99
-    TTFT/TPOT, goodput, measured $/Mtok — on every cloud you run, and migrates traffic to
-    Baseten safely when the evidence says so.</p>
-    <a href="operate.html">Open the console →</a>
-  </div>
-</div>
+<!-- ACT 2 -->
+<section class="act" id="act2">
+  <div class="n">02 · SO WE FIXED THE FIRST HOUR</div>
+  <h2>Then we onboarded again — through Baseten's own agent rails — and the same workspace attached, baselined, and deployed cleanly.</h2>
+  <p class="lede">Baseten had already shipped the rails: their MCP server and agent skills (June 30,
+  2026). So onboarding stops being a form and becomes one click to your own coding agent.</p>
 
-<p class="aud">Built for teams <b>evaluating Baseten dedicated inference</b>, and <b>existing Baseten
-customers running multicloud portfolios</b>. Same console, same trust ladder:
-<span class="mono">observe → migrate → declare → operate</span>. Monitoring is read-only on external
-clouds; control features apply only to Baseten-side pools — this is a migration play, not a platform ask.</p>
+  <details class="unfold">
+    <summary>
+      <span class="btn">▶ Onboard with one prompt</span>
+      <span class="hint">Click to unfold what the click does: your agent attaches your existing
+      clouds read-only, baselines every route, and proposes the first candidate — zero write
+      actions before you confirm.</span>
+    </summary>
+    <div class="body">
+      <div class="steps4">
+        <div><b>1 · ATTACH</b>your existing endpoints, read-only keys — Modal, RunPod, anywhere OpenAI-compatible</div>
+        <div><b>2 · BASELINE</b>real SLO percentiles + measured $/Mtok per route, into a ledger you own</div>
+        <div><b>3 · PROPOSE</b>the first shadow candidate, with side-by-side numbers</div>
+        <div><b>4 · STOP</b>no traffic moves until you've seen the evidence</div>
+      </div>
+      <pre class="prompt" id="pr"><span class="c"># Paste into Claude Code, Cursor, or any MCP client.</span>
 
-<section class="door" aria-label="The console">
-  <div class="lbl">THE MVP — MEANT TO BE DRIVEN, NOT SCREENSHOTTED</div>
-  <div class="door-stats">
-    <div class="dstat">
-      <div class="k">MTTR, agent on</div>
-      <div class="v"><b>8.1s</b> median</div>
-      <div class="s">48 recorded live drills · agent off: never recovered</div>
+Connect the Baseten MCP server (https://api.baseten.co/mcp) with my workspace
+API key, and install the Baseten agent skills (basetenlabs/baseten-skills).
+
+1. ATTACH (read-only): register my OpenAI-compatible endpoints with a
+   read-scoped key each — do not request write access.
+2. BASELINE: 60-request streaming bench per route; record TTFT, tok/s,
+   status, billed cost. Compute p50/p99 TTFT, p99 TPOT, goodput at my SLO,
+   and measured $/Mtok. The results are my ledger — exportable, mine.
+3. PROPOSE: if a route would hold its SLO cheaper on Baseten capacity,
+   propose it as a SHADOW candidate with the side-by-side numbers.
+4. STOP. Do not move traffic. Promotion happens only through the certify
+   gate, with rollback held.</pre>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('pr').innerText).then(()=>{this.textContent='✓ copied'})">Copy prompt</button>
+      <p class="proof">We know this works because we took this path: after six manual attempts
+      produced the friction log, this exact flow onboarded the same workspace cleanly —
+      evidence committed in <a href="data/recorded/PROVENANCE.md"><span class="mono">data/recorded/</span></a>.</p>
     </div>
-    <div class="dstat">
-      <div class="k">Measured $/Mtok</div>
-      <div class="v">$2.78 – $8.53</div>
-      <div class="s">billed sweeps + published $/hr ÷ measured tok/s</div>
-    </div>
-    <div class="dstat">
-      <div class="k">The guard</div>
-      <div class="v">refuses<b>*</b></div>
-      <div class="s">*rig a drill: the agent won't quarantine the last healthy pool — and says why</div>
-    </div>
-    <div class="dstat">
-      <div class="k">The gate</div>
-      <div class="v">shadow→certify</div>
-      <div class="s">traffic moves only on a passing certificate; a refusal is the system working</div>
+  </details>
+  <p class="actfoot" style="margin-top:18px">Onboarding put us inside the workspace — and that's
+  when we saw what was missing.</p>
+</section>
+
+<!-- ACT 3 -->
+<section class="act" id="act3">
+  <div class="n">03 · THE THOUGHT PROCESS — WRITTEN DOWN BEFORE BUILT</div>
+  <h2>Baseten engineers four nines and sells three. Multicloud buyers can't see who's holding their SLOs. Nobody sells that surface.</h2>
+  <p class="lede">Before writing a line of the MVP, the thinking went on paper — the strategy, the
+  product requirements, and the MVP's own design doc. Read them in order:</p>
+  <div class="chapters">
+    <a class="chapter" href="docs/strategy.html">
+      <span class="cn">03·A</span>
+      <span><span class="ct">Selling the nines — the strategy</span>
+      <span class="cd">Why reliability becomes the product: MCM already enforces placement, failover,
+      releases and SLOs internally; the winner turns that machinery inside out and sells the fourth
+      nine it already delivers.</span></span>
+      <span class="go">read →</span>
+    </a>
+    <a class="chapter" href="docs/prd.html">
+      <span class="cn">03·B</span>
+      <span><span class="ct">The reliability plane — the PRD</span>
+      <span class="cd">The strategy as a buildable surface: four declared policy objects, the operate
+      console, agents with a warrant, the SLA ladder — three phases, each gated, each feature with
+      its target metric.</span></span>
+      <span class="go">read →</span>
+    </a>
+  </div>
+
+  <div class="mvpfig" id="mvp">
+    <div class="fl">03·C — THE MVP: WHAT WE BUILT, IN ONE PICTURE</div>
+    <svg viewBox="0 0 900 330" role="img" aria-label="Architecture, left to right: your clouds feed the plane's load generator and SLO scorer; the incident agent monitors every cloud and remediates on Baseten; the certify gate moves traffic to whichever cloud earned it, reversibly.">
+      <text x="24" y="26" fill="#8A8A80" font-size="10" letter-spacing="1">YOUR CLOUDS</text>
+      <text x="300" y="26" fill="#D5F26E" font-size="10" letter-spacing="1">THE PLANE — AGENTS ON YOUR DECLARED SLO</text>
+      <text x="712" y="26" fill="#8A8A80" font-size="10" letter-spacing="1">OUTCOME</text>
+      <rect x="24" y="40" width="200" height="86" rx="8" fill="none" stroke="#3A3A32"/>
+      <text x="40" y="64" fill="#F4F4EE" font-size="11.5">modal-dedicated · qwen3</text>
+      <text x="40" y="84" fill="#E0A85B" font-size="9.5">SHADOW · attached read-only</text>
+      <text x="40" y="102" fill="#8A8A80" font-size="9.5">no control affordance, ever</text>
+      <rect x="24" y="140" width="200" height="86" rx="8" fill="none" stroke="#D5F26E"/>
+      <text x="40" y="164" fill="#F4F4EE" font-size="11.5">baseten-dedicated · qwen3</text>
+      <text x="40" y="184" fill="#C6E96A" font-size="9.5">OPERATED · your new cluster</text>
+      <text x="40" y="202" fill="#8A8A80" font-size="9.5">full policy + remediation surface</text>
+      <rect x="264" y="40" width="380" height="238" rx="8" fill="#16160F" stroke="#3A3A32"/>
+      <text x="286" y="68" fill="#F4F4EE" font-size="11.5">workload runner — same prompts, every cloud</text>
+      <text x="286" y="86" fill="#8A8A80" font-size="9.5">streaming TTFT/TPOT per request → your route ledger</text>
+      <text x="286" y="116" fill="#F4F4EE" font-size="11.5">cross-cloud SLO monitor (agent, feature 1)</text>
+      <text x="286" y="134" fill="#8A8A80" font-size="9.5">goodput · p99s · measured $/Mtok — scored per provider</text>
+      <text x="286" y="164" fill="#F4F4EE" font-size="11.5">auto-remediation (agent, feature 2 · Baseten-side)</text>
+      <text x="286" y="182" fill="#8A8A80" font-size="9.5">closed allowlist: quarantine·probe·reinstate·escalate</text>
+      <text x="286" y="200" fill="#8A8A80" font-size="9.5">guards: never orphan the last pool · MTTR 8.8s recorded</text>
+      <text x="286" y="230" fill="#F4F4EE" font-size="11.5">certify gate — parity + SLO, side by side</text>
+      <text x="286" y="248" fill="#8A8A80" font-size="9.5">traffic moves only on PASS · a refusal is the system working</text>
+      <rect x="684" y="40" width="192" height="238" rx="8" fill="none" stroke="#D5F26E" stroke-width="1.5"/>
+      <text x="702" y="70" fill="#C6E96A" font-size="11.5">traffic on the cloud</text>
+      <text x="702" y="88" fill="#C6E96A" font-size="11.5">that earned it</text>
+      <text x="702" y="118" fill="#F4F4EE" font-size="10">rollback held for the</text>
+      <text x="702" y="134" fill="#F4F4EE" font-size="10">route's life</text>
+      <text x="702" y="164" fill="#F4F4EE" font-size="10">⇄ migrate-out is one</text>
+      <text x="702" y="180" fill="#F4F4EE" font-size="10">click too — even when it</text>
+      <text x="702" y="196" fill="#F4F4EE" font-size="10">costs Baseten business.</text>
+      <text x="702" y="226" fill="#8A8A80" font-size="9.5">that reversibility is why</text>
+      <text x="702" y="242" fill="#8A8A80" font-size="9.5">attaching is safe</text>
+      <line x1="224" y1="83" x2="264" y2="110" stroke="#3A3A32"/>
+      <line x1="224" y1="183" x2="264" y2="160" stroke="#3A3A32"/>
+      <line x1="644" y1="159" x2="684" y2="159" stroke="#D5F26E"/>
+      <polygon points="682,154 682,164 690,159" fill="#D5F26E"/>
+      <text x="24" y="308" fill="#8A8A80" font-size="9" letter-spacing=".5">TRUST RAIL · shadow-only on external clouds · every number measured against a ledger you own and can export · zero markup on external legs · reversible by design</text>
+    </svg>
+    <div class="commit">
+      <div><b>One screen.</b> Goodput, p99 TTFT/TPOT, measured $/Mtok, MTTR — per cloud, against the SLO you declared. Glanceable in five seconds.</div>
+      <div><b>Two agent features.</b> The monitor scores every cloud; remediation acts only on Baseten pools, under a closed allowlist with guards that refuse.</div>
+      <div><b>One gate.</b> Shadow → certify → promote, rollback armed for the route's life — in either direction. Migration is the product; lock-in is not.</div>
     </div>
   </div>
-  <div class="door-foot">
-    <p class="note">Run a drill. Inject a regression. Migrate a route off Modal and roll it back.
-    Deterministic sim (<span class="mono">?seed=42</span>), no backend, no GPU — every number
-    measured or labeled simulated.</p>
+</section>
+
+<!-- ACT 4 -->
+<section class="act" id="act4">
+  <div class="n">04 · NOW IT'S YOURS TO OPERATE</div>
+  <h2>The console opens where you'd actually start.</h2>
+  <div class="door">
+    <p class="scen">Your setup is done: <b>your existing cloud is attached in shadow</b> (Modal,
+    read-only) and <b>your Baseten dedicated cluster is provisioned</b> (T4x8x32, Qwen3-8B).
+    Deploy your workload, watch the SLO evidence accumulate per cloud, and migrate traffic when
+    it holds — at the cheaper measured price.</p>
     <a class="go" href="operate.html">Open the console →</a>
+    <p class="thesis">The question it answers: <b>is Baseten more reliable for your workload — and
+    can you prove it?</b> Agents score the benchmarks you declared on every cloud you run, and
+    traffic moves only on that evidence. In either direction — even when it costs Baseten
+    business.</p>
   </div>
 </section>
 
 <footer class="ev">
-<p class="honesty"><b>evidence:</b> every number on this site is measured or labeled simulated;
-the MTTR 8.8–9.2s is real — recorded live-incident runs in
-<a href="https://github.com/vsiwach/baseten-mvp">baseten-mvp</a>, copied verbatim with
-<a href="data/recorded/PROVENANCE.md">provenance</a>.</p>
+<p class="honesty"><b>evidence:</b> the measured numbers on this site (MTTR 8.8–9.2s, warm TTFT,
+$/Mtok) trace to committed recordings in
+<a href="https://github.com/vsiwach/baseten-mvp">baseten-mvp</a> —
+<a href="data/recorded/PROVENANCE.md">provenance</a> · MIT</p>
 </footer>
 
 </div>
