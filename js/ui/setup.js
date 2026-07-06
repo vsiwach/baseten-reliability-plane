@@ -10,11 +10,11 @@
       && migration.serving === migration.target;
     const steps = [
       { n: 1, title: 'Existing cloud attached', state: 'done',
-        sub: 'modal-dedicated · shadow (read-only) — via the one-prompt onboarding' },
+        sub: 'competitor-cloud · shadow (read-only) — via the one-prompt onboarding' },
       { n: 2, title: 'Baseten clusters provisioned', state: 'done',
         sub: '2× T4x8x32 (serving + declared failover) · qwen3-8b-awq loaded on both' },
       { n: 3, title: 'Deploy your workload', state: deployed ? 'done' : 'now',
-        sub: deployed ? 'same workload on both clouds — modal keeps serving voice-agent, your Baseten cluster runs chat-prod'
+        sub: deployed ? 'same workload on both clouds — your competitor cloud keeps serving voice-agent, your Baseten cluster runs chat-prod'
                       : 'nothing is measured until your traffic flows',
         action: deployed ? null : { id: 'deploy', label: '▶ Deploy workload' } },
       { n: 4, title: 'Watch the SLO evidence', state: !deployed ? 'todo' : (samples > 30 ? 'done' : 'now'),

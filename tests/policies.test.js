@@ -41,7 +41,7 @@ test('yaml-lite parses placement-policy (block list of maps, comments)', () => {
   assert.strictEqual(p.pools.length, 4, 'exactly the four pools (RunPod row stays commented)');
   const ids = p.pools.map(x => x.id);
   assert.deepStrictEqual(ids, ['baseten-dedicated', 'baseten-dedicated-2',
-                               'baseten-model-api', 'modal-dedicated']);
+                               'baseten-model-api', 'competitor-cloud']);
   const cluster2 = p.pools[1];
   assert.strictEqual(cluster2.control, 'operated');
   assert.deepStrictEqual(cluster2.tags, ['reserved'], 'the declared failover cluster');

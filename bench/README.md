@@ -13,9 +13,9 @@ python3 bench/bench.py --url https://inference.baseten.co/v1 \
 python3 bench/bench.py --url https://model-XXXXX.api.baseten.co/environments/production/sync/v1 \
   --model qwen3-8b-awq --key "$BASETEN_API_KEY" --alias baseten-dedicated --usd-hr 0.9024 -n 60
 
-# Modal (this is the one that upgrades modal-dedicated from SIMULATED to MEASURED)
-python3 bench/bench.py --url https://myorg--qwen3-serve.modal.run/v1 \
-  --model Qwen/Qwen3-8B-AWQ --key "$MODAL_TOKEN" --alias modal-dedicated --usd-hr 1.10 -n 60
+# Your competitor cloud (upgrades competitor-cloud from SIMULATED to MEASURED)
+python3 bench/bench.py --url https://qwen3.your-competitor-cloud.example/v1 \
+  --model Qwen/Qwen3-8B-AWQ --key "$COMPETITOR_TOKEN" --alias competitor-cloud --usd-hr 1.10 -n 60
 ```
 
 Measured lessons already encoded in the harness, from the friction log:

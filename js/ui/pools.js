@@ -56,7 +56,7 @@
         <td class="num">${chipped(fmt.msTok(prof.tpot_ms), kind, prof.provenance)}</td>
         <td class="num">${chipped(prof.cold_start_s + 's', kind, prof.cold_mitigation + ' — ' + prof.provenance)}</td>
         <td class="num">${chipped(fmt.usd(prof.usd_per_mtok), kind, prof.provenance)}</td>
-        <td class="num">${chipped(prof.sla.replace(' (published)', ''), 'published', 'Provider-published SLA, not a measurement. Baseten: baseten.co/service-level-agreement (99.9% monthly, capacity-scoped). Modal: modal.com SLA page.')}</td>
+        <td class="num">${chipped(prof.sla.replace(' (published)', ''), 'published', 'Provider-published SLA, not a measurement. Baseten: baseten.co/service-level-agreement (99.9% monthly, capacity-scoped); external clouds: the provider\'s own SLA page.')}</td>
       </tr>`;
     }).join('');
     return `<div class="table-scroll"><table class="data">

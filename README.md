@@ -48,7 +48,7 @@ provider** — one console for SLO adherence and measured $/Mtok. The ledger
 that monitoring builds turns "considering moving traffic" into a **one-click
 certified migration**, backed by rerunnable evidence instead of a bake-off
 project. Control features apply only to Baseten-side workloads:
-**observe → migrate → declare → operate**. Modal appears as the worked example
+**observe → migrate → declare → operate**. The competitor cloud appears as the worked example
 of a monitored external pool, not a bake-off target — and certified migration
 is deliberately reversible (migrate-out is one click too), because no-lock-in
 is what makes attaching your endpoints safe.
@@ -82,10 +82,9 @@ Measured (chip → tooltip → committed file; see
   and true values at ~2min — why this console renders "no data yet (lag)",
   never zeros (`live_mcp_metrics_summary_*.json`).
 
-Simulated (labeled everywhere): live traffic, drill timings, the
-`modal-dedicated` profile (no recorded Modal CSV exists yet — record one with
-`bench/` and it upgrades to MEASURED), and `hipaa-eu-pool` (exists to demo
-right-of-way without pretending to real HIPAA capacity).
+Simulated (labeled everywhere): live traffic, drill timings, and the
+`competitor-cloud` profile (representative of an external dedicated cloud —
+record a real CSV with `bench/` and it upgrades to MEASURED).
 
 ### SLO/SLA comparison (provenance per cell, as rendered in the console)
 
@@ -93,8 +92,8 @@ right-of-way without pretending to real HIPAA capacity).
 | --- | --- | --- | --- | --- | --- |
 | baseten-dedicated | 330ms · measured | 34ms/tok · measured | 148s (BDN) · measured | $8.53 · measured | 99.9% · published |
 | baseten-model-api | 299ms · measured | 6.3ms/tok · measured | 0s (shared) · measured | $2.78 · measured (billed) | 99.9% · published |
-| modal-dedicated | 280ms · simulated | 33ms/tok · simulated | 4s (snapshot) · simulated | $10.19 · simulated | 99.95% · published |
-| hipaa-eu-pool | 380ms · simulated | 40ms/tok · simulated | 60s · simulated | $26.70 · simulated | 99.9% · published |
+| baseten-dedicated-2 | 330ms · measured | 34ms/tok · measured | 148s (BDN) · measured | $8.53 · measured | 99.9% · published |
+| competitor-cloud | 280ms · simulated | 33ms/tok · simulated | 4s (snapshot) · simulated | $10.19 · simulated | 99.95% · published |
 
 ## Run it
 

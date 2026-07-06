@@ -59,7 +59,7 @@
 
     const routes = [
       { id: 'chat-prod', pool: 'baseten-dedicated', rps: 2 },
-      { id: 'voice-agent', pool: 'modal-dedicated', rps: 1 },   // monitored external route
+      { id: 'voice-agent', pool: 'competitor-cloud', rps: 1 },   // monitored external route
     ];
     // the routes the customer's SLO contract covers: declared on operated pools
     const contractRoutes = new Set(
@@ -386,8 +386,8 @@
       // OUT (the no-lock-in proof): the Baseten-resident route leaves. Same
       // machine, direction swapped.
       const [route, source, target] = direction === 'in'
-        ? ['voice-agent', 'modal-dedicated', 'baseten-dedicated']
-        : ['chat-prod', 'baseten-dedicated', 'modal-dedicated'];
+        ? ['voice-agent', 'competitor-cloud', 'baseten-dedicated']
+        : ['chat-prod', 'baseten-dedicated', 'competitor-cloud'];
       migration = migrationMod.createMigration({
         route, source, target,
         slo: { ttft_p99_ms: overrides.slo_ttft_ms, tpot_p99_ms: slo.tpot_p99_ms },

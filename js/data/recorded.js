@@ -41,18 +41,18 @@
         'p50 TTFT 299ms, billed $2.78/Mtok, 159 tok/s. Hazard: 28/40 requests 429d at ~1.3 rps ' +
         'with no Retry-After (rate_limit_glm47_20260702-183916.csv, friction #10).',
     },
-    'modal-dedicated': {
+    'competitor-cloud': {
       replicas: 2,
       ttft_ms: 280, tpot_ms: 33,
-      usd_hr: 1.10,               // Modal published A10G on-demand rate
+      usd_hr: 1.10,               // representative A10G on-demand rate
       usd_per_mtok: 10.19,        // 1.10/hr ÷ 30 tok/s assumed at the same model family
-      cold_start_s: 4, cold_mitigation: 'GPU memory snapshot (Modal published)',
+      cold_start_s: 4, cold_mitigation: 'GPU memory snapshot (provider-published)',
       sla: '99.95% (published)',
       source: 'simulated',
-      provenance: 'SIMULATED — no recorded Modal bench CSV exists in data/recorded/ yet. ' +
-        'Parameters from Modal’s published pricing and cold-start characteristics. ' +
-        'Record real numbers with bench/ against any OpenAI-compatible Modal endpoint ' +
-        'and drop the CSV in data/recorded/.',
+      provenance: 'SIMULATED — representative of a competitor dedicated cloud (no recorded ' +
+        'bench CSV in data/recorded/ yet). Record real numbers with bench/ against any ' +
+        'OpenAI-compatible endpoint and drop the CSV in data/recorded/ — the pool then ' +
+        'reads MEASURED.',
     },
     'baseten-dedicated-2': {
       replicas: 4,

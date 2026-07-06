@@ -79,7 +79,7 @@ test('migration IN promotes voice-agent onto baseten-dedicated; rollback restore
     'baseten-dedicated', 'route actually moved');
   eng.rollbackMigration();
   assert.strictEqual(eng.routesView().find(r => r.id === 'voice-agent').pool,
-    'modal-dedicated', 'one click restores the original pool');
+    'competitor-cloud', 'one click restores the original pool');
 });
 
 test('win-back card appears for the external route that is cheaper at equal SLO', () => {
@@ -88,7 +88,7 @@ test('win-back card appears for the external route that is cheaper at equal SLO'
   const recs = eng.winbackView();
   assert.ok(recs.length >= 1, 'ledger recommends the migration');
   assert.strictEqual(recs[0].route, 'voice-agent');
-  assert.strictEqual(recs[0].from, 'modal-dedicated');
+  assert.strictEqual(recs[0].from, 'competitor-cloud');
   assert.strictEqual(recs[0].to, 'baseten-dedicated');
   assert.ok(recs[0].delta_pct > 0);
 });

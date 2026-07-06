@@ -36,12 +36,12 @@ pools:
     cost_rank: 1
     tags: []
     hazards: [rate-limit-coupling]   # friction #10: per-model-per-workspace 429 quota
-  - id: modal-dedicated
-    provider: modal
+  - id: competitor-cloud
+    provider: competitor
     instance: A10G
     region: us-east-1
     control: monitor-only      # external cloud: telemetry in, no control out
-    cold_start_s: 4            # simulated from Modal's published GPU-snapshot cold starts
+    cold_start_s: 4            # representative of snapshot-based dedicated clouds
     cost_rank: 4
     tags: []
   # Worked example: attach any OpenAI-compatible endpoint read-only.

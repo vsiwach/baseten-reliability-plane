@@ -78,14 +78,14 @@ test('cooldown: a resolved pool is not immediately re-opened', () => {
 
 test('STRUCTURAL: the agent refuses every action against a monitor-only pool', () => {
   const a = createAgentLogic();
-  const monitorSig = sig({ poolId: 'modal-dedicated', control: 'monitor-only', breachRate: 1.0 });
+  const monitorSig = sig({ poolId: 'competitor-cloud', control: 'monitor-only', breachRate: 1.0 });
   const effects = a.step(0, [monitorSig], 3);
   const acting = effects.filter(e => ALLOWLIST.includes(e.op) || e.op === 'open');
   assert.strictEqual(acting.length, 0, 'no case, no quarantine, no probe — nothing');
   assert.ok(effects.some(e => e.op === 'observe'), 'the breach is observed, not acted on');
   assert.ok(effects[0].note.includes('Migrate route'));
   // and probe verdicts for a pool with no case are ignored
-  assert.strictEqual(a.recordProbe(1, 'modal-dedicated', false, 900).length, 0);
+  assert.strictEqual(a.recordProbe(1, 'competitor-cloud', false, 900).length, 0);
 });
 
 test('pool_down: already-unusable pool resolves when health returns', () => {
