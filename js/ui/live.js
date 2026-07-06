@@ -179,10 +179,16 @@
 
     function winback() {
       const routeViews = Object.entries(st.routes || {}).map(([id, r]) => ({ id, pool: r.serving }));
-      return RP.migration.winback(routeViews, poolViews().map(p => ({
+      const views = poolViews().map(p => ({
         id: p.id, control: p.control, dedicated: p.usd_hr != null,
         samples: p.samples, usd_per_mtok: p.usd_per_mtok, ttft_p99_ms: p.ttft_p99_ms,
-      })), GATE);
+      }));
+      // same evidence discipline as the sim: a full window per pool before
+      // the ledger directs anyone anywhere
+      const MIN_EVIDENCE = 8;
+      return RP.migration.winback(routeViews, views, GATE)
+        .filter(w => (views.find(v => v.id === w.from) || {}).samples >= MIN_EVIDENCE &&
+                     (views.find(v => v.id === w.to) || {}).samples >= MIN_EVIDENCE);
     }
 
     // ---- stepper (live copy) -------------------------------------------------------

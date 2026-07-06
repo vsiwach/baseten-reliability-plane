@@ -550,8 +550,14 @@
         samples: p.window.length,          // evidence = observed traffic
         ttft_p99_ms: costs.percentile(p.window.map(s => s.ttft), 99) ?? p.ttft_ms,
       }));
+      // a recommendation needs a FULL evidence window on both sides, not a
+      // blip — the ledger stays quiet until ~12s of samples exist per pool,
+      // so the operator watches evidence accumulate before being directed
+      const MIN_EVIDENCE = 12;
       const fresh = migrationMod.winback(routeViews, poolViews,
-        { ttft_p99_ms: overrides.slo_ttft_ms });
+        { ttft_p99_ms: overrides.slo_ttft_ms })
+        .filter(w => byId[w.from].window.length >= MIN_EVIDENCE &&
+                     byId[w.to].window.length >= MIN_EVIDENCE);
       /* A recommendation is a directive to the operator — it must not
          flicker with per-window jitter. Once fired it stays until the route
          actually moves (or no longer lives on the external pool). */

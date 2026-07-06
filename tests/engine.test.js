@@ -82,11 +82,19 @@ test('migration IN promotes voice-agent onto baseten-dedicated; rollback restore
     'competitor-cloud', 'one click restores the original pool');
 });
 
-test('win-back card appears for the external route that is cheaper at equal SLO', () => {
+test('win-back appears only after a full evidence window, then recommends (sticky)', () => {
   const eng = boot(42);
-  for (let i = 0; i < 10; i++) eng.tick(1);
+  // the console polls the view every tick — mirror that
+  let firstFiredAt = null;
+  for (let i = 1; i <= 24; i++) {
+    eng.tick(1);
+    if (eng.winbackView().length && firstFiredAt === null) firstFiredAt = i;
+  }
+  assert.ok(firstFiredAt !== null, 'ledger recommends once evidence is full');
+  assert.ok(firstFiredAt >= 10,
+    `no recommendation from a blip — fired at t=${firstFiredAt}, only after a full window`);
   const recs = eng.winbackView();
-  assert.ok(recs.length >= 1, 'ledger recommends the migration');
+  assert.ok(recs.length >= 1, 'recommendation is sticky once fired');
   assert.strictEqual(recs[0].route, 'voice-agent');
   assert.strictEqual(recs[0].from, 'competitor-cloud');
   assert.strictEqual(recs[0].to, 'baseten-dedicated');
