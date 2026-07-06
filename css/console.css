@@ -30,7 +30,8 @@
 .hazard{font-family:var(--mono);font-size:10px;color:var(--amber);margin-top:8px;cursor:help}
 .pool-controls{margin-top:10px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 button.mini{font-size:11px;padding:4px 10px;border-radius:6px}
-.rev{font-family:var(--mono);font-size:9.5px;color:var(--dim);cursor:help}
+button.mini.rev{font-family:var(--mono);font-size:9.5px;color:var(--dim);border:none;padding:4px 2px;font-weight:400}
+button.mini.rev:hover{color:var(--mut)}
 .qnote{font-size:10px;color:var(--amber);margin-top:8px}
 
 /* policy rail */

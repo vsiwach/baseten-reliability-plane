@@ -327,11 +327,14 @@
     function startMigration(direction = 'in') {
       if (migration && !migration.finished) return false;
       migrationDir = direction;
-      const [source, target] = direction === 'in'
-        ? ['modal-dedicated', 'baseten-dedicated']
-        : ['baseten-dedicated', 'modal-dedicated'];
+      // IN (the headline): the monitored external route comes onto Baseten.
+      // OUT (the no-lock-in proof): the Baseten-resident route leaves. Same
+      // machine, direction swapped.
+      const [route, source, target] = direction === 'in'
+        ? ['voice-agent', 'modal-dedicated', 'baseten-dedicated']
+        : ['chat-prod', 'baseten-dedicated', 'modal-dedicated'];
       migration = migrationMod.createMigration({
-        route: 'voice-agent', source, target,
+        route, source, target,
         slo: { ttft_p99_ms: overrides.slo_ttft_ms, tpot_p99_ms: slo.tpot_p99_ms },
         requiredSamples: 40,
       });
@@ -386,7 +389,11 @@
     function heroMetrics() {
       const all = pools.filter(operated).flatMap(p => p.window);
       const ttfts = all.map(s => s.ttft), tpots = all.map(s => s.tpot);
-      const perPool = pools.map(p => ({ usd_per_mtok: p.usd_per_mtok, tokens: p.served_tokens }));
+      // the MEASURED chip on the blend is earned: only pools whose price
+      // traces to a committed file participate; simulated pools would
+      // poison the provenance (they still show their own labeled figures)
+      const perPool = pools.filter(p => operated(p) && p.source === 'measured')
+        .map(p => ({ usd_per_mtok: p.usd_per_mtok, tokens: p.served_tokens }));
       return {
         goodput: all.length ? costs.goodput(all.filter(s => s.slo_met).length, all.length) : null,
         ttft_p99_ms: costs.percentile(ttfts, 99),
@@ -511,6 +518,23 @@
       // controls
       runDrill, runRiggedDrill, startRollout, injectRegression,
       startMigration, rollbackMigration,
+      /* Operator controls exist only on OPERATED pools — a human's buttons,
+         separate from the agent's allowlist. Monitor-only pools refuse even
+         the operator (the UI never renders the button; this is the backstop). */
+      operatorQuarantine: id => {
+        const p = byId[id];
+        if (!p || !operated(p) || p.quarantined) return false;
+        p.quarantined = true; setReplicas(p, 'quarantined');
+        emit('operator', `operator: quarantined ${id} (manual)`, 'warn');
+        return true;
+      },
+      operatorReinstate: id => {
+        const p = byId[id];
+        if (!p || !operated(p) || !p.quarantined) return false;
+        p.quarantined = false; setReplicas(p, 'warm');
+        emit('operator', `operator: reinstated ${id} (manual)`, 'info');
+        return true;
+      },
       clearDrill: () => { drill = null; },
       overrides,
       setOverride: (k, v) => { overrides[k] = v; emit('policy', `policy override: ${k} → ${JSON.stringify(v)}`, 'info'); },

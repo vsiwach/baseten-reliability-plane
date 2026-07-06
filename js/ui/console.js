@@ -76,6 +76,7 @@
     if (!btn) return;
     const act = btn.dataset.act;
     if (act === 'migrate') engine.startMigration('in');
+    if (act === 'migrate-out') engine.startMigration('out');   // no-lock-in, same machine
     if (act === 'rollback') engine.rollbackMigration();
     if (act === 'quarantine') engine.operatorQuarantine(btn.dataset.pool);
     if (act === 'reinstate') engine.operatorReinstate(btn.dataset.pool);

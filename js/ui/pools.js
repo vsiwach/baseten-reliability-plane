@@ -22,7 +22,7 @@
       ? '<button class="mini" data-act="migrate">Migrate route →</button>'
       : `<button class="mini" data-act="quarantine" data-pool="${esc(p.id)}">Quarantine</button>
          <button class="mini" data-act="reinstate" data-pool="${esc(p.id)}">Reinstate</button>
-         <span class="rev" data-tip="Certified migration is reversible by design — the same state machine runs in either direction; that's why attaching your endpoints is safe." tabindex="0">⇄ migrate out is one click too</span>`;
+         <button class="mini rev" data-act="migrate-out" data-tip="Certified migration is reversible by design — the same state machine (js/sim/migration.js) runs in either direction; that's why attaching your endpoints is safe.">⇄ migrate out is one click too</button>`;
     return `
     <div class="pool card ${border}" data-pool="${esc(p.id)}">
       <div class="pool-head">
