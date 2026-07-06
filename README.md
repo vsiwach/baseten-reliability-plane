@@ -90,9 +90,13 @@ of a monitored external pool, not a bake-off target — and certified migration
 is deliberately reversible (migrate-out is one click too), because no-lock-in
 is what makes attaching your endpoints safe.
 
-## JD mapping — Product Manager, Inference Platform
+## What a production inference platform must prove — and where this repo proves it
 
-| JD outcome area | Where this repo demonstrates it | PRD |
+The four outcome areas below are the reliability surface any serious
+inference platform owes its customers; each maps to a panel you can drive
+and a PRD feature number.
+
+| Platform outcome area | Where this repo demonstrates it | PRD |
 | --- | --- | --- |
 | Autoscaling to demand + **a single placement policy** (region, compliance regime, capacity preference, **right-of-way**) | Placement policy card + pool grid + placement feed: compliance-bound work is DENIED ordinary capacity, PREEMPTS filler on sensitive capacity (watch the feed), capacity-preference toggle changes where the next workload lands, cold-start seconds with mitigation on every pool card | F1.1, F1.3, F1.4 |
 | **Multi-region / active-active and fallback as first-class policy** | Failover policy card (spill target toggle) + quarantine → spill in the feed + the #10 hazard scored on the spill target (rate-limit coupling prices the failover path honestly) | F1.5 |
