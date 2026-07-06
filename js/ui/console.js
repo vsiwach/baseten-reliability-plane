@@ -26,9 +26,54 @@
   let paused = false;
   let replay = null;                        // {episode, elapsed}
   let feedPaused = false;
+  const driveDone = {};                     // stepId -> true once observed done
+
+  /* Drive-strip state, derived from engine views each frame. */
+  function driveState() {
+    const drill = engine.drillView();
+    const rel = engine.releaseView();
+    const mig = engine.migrationView();
+    if (drill && drill.done) driveDone[drill.kind === 'rigged' ? 'rigged' : 'drill'] = true;
+    if (rel && rel.state === 'rolled_back') driveDone.rollout = true;
+    if (mig && mig.finished && mig.verdict === 'PROMOTE_ELIGIBLE') driveDone.migrate = true;
+    if (replay && replay.elapsed >= replay.episode.outcome.mttr_s) driveDone.replay = true;
+    const running = id => ({
+      drill: drill && !drill.done && drill.kind === 'drill',
+      rigged: drill && !drill.done && drill.kind === 'rigged',
+      rollout: rel && rel.state === 'in_progress',
+      migrate: mig && !mig.finished,
+      replay: replay && replay.elapsed < replay.episode.outcome.mttr_s,
+    }[id]);
+    const out = {};
+    for (const s of RP.ui.drive.STEPS) {
+      out[s.id] = running(s.id) ? 'running' : (driveDone[s.id] ? 'done' : 'todo');
+    }
+    return out;
+  }
+
+  function driveAction(id) {
+    replay = null;
+    switch (id) {
+      case 'drill': engine.clearDrill(); engine.runDrill(); break;
+      case 'rigged': engine.clearDrill(); engine.runRiggedDrill(); break;
+      case 'rollout':
+        engine.startRollout();
+        engine.injectRegression();   // one click shows the whole point: the gate catches it
+        break;
+      case 'migrate': engine.startMigration('in'); break;
+      case 'replay': replay = { episode: RP.recorded.replayEpisode, elapsed: 0 }; break;
+    }
+    const step = RP.ui.drive.STEPS.find(s => s.id === id);
+    const el = step && document.querySelector(step.target);
+    if (el) el.scrollIntoView({
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'center',
+    });
+  }
 
   // ---- render loop -------------------------------------------------------------
   function renderAll() {
+    RP.ui.drive.render($('drive'), driveState());
     RP.ui.hero.render($('hero'), engine.heroMetrics(), engine.sparksView(),
       RP.recorded.mttr, engine.incidentsView().find(i => !i.live)?.mttr_s ?? null);
     RP.ui.pools.render($('pools'), $('slo-strip'), engine.poolsView(), profiles);
@@ -70,8 +115,10 @@
   $('btn-rollout').addEventListener('click', () => { engine.startRollout(); renderAll(); });
   $('btn-regression').addEventListener('click', () => { engine.injectRegression(); renderAll(); });
 
-  // migration + pool controls are re-rendered nodes → delegate
+  // drive strip, migration + pool controls are re-rendered nodes → delegate
   document.addEventListener('click', e => {
+    const driveBtn = e.target.closest('button[data-drive]');
+    if (driveBtn) { driveAction(driveBtn.dataset.drive); renderAll(); return; }
     const btn = e.target.closest('button[data-act]');
     if (!btn) return;
     const act = btn.dataset.act;

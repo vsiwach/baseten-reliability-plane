@@ -39,6 +39,12 @@
 <!-- F0.4 hero -->
 <section id="hero" aria-label="Service level at a glance"></section>
 
+<!-- the guided drive: five actions in the order a buyer trusts them -->
+<section class="card drive-card" aria-label="Drive the console">
+  <h3>DRIVE IT — five actions, in the order a skeptical buyer trusts them</h3>
+  <div id="drive"></div>
+</section>
+
 <div class="grid-main">
   <div class="col">
     <!-- pool grid -->
@@ -52,7 +58,7 @@
     </div>
 
     <!-- release + migration -->
-    <div class="card" style="margin-bottom:12px">
+    <div class="card" style="margin-bottom:12px" id="panel-release">
       <h3>RELEASE — canary, gated by probes (F1.2)</h3>
       <div id="rollout"></div>
       <div class="relctl">
@@ -60,13 +66,13 @@
         <button id="btn-regression" class="danger">Inject regression</button>
       </div>
     </div>
-    <div class="card" style="margin-bottom:12px">
+    <div class="card" style="margin-bottom:12px" id="panel-migration">
       <h3>CERTIFIED MIGRATION — shadow → certify → promote (headline: IN, onto Baseten)</h3>
       <div id="migration"></div>
     </div>
 
     <!-- incidents -->
-    <div class="card">
+    <div class="card" id="panel-incidents">
       <h3>INCIDENTS — agent on the SLO, MTTR on the clock (F2.1–F2.2)</h3>
       <div class="panel-actions">
         <button id="btn-drill" class="primary">Run drill</button>
@@ -116,6 +122,7 @@
 <script src="js/data/policies.js"></script>
 <script src="js/data/recorded.js"></script>
 <script src="js/ui/format.js"></script>
+<script src="js/ui/drive.js"></script>
 <script src="js/ui/hero.js"></script>
 <script src="js/ui/pools.js"></script>
 <script src="js/ui/policy-rail.js"></script>

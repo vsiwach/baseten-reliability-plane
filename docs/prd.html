@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PRD — Baseten Reliability Plane</title>
-<meta name="description" content="Feature-by-feature spec (F0–F2): the four policy objects, the operate console, monitor-only vs operated pools, certified migration, and the incident agent's closed allowlist.">
+<title>The reliability plane — PRD · Baseten Reliability Plane</title>
+<meta name="description" content="Complete product requirements for turning MCM inside out: prove the telemetry, declare placement/failover/release/SLO as policy, put agents on the pager with a warrant, sell the fourth nine.">
 <link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/doc.css">
 </head>
 <body>
-<div class="wrap narrow">
+<div class="wrap">
 
 <header class="topbar">
   <div class="brand">RELIABILITY PLANE</div>
@@ -29,23 +30,296 @@
   <a href="../operate.html">05 · THE MVP</a>
 </nav>
 
-<h1>PRD — the four policy objects + the operate console</h1>
-<p class="note" style="font-size:14px;margin:10px 0 6px;max-width:700px">
-The strategy, turned into a buildable surface: feature-by-feature spec (F0–F2) for the hero SLO
-tiles, the policy rail, monitor-only vs operated pools, certified migration, and the incident
-agent with its closed allowlist. The console one step ahead in this flow is its
-<b>reference implementation</b> — every F-number in the PRD is a panel you can click.</p>
+<div class="docbar">
+  <p class="note">Every F-number below is a panel you can click — <a href="../operate.html">the console</a> is this PRD's reference implementation.</p>
+  <p class="note"><a href="Baseten-Reliability-PRD.pdf" download>Download as PDF</a></p>
+</div>
 
-<object class="docpdf" data="Baseten-Reliability-PRD.pdf" type="application/pdf" aria-label="PRD PDF">
-  <p class="note" style="padding:20px">Your browser can't embed PDFs —
-  <a href="Baseten-Reliability-PRD.pdf">download the PRD</a> instead.</p>
-</object>
-<p class="note"><a href="Baseten-Reliability-PRD.pdf" download>Download PDF</a></p>
+<article class="sheet">
+  <div class="masthead"><b>BASETEN</b><span>INFERENCE RELIABILITY PRD · JULY 2026</span></div>
+  <div class="rule"></div>
 
-<div class="nextcta">
+  <h1>The reliability<br><span class="hl">plane</span></h1>
+  <p class="standfirst">Complete product requirements for turning MCM inside out: prove the
+  telemetry, let customers declare placement, failover, release, and SLO as policy, put agents on
+  the pager with a warrant, and sell the fourth nine. Companion to the Strategy and the
+  due-diligence brief.</p>
+
+  <div class="thesis">
+    <div class="tl">NORTH STAR</div>
+    <p>Every production workload on Baseten runs under a declared, observable policy — measured as
+    <b>MTTR on agent-covered incidents, goodput at declared SLO, policy adoption across dedicated
+    accounts, and SLA-ladder revenue</b>.</p>
+  </div>
+
+  <div class="byline"><span>VIKRAM SIWACH · JULY 2026</span><span>REFERENCE IMPLEMENTATION: GITHUB.COM/VSIWACH/BASETEN-RELIABILITY-PLANE</span><span>EVERY FEATURE NAMES ITS STRATEGY PILLAR (P1–P6) AND MVP HOOK</span></div>
+
+  <div class="sec"><span class="n">01</span><h2>Product definition</h2></div>
+  <p><b>Product:</b> the reliability plane — four declared policy objects (Placement, Failover,
+  Release, SLO) enforced by MCM and the router, observed in a single operate console, operated by
+  agents under a closed allowlist, and sold as an SLA ladder (Managed 99.9 / Declared 99.95 /
+  Operated 99.99). <b>Available to two buyers from day one:</b> teams evaluating Baseten for
+  dedicated inference (the console is their evaluation harness — agentic onboarding, real SLO
+  baselines, certified migration when the evidence says so) and existing customers running Baseten
+  inside a multicloud portfolio (the console is their daily reliability surface, and the ledger
+  their case for consolidating traffic).</p>
+  <div class="cols2">
+    <p><b>The trust machinery is the observability contract:</b> machine-readable failure reasons,
+    capacity-wait states, metrics completeness timestamps, and published rate-limit budgets — the
+    console never lies, so the policies can be believed.</p>
+    <p><b>The adoption machinery is defaults-with-override:</b> every policy object ships
+    pre-filled with what Baseten's operators would do anyway; declaring is one edit, not a config
+    project.</p>
+    <p><b>The retention machinery is accumulated policy:</b> declared SLOs, placement rules,
+    release gates, and incident history compound switching costs the way raw endpoints never do.</p>
+    <p><b>The acquisition machinery is the migration play:</b> read-only monitoring of the clouds
+    customers already run on (the wedge nobody is suspicious of), a route ledger that accumulates
+    cross-provider SLO and cost evidence, and certified migration offered exactly when the
+    evidence — and the customer — are ready. Control features stay Baseten-side:
+    observe → migrate → declare → operate.</p>
+  </div>
+  <p><b>Supporting metrics:</b> % dedicated workloads under ≥1 declared policy; operate-console
+  WAU; MTTR p50/p95 on agent-covered incidents; goodput at declared SLO; zero-downtime deploys as
+  % of promotions; preemption events honored per policy; external pools attached and traffic won
+  back on measured evidence; SLA-ladder ACV.</p>
+
+  <div class="sec"><span class="n">02</span><h2>Users</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:24%">PERSONA</th><th style="width:52%">JOB TO BE DONE</th><th>CONVERTS VIA</th></tr></thead>
+    <tbody>
+      <tr><td><b>P1 · AI-native inference owner</b><span class="sub">PRIMARY</span></td>
+        <td>Tokens are COGS; downtime is churn. Needs SLOs held during traffic spikes and model rollouts, and proof that reliability didn't regress after every change.</td>
+        <td>Console → SLO + Release policy → Declared tier</td></tr>
+      <tr><td><b>P2 · Enterprise / healthcare platform owner</b><span class="sub">PRIMARY</span></td>
+        <td>Needs residency and compliance provable to procurement and auditors; needs failover that is policy, not anecdote; needs evidence artifacts, not assurances.</td>
+        <td>PlacementPolicy + drills → Operated tier</td></tr>
+      <tr><td><b>P3 · On-call engineer</b></td>
+        <td>Needs to tell slow from stuck from doomed in one glance; needs safe remediations (replace replica, shift region, rollback) without a support ticket at 3am.</td>
+        <td>Incident console → agent remediation</td></tr>
+      <tr><td><b>P4 · The agent</b><span class="sub">NEW</span></td>
+        <td>Machine consumer of every surface: needs failure reasons, completeness timestamps, Retry-After, and idempotent actions — the same contract gaps that break dashboards break agents first.</td>
+        <td>MCP server + allowlisted action APIs</td></tr>
+      <tr><td><b>P5 · Baseten's own operators</b></td>
+        <td>Today's white-glove work (encoding constraints, watching failovers) becomes reviewing declared policy and auditing agent actions — the scaling lever for the ops team itself.</td>
+        <td>Internal adoption gates GA</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Goals and non-goals</h3>
+  <div class="cols2">
+    <p><b>Goals</b> (1) The observability contract closed and versioned; (2) the operate console
+    as the daily surface for dedicated accounts; (3) all four policy objects GA with
+    defaults-with-override; (4) right-of-way for compliance-bound workloads live on sensitive
+    capacity; (5) measurable MTTR decline via agent remediation; (6) the SLA ladder monetizing
+    declared reliability.</p>
+    <p><b>Non-goals</b> Engine work (BIS-LLM performance is its own roadmap); multi-cloud
+    abstraction resale; a generic APM product (export to Datadog stays first-class); agent
+    autonomy beyond the closed allowlist; per-token pricing changes; replacing MCM's scheduler —
+    the plane declares intent, MCM keeps enforcing it.</p>
+  </div>
+
+  <div class="sec"><span class="n">03</span><h2>The roadmap and its gates</h2></div>
+  <figure class="fig">
+    <div class="fl">FIGURE 1 · THREE PHASES, EACH GATED — spend never scales past an ungated phase</div>
+    <div class="cells" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="cell"><div class="ct">PHASE 0 · PROVE</div><p>Q3–Q4 2026<br>observability contract · console read-only · MTTR baseline</p></div>
+      <div class="cell"><div class="ct">PHASE 1 · DECLARE</div><p>Q4 2026–Q2 2027<br>four policy objects · right-of-way · Declared tier</p></div>
+      <div class="cell"><div class="ct">PHASE 2 · OPERATE</div><p>2027<br>agents GA · drills + evidence · Operated tier 99.99%</p></div>
+    </div>
+    <div class="cells" style="grid-template-columns:1fr 1fr 1fr;margin-top:10px">
+      <div class="cell lm"><div class="ct">EXIT GATE</div><p>100% terminal states carry failure_reason · console WAU ≥50% of dedicated accounts · MTTR baseline published</p></div>
+      <div class="cell lm"><div class="ct">EXIT GATE</div><p>≥30% dedicated workloads under ≥1 policy · zero-downtime promotions measured · ≥3 placement design partners live</p></div>
+      <div class="cell lm"><div class="ct">EXIT GATE</div><p>MTTR p50 &lt;60s agent-covered · ≥10 accounts on Declared/Operated · drill reports in ≥3 renewals</p></div>
+    </div>
+    <div class="legend">⚠ kill / pivot: console WAU &lt;20% after 2 quarters → reliability stays
+    managed-only, plane becomes internal tooling · policy adoption &lt;10% after 2 quarters → fold
+    policies into white-glove as "reviewed defaults" · agent trust incident with customer impact →
+    shadow-mode only until re-earned.</div>
+  </figure>
+
+  <div class="sec"><span class="n">04</span><h2>Phase 0 — Prove</h2><span class="meta">Q3–Q4 2026 · P1</span></div>
+  <div class="callout"><b>Entry:</b> now. <b>Exit gate:</b> failure reasons on 100% of terminal
+  states + capacity-wait states live + metrics completeness shipped + console WAU ≥50% of
+  dedicated accounts + MTTR baseline published. <b>Scope note:</b> every item below is a
+  first-hand-verified gap (friction log #, in evidence); Phase 0 is deliberately unglamorous — it
+  is the trust the rest of the plane stands on, and it is the migration play's front door: an
+  evaluator who hits friction #6 or #7 in their first hour is a migration lost before any evidence
+  could speak.</div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:17%">FEATURE</th><th style="width:45%">REQUIREMENT</th><th style="width:20%">TARGET METRIC</th><th>MVP HOOK</th></tr></thead>
+    <tbody>
+      <tr><td><b>F0.1 Failure-reason contract</b></td>
+        <td>Every deployment terminal state carries a machine-readable <code>failure_reason</code> (BUILD_FAILED cause, OOM, dep-skew, SKU-gated); build logs via management API; push-time pre-flight (SKU allowed? weights fit host RAM? python/quant combo valid?). <code>friction #7 #12 #13 #14</code></td>
+        <td>0 terminal states without reason; pre-flight catches ≥80% of the failure classes seen in the log</td>
+        <td><code>status API in sim; failure taxonomy in events</code></td></tr>
+      <tr><td><b>F0.2 Capacity-wait states</b></td>
+        <td>WAITING_FOR_CAPACITY as first-class status with queue context and alternative-SKU suggestion; a deploy never dies INACTIVE without a reason; wait time visible in console and API. <code>friction #6</code></td>
+        <td>0 silent INACTIVE transitions; median time-to-diagnosis for placement waits &lt;1 min</td>
+        <td><code>placement feed panel; capacity events in replay</code></td></tr>
+      <tr><td><b>F0.3 Metrics you can build on</b></td>
+        <td><code>data_complete_through</code> timestamp on every metrics response (silent nulls become labeled lag); published rate-limit budgets sized for dashboards; Retry-After + X-RateLimit-* on every 429 platform-wide; token metrics for all deployments, not just BIS-LLM. <code>friction #10 #18 #19</code></td>
+        <td>0 unlabeled empty windows; a 60s-interval console polls a 20-deployment workspace with headroom</td>
+        <td><code>console's "no data YET vs no traffic" rule; honest-numbers banner</code></td></tr>
+      <tr><td><b>F0.4 Operate console (read-only) + bring-your-endpoint</b></td>
+        <td>One screen per workspace: SLO hero (goodput, p99 TTFT/TPOT, $/Mtok measured), pool grid, placement feed with reasons, release state, incident timeline. Every number measured, never estimated; every silence labeled. <b>Bring-your-endpoint:</b> any OpenAI-compatible deployment on any provider attaches read-only as a monitored pool — the console is useful before a single request moves to Baseten, which is the point (the wedge for F2.5). Monitor-only is a hard product rule: no control affordance ever renders on an external deployment.</td>
+        <td>WAU ≥50% of dedicated accounts; ≥25% of console accounts attach ≥1 external endpoint; &lt;5s to answer "is my model healthy and why"</td>
+        <td><code>operate.html — the reference implementation IS the design contract; modal pool = monitor-only exemplar</code></td></tr>
+      <tr><td><b>F0.5 Alerting primitives</b></td>
+        <td>SLO objects with burn-rate alerts; webhook + PagerDuty/Slack integration; deploy-event notifications. Absence today is verified — customers export to their own stack or fly blind.</td>
+        <td>≥40% of dedicated accounts with ≥1 alert rule</td>
+        <td><code>slo-policy.yaml thresholds drive console badges</code></td></tr>
+      <tr><td><b>F0.6 Agentic onboarding — on Baseten's own rails</b></td>
+        <td>One prompt to the customer's coding agent (Claude Code, Cursor, any MCP client) onboards them: connect the <b>Baseten MCP server</b> (workspace, autoscaling, logs — shipped June 30 2026) and <b>Baseten agent skills</b> (deploy, Truss, tune), attach external endpoints read-only, baseline every route into the ledger, propose the first A/B candidate — stopping before any traffic moves. Credit where due: Baseten made the platform agent-operable first; this feature is the onboarding those rails deserve, and the on-ramp for F2.5's migration play.</td>
+        <td>Time from prompt to attached + baselined workspace &lt;10 min; ≥50% of new plane accounts onboard via agent; 0 write actions before human confirmation</td>
+        <td><code>onboard.html — runnable prompt + 4-step flow + credit block</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec"><span class="n">05</span><h2>Phase 1 — Declare</h2><span class="meta">Q4 2026–Q2 2027 · P2 P3 P4</span></div>
+  <div class="callout"><b>Entry:</b> Phase 0 exit. <b>Exit gate:</b> ≥30% of dedicated workloads
+  under ≥1 declared policy; zero-downtime promotions measured as default; ≥3 placement design
+  partners (≥1 healthcare) live; Declared tier launched. <b>Kill/pivot:</b> policy adoption &lt;10%
+  after 2 quarters → policies become operator-reviewed defaults, not customer surface.</div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:17%">FEATURE</th><th style="width:45%">REQUIREMENT</th><th style="width:20%">TARGET METRIC</th><th>MVP HOOK</th></tr></thead>
+    <tbody>
+      <tr><td><b>F1.1 SLOPolicy</b><span class="sub">P0 · THE KEYSTONE</span></td>
+        <td>Declare p99 TTFT/TPOT, error rate, and goodput targets per deployment/route. SLOs drive autoscaling signals (scale to the SLO, not just concurrency), alert thresholds, release gates, and agent triggers — one declaration, four consumers.</td>
+        <td>≥50% of declared workloads meet SLO ≥99% of windows; SLO-driven scaling beats concurrency-only on p99 in A/B</td>
+        <td><code>slo-policy.yaml consumed by hero, gates, and agent in replay</code></td></tr>
+      <tr><td><b>F1.2 ReleasePolicy</b><span class="sub">P0</span></td>
+        <td>Standing traffic splits beyond promotion: canary steps with metric gates and auto-rollback; shadow/mirror with diff reports (zero user risk); A/B with cohort stickiness; declarative warm-up spec and drain semantics; probe presets per engine replacing 30-min defaults; Chains parity. <code>today: promotion-scoped, default-off, no Chains</code></td>
+        <td>99.9%+ of promotions drop zero requests; auto-rollback &lt;5 min from gate breach; ≥1 shadow eval per major model migration</td>
+        <td><code>release-policy.yaml + release track panel; canary steps animate in replay</code></td></tr>
+      <tr><td><b>F1.3 PlacementPolicy</b><span class="sub">P0 · THE HEADLINE</span></td>
+        <td>One object: allowed regions, compliance regime tags (HIPAA, EU-residency), provider preference, capacity tier order (reserved → on-demand → spill). Self-serve via API/UI/truss config; enforced by MCM; every placement decision emitted with a reason to the placement feed. Replaces "manually encoded per customer."</td>
+        <td>≥3 design partners; 0 placement violations; regional-env setup time from support-ticket days to &lt;1 hour self-serve</td>
+        <td><code>placement-policy.yaml + placement feed with reasons</code></td></tr>
+      <tr><td><b>F1.4 Right-of-way / priority classes</b><span class="sub">P1</span></td>
+        <td>Priority classes per workload; compliance-bound workloads preempt region-flexible ones on sensitive capacity; preempted workloads drain gracefully and relocate per their own policy; preemption events visible to both parties.</td>
+        <td>Sensitive-capacity availability for compliance-bound ≥99.9% during contention drills; 0 SLO breaches caused by preemption on relocated workloads</td>
+        <td><code>priority field + contention drill in replay</code></td></tr>
+      <tr><td><b>F1.5 FailoverPolicy</b><span class="sub">P1</span></td>
+        <td>Declared topologies: active-active regions, ordered fallback, spill targets (second deployment or Model APIs for open-weight routes); health-aware recovery with fast probe defaults; failover events on the incident timeline. <code>today: MCM behavior, invisible</code></td>
+        <td>Failover RTO &lt;60s in drills; ≥1 customer-visible failover evidence report per event</td>
+        <td><code>failover-policy.yaml + "kill a pool" drill button</code></td></tr>
+      <tr><td><b>F1.6 Warm capacity as policy</b><span class="sub">P2</span></td>
+        <td>Scheduled and forecast-driven pre-warm replacing cron-the-API guidance; BDN weight-caching default-on for hf://-resolvable models (measured 2.4× cold-start cut); billing labels cold-start vs serving minutes. <code>friction #17 + docs' own cron advice</code></td>
+        <td>p95 cold start for cached 8B-class models &lt;60s; 0 accounts pre-warming via cron</td>
+        <td><code>cold-start economics in pool cards</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec"><span class="n">06</span><h2>Phase 2 — Operate</h2><span class="meta">2027 · P5 P6</span></div>
+  <div class="callout"><b>Entry:</b> Phase 1 exit + three design partners on declared policy for a
+  full quarter. <b>Exit gate:</b> MTTR p50 &lt;60s on agent-covered incident classes; ≥10 accounts
+  on Declared/Operated tiers; drill evidence used in ≥3 renewals. <b>Kill/pivot:</b> any agent
+  action causing customer-visible harm → agents to shadow mode (recommend-only) until a full
+  quarter clean.</div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:17%">FEATURE</th><th style="width:45%">REQUIREMENT</th><th style="width:20%">TARGET METRIC</th><th>MVP HOOK</th></tr></thead>
+    <tbody>
+      <tr><td><b>F2.1 Incident console + agent remediation</b><span class="sub">P0 · THE HEADLINE</span></td>
+        <td>Detection from declared SLOs (never just /healthz — a pool can pass health checks while serving garbage); agents act under a closed allowlist (quarantine, probe, reinstate, scale, shift, rollback, escalate) with hard guards (never orphan the last healthy pool; sticky quarantine; escalate once, then slow-poll); every action on a replayable timeline; MTTR detect→diagnose→resolve tracked per incident. Shadow mode (recommend-only) is the GA on-ramp.</td>
+        <td>MTTR p50 &lt;60s agent-covered vs baseline; 0 guard violations; ≥70% of eligible incidents resolved without human action</td>
+        <td><code>the 8.8–9.2s measured loop, replayed from committed episodes JSONL</code></td></tr>
+      <tr><td><b>F2.2 Drills + evidence</b><span class="sub">P1</span></td>
+        <td>Scheduled chaos drills (kill pool, degrade region, exhaust capacity) run against declared policies; per-drill and per-incident signed evidence reports (what happened, what policy required, what the plane did, MTTR) — an artifact the customer's auditor accepts.</td>
+        <td>≥1 drill/quarter per Operated account; evidence artifact attached to 100% of incidents</td>
+        <td><code>drill button → evidence card in console</code></td></tr>
+      <tr><td><b>F2.3 The SLA ladder</b><span class="sub">P0 · MONETIZATION</span></td>
+        <td>Managed 99.9 (today) / Declared 99.95 (policy + reserved floor, capacity terms inside the SLA) / Operated 99.99 (multi-region + agents + drills). The 99.99% marketing already claims becomes purchasable with evidence as the receipt.</td>
+        <td>≥10 accounts on paid tiers; 0 SLA misses on Operated; ladder ACV growth</td>
+        <td><code>tier badge in console header</code></td></tr>
+      <tr><td><b>F2.4 Cost governance</b><span class="sub">P1</span></td>
+        <td>Measured $/Mtok per deployment (pool $/hr ÷ measured tok/s — never estimated); per-policy and per-team attribution; budget caps with policy-aware enforcement (degrade to cheaper pool before throttling).</td>
+        <td>100% dedicated deployments with measured $/Mtok; ≥50% of enterprise accounts using chargeback</td>
+        <td><code>/v1/costs pattern; $/Mtok in hero + pool cards</code></td></tr>
+      <tr><td><b>F2.5 Route ledger + certified win-back</b><span class="sub">P1 · THE MIGRATION PLAY</span></td>
+        <td>The ledger accumulates from F0.4 monitoring: per-route workload shape, SLO adherence, measured $/Mtok per provider. When a monitored external route would hold its SLO at lower measured $/Mtok on Baseten capacity, the console offers certified migration — shadow → certify → promote, reversible for the route's life. The trust ladder is explicit: observe (F0.4) → migrate (this) → declare (F1.x) → operate (F2.1) — control-plane features apply only to Baseten-side workloads and are never the day-one ask. Guardrails: cards only from rerunnable measured evidence; the customer owns and can export their ledger; external legs at zero markup; monitor-only means monitor-only.</td>
+        <td>≥25% of accounts with external endpoints attached (F0.4); ≥40% of win-back cards accepted into shadow; measured traffic migrated per quarter; 0 disputed recommendations</td>
+        <td><code>win-back card on migration panel with measured delta; monitor-only badge on modal pool</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec"><span class="n">07</span><h2>Always-on tracks</h2></div>
+  <div class="callouts">
+    <div class="callout"><b>Honest numbers.</b> Every metric on any surface is measured, never estimated; empty windows are labeled lag or no-traffic, never faked; savings are reported against declared baselines, never invoiced from counterfactuals. This rule is inherited by the reference implementation and is non-negotiable — a reliability product that fabricates a number once is dead.</div>
+    <div class="callout"><b>Agent governance.</b> The allowlist is versioned and auditable; learning tunes cadence and thresholds, never expands authority; every agent action is replayable end-to-end; a public MTTR benchmark methodology invites external rerun.</div>
+    <div class="callout"><b>Contract stability.</b> The observability contract (F0.1–F0.3) is versioned API surface with deprecation policy — agents and consoles are customers too (persona P4), and breaking them silently is a reliability incident.</div>
+  </div>
+
+  <div class="sec"><span class="n">08</span><h2>Success metrics by phase</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:33%">PHASE 0 · Q3–Q4'26</th><th style="width:33%">PHASE 1 · Q4'26–Q2'27</th><th>PHASE 2 · 2027</th></tr></thead>
+    <tbody><tr>
+      <td>100% terminal states with failure_reason; 0 silent INACTIVE; metrics completeness shipped; console WAU ≥50% of dedicated accounts; MTTR baseline published; ≥40% accounts with alert rules.</td>
+      <td>≥30% dedicated workloads under ≥1 policy; zero-downtime promotions default; ≥3 placement partners (≥1 healthcare); failover RTO &lt;60s in drills; 0 cron pre-warming; Declared tier live.</td>
+      <td>MTTR p50 &lt;60s agent-covered; ≥70% eligible incidents auto-resolved; ≥10 SLA-ladder accounts; 0 Operated SLA misses; evidence in ≥3 renewals; public MTTR benchmark published.</td>
+    </tr></tbody>
+  </table></div>
+
+  <div class="sec"><span class="n">09</span><h2>The MVP: the reference implementation</h2></div>
+  <p>Phase 0 defines the product surface; the reference implementation makes it tangible before a
+  single platform engineer is committed. It is a static, Vercel-deployable operate console that
+  replays <em>real recorded evidence</em> — the measured MTTR episodes, the chaos drills, the
+  friction-log failure taxonomy — against the four policy YAMLs, built from the ai-native-pipeline
+  base (release engine, incident agent, measured-cost ledger, policy schemas). Its architecture is
+  the story in one picture:</p>
+  <figure class="fig">
+    <div class="fl">FIGURE 2 · ONE-PROMPT ONBOARDING — the on-ramp to certified migration, on Baseten's own rails</div>
+    <div class="cells" style="grid-template-columns:2fr 1fr">
+      <div class="cell dk"><div class="ct" style="color:#C6E96A">THE 1 CLICK</div>
+        <p>Customer's coding agent — Claude Code · Cursor · any MCP client — receives <b>one
+        onboarding prompt</b>. Zero write actions before human confirmation.</p></div>
+      <div class="cell lm"><div class="ct">BASETEN RAILS ★ CREDITED</div>
+        <p><b>MCP server</b> (workspace · autoscaling · logs) + <b>agent skills</b> (deploy · Truss
+        · tune), shipped June 30 2026 — the agent surface this onboarding rides on</p></div>
+    </div>
+    <div class="cells" style="grid-template-columns:1fr 1.4fr 1fr;margin-top:10px">
+      <div class="cell"><div class="ct">YOUR CURRENT CLOUDS · MONITOR-ONLY</div>
+        <p>Modal · RunPod · any OpenAI-compatible endpoint, attached with read-only keys. No
+        control affordance ever renders here — the only action is certified migration.</p></div>
+      <div class="cell"><div class="ct">RELIABILITY PLANE</div>
+        <p><b>1 · Attach</b> — agent discovers workspace + endpoints&ensp;<b>2 · Baseline</b> —
+        route ledger: real SLO (p99 TTFT/TPOT, goodput) + measured $/Mtok per provider&ensp;
+        <b>3 · A/B + shadow</b> — split or mirror traffic, gate on the customer's declared SLO&ensp;
+        <b>4 · Certify &amp; migrate</b> — signed parity report → promote</p></div>
+      <div class="cell"><div class="ct">BASETEN · OPERATED</div>
+        <p>Candidate deployment (dedicated / Model APIs) receives traffic only after the certify
+        gate passes; <b>rollback held for the life of the route</b> — leaving is one click too,
+        which is why attaching is safe.</p></div>
+    </div>
+    <div class="legend">Trust rail: monitor-only on external clouds · every number measured or
+    labeled simulated · ledger owned and exportable by the customer · zero markup on external
+    legs. Serves both buyers: the evaluator's harness and the multicloud customer's consolidation
+    case.</div>
+  </figure>
+  <p>Five commitments:</p>
+  <div class="callouts">
+    <div class="callout"><b>1 · One screen (F0.4):</b> SLO hero, pool grid, placement feed with reasons, release track, incident timeline — the operate.html design contract, glanceable in 5 seconds.</div>
+    <div class="callout"><b>2 · Four policies as YAML (F1.1–F1.5):</b> slo-, release-, placement-, failover-policy.yaml with defaults-with-override semantics, viewable and editable in the console with simulated enforcement.</div>
+    <div class="callout"><b>3 · The agent loop replayed (F2.1):</b> committed incident episodes drive the timeline — quarantine → probe → reinstate with the MTTR stopwatch; a drill button re-runs the loop live in simulation.</div>
+    <div class="callout"><b>4 · Honest numbers throughout:</b> every figure traces to a committed CSV/JSONL or is labeled SIMULATED; the silent-null rule is implemented, not just specified.</div>
+    <div class="callout"><b>5 · Shareable by default:</b> clean public repo, MIT, README mapping every panel to the JD's four outcome areas and to F-numbers in this PRD.</div>
+  </div>
+
+  <div class="sec"><span class="n">10</span><h2>Open questions</h2></div>
+  <div class="cols2">
+    <p><b>MCM's policy readiness</b> — how much of the scheduler already keys on per-customer constraints vs needs refactoring to honor declared intent? Phase 0 discovery with the MCM team decides Phase 1 sequencing.</p>
+    <p><b>SLA actuarial basis</b> — how many quarters of drill evidence does finance/legal need before selling 99.99% with capacity terms included, and at what reserved-floor threshold?</p>
+    <p><b>Preemption economics</b> — what compensation (credits, priority refund) makes right-of-way preemption acceptable to the preempted party without gaming?</p>
+    <p><b>Agent liability</b> — what does the Operated-tier contract say about an agent action that worsens an incident, and does shadow-mode history change the answer?</p>
+    <p><b>Chains parity cost</b> — rolling deployments are unsupported for Chains today; is that architectural or just unbuilt? It gates ReleasePolicy's "no excluded products" claim.</p>
+    <p><b>Enterprise-tier validation</b> — the friction log is n=1 on a non-enterprise workspace; which walls (GPU gating, replica caps, metrics budgets) exist at enterprise tier? Phase 0 telemetry answers this with data.</p>
+  </div>
+
+  <div class="sheetfoot"><span>BASETEN · INFERENCE RELIABILITY PRD · JULY 2026</span><span>VIKRAM SIWACH · PREPARED FOR BASETEN</span></div>
+</article>
+
+<div class="nextcta" style="max-width:940px;margin-left:auto;margin-right:auto">
   <div>
     <div class="lbl">NEXT · 05</div>
-    <div class="t">The MVP — run a drill, inject a regression, migrate a route, watch the gate refuse</div>
+    <div class="t">The MVP — every F-number above is a panel you can click</div>
   </div>
   <a href="../operate.html">Open the console →</a>
 </div>

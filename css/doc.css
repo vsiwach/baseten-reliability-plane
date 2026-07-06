@@ -1,0 +1,71 @@
+/* doc.css — the paper-sheet document system. The Strategy and PRD render as
+   native HTML documents (same design language as their PDF exports: light
+   sheet, masthead, lime-highlight title, dark thesis box, numbered sections)
+   floating on the site's dark ground. No PDF viewer chrome. */
+
+.sheet{background:#FBFBF7;color:#16160F;border-radius:6px;max-width:940px;margin:8px auto 30px;padding:56px 64px 48px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+@media(max-width:820px){.sheet{padding:32px 22px 30px}}
+
+.sheet .masthead{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:10px;letter-spacing:.14em;gap:12px;flex-wrap:wrap}
+.sheet .masthead b{font-weight:600}
+.sheet .masthead span{color:#8A8A80}
+.sheet .rule{height:3px;background:#16160F;margin-top:10px}
+
+.sheet h1{font-size:clamp(34px,6vw,52px);line-height:1.04;font-weight:800;letter-spacing:-.028em;margin:34px 0 0;color:#16160F}
+.sheet h1 .hl{box-shadow:inset 0 -.3em 0 #D5F26E}
+.sheet .standfirst{font-size:16px;line-height:1.55;color:#55554D;margin:20px 0 0;max-width:62ch}
+
+.sheet .thesis{background:#16160F;color:#F4F4EE;padding:18px 22px;margin:24px 0 0}
+.sheet .thesis .tl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#C6E96A;margin-bottom:7px}
+.sheet .thesis p{font-size:14px;line-height:1.55;font-weight:500;margin:0}
+.sheet .thesis b{font-weight:700}
+
+.sheet .byline{display:flex;gap:22px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#8A8A80;margin:16px 0 0;flex-wrap:wrap}
+
+.sheet .sec{display:flex;align-items:baseline;gap:12px;margin:36px 0 0;border-top:1px solid #E4E4DC;padding-top:20px}
+.sheet .sec .n{font-family:var(--mono);font-size:11px;font-weight:600;color:#6F8F1F}
+.sheet .sec h2{font-size:21px;font-weight:700;letter-spacing:-.01em;margin:0;color:#16160F}
+.sheet .sec .meta{font-family:var(--mono);font-size:10px;color:#8A8A80;letter-spacing:.06em}
+.sheet h3{font-size:14.5px;font-weight:700;margin:20px 0 0;color:#16160F}
+.sheet p{font-size:13px;line-height:1.62;margin:10px 0 0;color:#16160F}
+.sheet p.mut{color:#55554D}
+.sheet code{font-family:var(--mono);font-size:.92em;color:#6F8F1F}
+
+.sheet .callout{font-size:13px;line-height:1.62;margin:12px 0 0;padding:10px 14px;background:#F2F2EA;border-left:3px solid #B7DB4A}
+.sheet .callouts .callout{margin-top:10px}
+.sheet .dark{background:#16160F;color:#F4F4EE;padding:18px 22px;margin:24px 0 0}
+.sheet .dark .tl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#C6E96A;margin-bottom:7px}
+.sheet .dark p{font-size:14px;line-height:1.6;font-weight:500;margin:0;color:#F4F4EE}
+
+.sheet .fig{margin:20px 0 0;border:1.5px solid #16160F;padding:18px 20px 16px}
+.sheet .fig .fl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#6F8F1F;font-weight:600;margin-bottom:14px}
+.sheet .fig .cells{display:grid;gap:10px}
+.sheet .fig .cell{border:1.5px solid #16160F;padding:10px 12px;background:#F7F7F1}
+.sheet .fig .cell.dk{background:#16160F;color:#F4F4EE}
+.sheet .fig .cell.lm{background:#EDF6D4}
+.sheet .fig .cell .ct{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;font-weight:600;margin-bottom:6px}
+.sheet .fig .cell p{font-size:11px;line-height:1.55;margin:0;color:inherit}
+.sheet .fig .cell b{font-weight:700}
+.sheet .fig .legend{font-family:var(--mono);font-size:10px;line-height:1.6;color:#8A8A80;margin-top:14px}
+.sheet figcaption{font-size:11px;line-height:1.55;color:#8A8A80;margin-top:12px}
+
+.sheet .tw{overflow-x:auto;margin:12px 0 0}
+.sheet table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.55;min-width:560px}
+.sheet thead tr{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:#8A8A80;text-align:left}
+.sheet th{font-weight:500;padding:0 14px 7px 0;border-bottom:1.5px solid #16160F}
+.sheet tbody{vertical-align:top}
+.sheet td{padding:10px 14px 10px 0;border-bottom:1px solid #E4E4DC;color:#16160F}
+.sheet tr:last-child td{border-bottom:0}
+.sheet td .sub{font-family:var(--mono);font-size:10px;color:#6F8F1F;display:block;margin-top:2px}
+.sheet td code{font-size:10.5px}
+
+.sheet .cols2{display:grid;grid-template-columns:1fr 1fr;gap:6px 26px;margin-top:6px}
+@media(max-width:700px){.sheet .cols2{grid-template-columns:1fr}}
+.sheet .cols2 p{font-size:12.5px}
+
+.sheet .sources{font-family:var(--mono);font-size:10.5px;line-height:1.8;color:#55554D;margin-top:12px}
+
+.sheet .sheetfoot{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:#8A8A80;padding-top:8px;border-top:1px solid #E4E4DC;margin-top:40px;gap:10px;flex-wrap:wrap}
+
+.docbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;max-width:940px;margin:0 auto 10px}
+.docbar .note{font-size:12.5px}
