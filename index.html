@@ -4,30 +4,45 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Baseten Reliability Plane — declare reliability, let agents operate it</title>
-<meta name="description" content="One product surface end to end: feature strategy → PRD → live MVP. Four declared policy objects, an SLO-driven incident agent with recorded 8.8s MTTR, and certified cross-provider migration.">
+<meta name="description" content="One product surface end to end: pain points → strategy → PRD → live MVP. Four declared policy objects, an SLO-driven incident agent with recorded 8.8s MTTR, and certified cross-provider migration.">
 <link rel="stylesheet" href="css/tokens.css">
 <style>
-.heroblk{margin:40px 0 34px}
-.heroblk h1{font-size:34px;line-height:1.2;max-width:760px}
+/* landing-only composition; all tokens inherited */
+.heroblk{margin:64px 0 56px}
+.heroblk h1{font-size:clamp(30px,5vw,44px);line-height:1.14;max-width:820px;font-weight:700;text-wrap:balance;letter-spacing:-.01em}
 .heroblk h1 em{color:var(--lime);font-style:normal}
-.heroblk .sub{font-size:16px;color:var(--mut);max-width:700px;margin-top:14px;line-height:1.65}
-.beats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0}
+.heroblk .sub{font-size:16px;color:var(--mut);max-width:640px;margin-top:18px;line-height:1.7}
+.heroblk .ctas{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.heroblk .ctas a{text-decoration:none;font-weight:600;font-size:14px;border-radius:8px;padding:12px 20px}
+.heroblk .ctas a.go{background:var(--lime);color:var(--ink)}
+.heroblk .ctas a.alt{border:1px solid var(--line);color:var(--mut)}
+.heroblk .ctas a.alt:hover{border-color:var(--dim);color:var(--txt)}
+
+.beats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 40px}
 @media(max-width:820px){.beats{grid-template-columns:1fr}}
-.beat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
-.beat .n{font-family:var(--mono);font-size:11px;color:var(--lime);letter-spacing:2px}
-.beat h2{font-size:16px;margin:8px 0 8px}
-.beat p{font-size:13px;color:var(--mut);line-height:1.65}
-.beat a{font-size:12px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:26px 0 14px}
-@media(max-width:820px){.cards{grid-template-columns:1fr 1fr}}
-.cta{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;text-decoration:none;color:var(--txt)}
-.cta:hover{border-color:var(--lime)}
-.cta .t{font-weight:600;font-size:14px}
-.cta .d{font-size:12px;color:var(--dim);margin-top:6px;line-height:1.5}
-.cta.primary{border-color:var(--lime)}
-.cta.primary .t{color:var(--lime)}
-.shot{border:1px solid var(--line);border-radius:10px;width:100%;display:block;margin:10px 0}
-.aud{font-size:13.5px;color:var(--mut);border-left:2px solid var(--lime);padding-left:14px;line-height:1.7;margin:22px 0}
+.beat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:9px}
+.beat .n{font-family:var(--mono);font-size:10.5px;color:var(--lime);letter-spacing:2px}
+.beat h2{font-size:15.5px;line-height:1.4;text-wrap:balance}
+.beat p{font-size:13px;color:var(--mut);line-height:1.65;flex:1}
+.beat a{font-size:12.5px}
+
+.aud{font-size:14px;color:var(--mut);border-left:2px solid var(--lime);padding-left:16px;line-height:1.75;margin:0 0 48px;max-width:760px}
+
+/* the console doorway — the surface itself, not a screenshot of it */
+.door{border:1px solid var(--lime);border-radius:12px;background:linear-gradient(0deg,rgba(213,242,110,.045),var(--panel) 70%);padding:22px 22px 20px;margin:0 0 44px}
+.door .lbl{color:var(--lime)}
+.door-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 18px}
+@media(max-width:820px){.door-stats{grid-template-columns:1fr 1fr}}
+.dstat{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.dstat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--dim);text-transform:uppercase}
+.dstat .v{font-family:var(--mono);font-size:19px;color:var(--txt);margin:7px 0 5px;font-variant-numeric:tabular-nums}
+.dstat .v b{color:var(--lime);font-weight:500}
+.dstat .s{font-size:10.5px;color:var(--dim);line-height:1.5}
+.door-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.door-foot .note{max-width:520px}
+.door-foot a.go{background:var(--lime);color:var(--ink);border-radius:8px;padding:13px 22px;font-weight:600;font-size:15px;text-decoration:none;white-space:nowrap}
+
+footer.ev{margin-top:44px}
 </style>
 </head>
 <body>
@@ -45,35 +60,39 @@
 
 <div class="heroblk">
   <h1>Reliability you <em>declare</em>. Agents that <em>operate</em> it. Evidence you can <em>rerun</em>.</h1>
-  <p class="sub">One product surface end to end — feature strategy → PRD → live MVP — for
-  Baseten's inference platform: four declared policy objects (Placement, Failover, Release, SLO),
-  one glanceable operate screen, an SLO-driven incident agent, and certified cross-provider migration.</p>
+  <p class="sub">One product surface end to end for Baseten's inference platform:
+  four declared policy objects, one glanceable operate screen, an SLO-driven incident
+  agent, and certified cross-provider migration.</p>
+  <div class="ctas">
+    <a class="go" href="operate.html">Open the console</a>
+    <a class="alt" href="docs/friction-log.html">Start the story at the pain points</a>
+  </div>
 </div>
 
 <div class="beats">
   <div class="beat">
     <div class="n">01 · THE FRICTION</div>
     <h2>We onboarded to Baseten by hand and logged every friction</h2>
-    <p>16 Baseten entries, each with committed evidence: a deploy that sat 30 minutes in <span class="mono">DEPLOYING</span>
-    then died silently, un-triageable <span class="mono">BUILD_FAILED</span>s, a production pointer left on a dead
-    deploy, 429s with no <span class="mono">Retry-After</span>, metrics that arrive as silent nulls.</p>
-    <p><a href="docs/friction-log.html">Read the friction log →</a></p>
+    <p>16 Baseten entries, each with committed evidence: a deploy that died silently in
+    <span class="mono">DEPLOYING</span>, un-triageable build failures, a production pointer
+    left on a dead deploy, 429s with no <span class="mono">Retry-After</span>.</p>
+    <a href="docs/friction-log.html">Read the pain points →</a>
   </div>
   <div class="beat">
     <div class="n">02 · THE TURN</div>
-    <h2>Then we onboarded again through Baseten's own agent surface — and the path worked</h2>
-    <p>The same workspace that fought us manually attached, baselined, and deployed through Baseten's
-    MCP server and agent skills. Evidence: <span class="mono">evals/mcp-deploy</span>, MCP-read metrics CSVs
-    committed in <span class="mono">data/recorded/</span>.</p>
-    <p><a href="onboard.html">See the agentic path →</a></p>
+    <h2>Then we onboarded again through Baseten's own agent surface — and it worked</h2>
+    <p>The same workspace that fought us manually attached, baselined, and deployed through
+    Baseten's MCP server and agent skills — evidence committed in
+    <span class="mono">data/recorded/</span>.</p>
+    <a href="onboard.html">See the agentic path →</a>
   </div>
   <div class="beat">
     <div class="n">03 · THE PRODUCT</div>
     <h2>This gives that same technique to the customer</h2>
-    <p>One prompt onboards you into a console that measures the SLOs you care about — p99 TTFT/TPOT,
-    goodput, measured $/Mtok — across every cloud you run on, and migrates traffic to Baseten
-    reliably (shadow → certify → promote, rollback held) when the evidence says so.</p>
-    <p><a href="operate.html">Open the console →</a></p>
+    <p>One prompt onboards you into a console measuring the SLOs you care about — p99
+    TTFT/TPOT, goodput, measured $/Mtok — on every cloud you run, and migrates traffic to
+    Baseten safely when the evidence says so.</p>
+    <a href="operate.html">Open the console →</a>
   </div>
 </div>
 
@@ -82,11 +101,39 @@ customers running multicloud portfolios</b>. Same console, same trust ladder:
 <span class="mono">observe → migrate → declare → operate</span>. Monitoring is read-only on external
 clouds; control features apply only to Baseten-side pools — this is a migration play, not a platform ask.</p>
 
-<a href="operate.html" aria-label="Open the operate console">
-  <img class="shot" src="assets/operate-screenshot.png" alt="The operate console: hero SLO tiles, four-pool multicloud grid, policy rail, placement feed, incident timeline with MTTR stopwatch" width="1200" height="760" loading="lazy">
-</a>
+<section class="door" aria-label="The console">
+  <div class="lbl">THE MVP — MEANT TO BE DRIVEN, NOT SCREENSHOTTED</div>
+  <div class="door-stats">
+    <div class="dstat">
+      <div class="k">MTTR, agent on</div>
+      <div class="v"><b>8.1s</b> median</div>
+      <div class="s">48 recorded live drills · agent off: never recovered</div>
+    </div>
+    <div class="dstat">
+      <div class="k">Measured $/Mtok</div>
+      <div class="v">$2.78 – $8.53</div>
+      <div class="s">billed sweeps + published $/hr ÷ measured tok/s</div>
+    </div>
+    <div class="dstat">
+      <div class="k">The guard</div>
+      <div class="v">refuses<b>*</b></div>
+      <div class="s">*rig a drill: the agent won't quarantine the last healthy pool — and says why</div>
+    </div>
+    <div class="dstat">
+      <div class="k">The gate</div>
+      <div class="v">shadow→certify</div>
+      <div class="s">traffic moves only on a passing certificate; a refusal is the system working</div>
+    </div>
+  </div>
+  <div class="door-foot">
+    <p class="note">Run a drill. Inject a regression. Migrate a route off Modal and roll it back.
+    Deterministic sim (<span class="mono">?seed=42</span>), no backend, no GPU — every number
+    measured or labeled simulated.</p>
+    <a class="go" href="operate.html">Open the console →</a>
+  </div>
+</section>
 
-<h3 class="lbl" style="margin:26px 0 4px">READ IT IN ORDER — pain points → strategy → PRD → MVP</h3>
+<h3 class="lbl" style="margin:0 0 4px">OR READ THE STORY IN ORDER</h3>
 <nav class="flow" aria-label="The story in order">
   <a href="docs/friction-log.html">01 · PAIN POINTS</a>
   <a href="onboard.html">02 · THE TURN</a>
@@ -95,10 +142,12 @@ clouds; control features apply only to Baseten-side pools — this is a migratio
   <a href="operate.html">05 · THE MVP</a>
 </nav>
 
+<footer class="ev">
 <p class="honesty"><b>evidence:</b> every number on this site is measured or labeled simulated;
 the MTTR 8.8–9.2s is real — recorded live-incident runs in
 <a href="https://github.com/vsiwach/baseten-mvp">baseten-mvp</a>, copied verbatim with
 <a href="data/recorded/PROVENANCE.md">provenance</a>.</p>
+</footer>
 
 </div>
 </body>

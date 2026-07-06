@@ -1,5 +1,9 @@
 # Baseten Reliability Plane — operate console MVP
 
+[![The operate console](assets/operate-screenshot.png)](https://baseten-reliability-plane.vercel.app/operate)
+
+**Live:** [baseten-reliability-plane.vercel.app](https://baseten-reliability-plane.vercel.app)
+
 Reliability at Baseten today is something the platform does *for* customers —
 MCM places, fails over, and heals, operator-first and invisible. This repo is
 the reference implementation of the opposite surface: reliability as something
