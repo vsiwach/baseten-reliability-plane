@@ -95,6 +95,18 @@ record a real CSV with `bench/` and it upgrades to MEASURED).
 | baseten-dedicated-2 | 330ms · measured | 34ms/tok · measured | 148s (BDN) · measured | $8.53 · measured | 99.9% · published |
 | competitor-cloud | 280ms · simulated | 33ms/tok · simulated | 4s (snapshot) · simulated | $10.19 · simulated | 99.95% · published |
 
+## What runs where
+
+| Surface | What it is | How |
+| --- | --- | --- |
+| **[baseten-reliability-plane.vercel.app](https://baseten-reliability-plane.vercel.app)** | The **demo workspace**: a deterministic simulation of the exact live behavior — same console, same agent code, safe to click everything (chaos included) | just open it |
+| **LIVE mode** | The same console operating **real clouds**: real Baseten activations via the management API, real streaming traffic, real chaos (deactivate/reactivate), real certified migration on mirrored requests | `export BASETEN_API_KEY=…` then `python3 live/bridge.py` + `python3 -m http.server 8431`; open `localhost:8431/operate.html` — badge flips to `LIVE` ([live/README.md](live/README.md)) |
+
+One console, two data planes. The static site can hold no secrets and must never
+expose real control (the chaos button deactivates a production deployment), so
+keys and control stay in the local bridge — which is also how the real product
+would ship: console anywhere, control plane where credentials live.
+
 ## Run it
 
 ```bash

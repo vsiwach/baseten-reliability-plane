@@ -60,8 +60,11 @@
       allowlist: engine.agentView().allowlist,
     });
     $('sim-clock').textContent = deployed
-      ? `t+${engine.t}s${paused ? ' · PAUSED' : ''}`
-      : 'workload not deployed';
+      ? `DEMO · t+${engine.t}s${paused ? ' · PAUSED' : ''}`
+      : 'DEMO · workload not deployed';
+    $('sim-clock').dataset.tip = 'Demo workspace: a deterministic simulation of the exact live ' +
+      'behavior (same code, same agents). To operate REAL clouds, clone the repo and run ' +
+      'live/bridge.py with your API key — this console auto-detects it and flips to LIVE.';
   }
 
   let nudged = false;   // one-time "your move" nudge when evidence turns ready
