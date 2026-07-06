@@ -40,19 +40,28 @@ POOLS = {
     "baseten-dedicated": {
         "kind": "baseten-predict",
         "model_id": os.environ.get("BT1_MODEL", "3ydn1e43"),
-        "deployment_id": os.environ.get("BT1_DEPLOYMENT", "qvm1v4e"),
+        "deployment_id": os.environ.get("BT1_DEPLOYMENT", "qrpv7y0"),
         "url": None,  # derived: model-{model_id}.api.baseten.co
         "usd_hr": 0.9024, "control": "operated",
     },
     "baseten-dedicated-2": {
-        # second deployment of the SAME working model (T4, pre-BDN build —
-        # its cold start demonstrates friction #17 live). The L4:2 pool sat
-        # in DEPLOYING for 40min (friction #6) and was benched.
+        # the REAL second cluster: deployment-4 (qrpv7y0), truss-pushed from
+        # the same source as the working build — same model, BDN, pinned deps
         "kind": "baseten-predict",
         "model_id": os.environ.get("BT2_MODEL", "3ydn1e43"),
-        "deployment_id": os.environ.get("BT2_DEPLOYMENT", "w52yvzr"),
+        "deployment_id": os.environ.get("BT2_DEPLOYMENT", "w6p1dg5"),
         "url": None,
-        "usd_hr": 0.9024, "control": "operated",   # T4x8x32 published
+        "usd_hr": 0.9024, "control": "operated",
+    },
+    "baseten-model-api": {
+        # the failover target failover-policy declares: real Baseten
+        # serverless capacity, zero provisioning. (The L4:2 pool sat 40min
+        # in DEPLOYING — friction #6; the spare T4 build reactivated into
+        # DEPLOY_FAILED with no API-visible reason — friction #12/#14.)
+        "kind": "openai", "auth": True,
+        "url": "https://inference.baseten.co/v1",
+        "usd_hr": None, "control": "operated",
+        "prefer_model": "Qwen",
     },
     "competitor-cloud": {
         "kind": "openai",
@@ -65,7 +74,7 @@ ROUTES = {
     "voice-prod": {"declared": "baseten-dedicated", "rps": 1.0},
     "voice-agent": {"declared": "competitor-cloud", "rps": 0.5},
 }
-SPILL_ORDER = ["baseten-dedicated-2"]     # failover-policy.yaml, live subset
+SPILL_ORDER = ["baseten-dedicated-2", "baseten-model-api"]   # failover-policy.yaml, verbatim
 
 PROMPTS = [
     "In one sentence, what makes GPU inference latency hard to keep stable?",
@@ -129,6 +138,8 @@ def stream_request(pool_id, prompt, max_tokens=80, timeout=60):
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": max_tokens, "stream": True}
             headers = {"Content-Type": "application/json"}
+            if p.get("auth"):
+                headers["Authorization"] = f"Api-Key {BASETEN_KEY}"
         req = urllib.request.Request(url, data=json.dumps(body).encode(),
                                      headers=headers)
         with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -172,10 +183,17 @@ def pool_state_model(pool_id):
     if pool_id in _model_cache:
         return _model_cache[pool_id]
     try:
-        req = urllib.request.Request(POOLS[pool_id]["url"].rstrip("/") + "/models")
+        headers = {}
+        if POOLS[pool_id].get("auth"):
+            headers["Authorization"] = f"Api-Key {BASETEN_KEY}"
+        req = urllib.request.Request(POOLS[pool_id]["url"].rstrip("/") + "/models",
+                                     headers=headers)
         with urllib.request.urlopen(req, timeout=120) as r:
             data = json.loads(r.read().decode())
-        _model_cache[pool_id] = data["data"][0]["id"]
+        ids = [m["id"] for m in data["data"]]
+        pref = POOLS[pool_id].get("prefer_model")
+        pick = next((i for i in ids if pref and pref.lower() in i.lower()), ids[0])
+        _model_cache[pool_id] = pick
     except Exception:
         return "default"     # NOT cached — retry on the next call
     return _model_cache[pool_id]
@@ -238,7 +256,12 @@ def deploy_competitor(pool_id):
     ds["phase"] = "waking (snapshot)"
     emit("deploy", f"{pool_id}: waking via GET /v1/models")
     t0 = time.monotonic()
-    model = pool_state_model(pool_id)
+    # never race the cold boot for the model name: wait until the listing answers
+    model = "default"
+    while model == "default" and time.monotonic() - t0 < 300:
+        model = pool_state_model(pool_id)
+        if model == "default":
+            time.sleep(5)
     ok, ms, _ = stream_request(pool_id, "warmup: say ok", max_tokens=4, timeout=300)
     ds["cold_start_s"] = round(time.monotonic() - t0, 1)
     ds["phase"] = "ready" if ok else "wake failed"
@@ -328,9 +351,17 @@ def health_loop():
     while True:
         for pid in POOLS:
             recent = [s for s in samples[pid] if s["t"] > time.time() - 20]
-            if recent:
-                errs = sum(1 for s in recent if not s["ok"])
-                state["pools"][pid]["health"] = "down" if errs / len(recent) > 0.6 else "up"
+            if not recent:
+                continue          # silence never changes health
+            errs = sum(1 for s in recent if not s["ok"])
+            if errs / len(recent) > 0.6:
+                state["pools"][pid]["health"] = "down"
+            elif state["pools"][pid]["health"] == "down":
+                # sticky: only a FRESH success (newest sample ok) flips up
+                if recent[-1]["ok"]:
+                    state["pools"][pid]["health"] = "up"
+            else:
+                state["pools"][pid]["health"] = "up"
         time.sleep(3)
 
 
@@ -345,8 +376,17 @@ def do_chaos():
     except Exception as exc:
         emit("chaos", f"deactivate failed: {exc}")
     state["pools"][pid]["health"] = "down"
-    state["chaos"]["phase"] = "pool down — reactivating (real cold start ahead)"
-    time.sleep(8)
+    state["chaos"]["phase"] = "pool down — waiting for clean INACTIVE before reactivating"
+    t_w = time.monotonic()
+    while time.monotonic() - t_w < 180:
+        try:
+            d = mgmt_call(f"/models/{p['model_id']}/deployments/{p['deployment_id']}")
+            if d.get("deployment", d).get("status") == "INACTIVE":
+                break
+        except Exception:
+            pass
+        time.sleep(5)
+    state["chaos"]["phase"] = "reactivating (real cold start ahead)"
     try:
         mgmt_call(f"/models/{p['model_id']}/deployments/{p['deployment_id']}/activate", "POST", {})
         emit("chaos", f"{pid}: reactivation issued — recovery rides the real BDN cold start")
