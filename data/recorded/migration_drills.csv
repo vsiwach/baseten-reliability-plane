@@ -1,0 +1,3 @@
+stamp,mode,warmup_ttft_p50_ms,warmup_ttft_p95_ms,during_ttft_p50_ms,during_ttft_p95_ms,drained_ttft_p50_ms,drained_ttft_p95_ms,after_ttft_p50_ms,after_ttft_p95_ms,re_prefill_count,new_session_first_prefills,cohort_sessions,cohort_live_requests,cohort_mid_conversation_re_prefills,cohort_ttft_p95_ms,cohort_hit_ttft_p50_ms,cohort_miss_ttft_p50_ms,drained_s,requests,errors
+20260705-141129,graceful,52.3,290.1,52.2,86.0,,,291.9,295.4,5,2,5,174,0,70.2,51.3,,105.71,441,1
+20260705-141351,immediate,57.1,292.1,56.7,76.6,,,52.4,69.2,6,0,6,55,6,293.3,56.1,293.3,21.14,201,0

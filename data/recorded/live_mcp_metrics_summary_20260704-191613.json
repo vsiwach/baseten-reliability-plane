@@ -1,0 +1,76 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"start_epoch_millis\":1783191645516,\"end_epoch_millis\":1783192545516,\"mode\":\"SUMMARY\",\"metric_descriptors\":[{\"name\":\"baseten_replicas_active\",\"unit_hint\":\"COUNT\",\"kind\":\"GAUGE\",\"label_sets\":[{}]},{\"name\":\"baseten_inference_requests_total\",\"unit_hint\":\"COUNT\",\"kind\":\"COUNTER\",\"label_sets\":[{\"status\":\"200\"}]},{\"name\":\"baseten_end_to_end_response_time_seconds\",\"unit_hint\":\"SECONDS\",\"kind\":\"HISTOGRAM\",\"label_sets\":[{\"quantile\":\"0.5\"},{\"quantile\":\"0.9\"},{\"quantile\":\"0.95\"},{\"quantile\":\"0.99\"},{\"stat\":\"avg\"}]}],\"metric_values\":[{\"start_epoch_millis\":1783191645516,\"values\":[[0.6470588235294118],[7.0],[1.801,1.9733999999999998,2.0637,2.1359399999999997,1.8854558578571423]]}]}"
+    }
+  ],
+  "structuredContent": {
+    "start_epoch_millis": 1783191645516,
+    "end_epoch_millis": 1783192545516,
+    "mode": "SUMMARY",
+    "metric_descriptors": [
+      {
+        "name": "baseten_replicas_active",
+        "unit_hint": "COUNT",
+        "kind": "GAUGE",
+        "label_sets": [
+          {}
+        ]
+      },
+      {
+        "name": "baseten_inference_requests_total",
+        "unit_hint": "COUNT",
+        "kind": "COUNTER",
+        "label_sets": [
+          {
+            "status": "200"
+          }
+        ]
+      },
+      {
+        "name": "baseten_end_to_end_response_time_seconds",
+        "unit_hint": "SECONDS",
+        "kind": "HISTOGRAM",
+        "label_sets": [
+          {
+            "quantile": "0.5"
+          },
+          {
+            "quantile": "0.9"
+          },
+          {
+            "quantile": "0.95"
+          },
+          {
+            "quantile": "0.99"
+          },
+          {
+            "stat": "avg"
+          }
+        ]
+      }
+    ],
+    "metric_values": [
+      {
+        "start_epoch_millis": 1783191645516,
+        "values": [
+          [
+            0.6470588235294118
+          ],
+          [
+            7.0
+          ],
+          [
+            1.801,
+            1.9733999999999998,
+            2.0637,
+            2.1359399999999997,
+            1.8854558578571423
+          ]
+        ]
+      }
+    ]
+  },
+  "isError": false
+}

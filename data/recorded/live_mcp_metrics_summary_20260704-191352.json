@@ -1,0 +1,76 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"start_epoch_millis\":1783191530920,\"end_epoch_millis\":1783192430920,\"mode\":\"SUMMARY\",\"metric_descriptors\":[{\"name\":\"baseten_replicas_active\",\"unit_hint\":\"COUNT\",\"kind\":\"GAUGE\",\"label_sets\":[{}]},{\"name\":\"baseten_inference_requests_total\",\"unit_hint\":\"COUNT\",\"kind\":\"COUNTER\",\"label_sets\":[{\"status\":\"200\"}]},{\"name\":\"baseten_end_to_end_response_time_seconds\",\"unit_hint\":\"SECONDS\",\"kind\":\"HISTOGRAM\",\"label_sets\":[{\"quantile\":\"0.5\"},{\"quantile\":\"0.9\"},{\"quantile\":\"0.95\"},{\"quantile\":\"0.99\"},{\"stat\":\"avg\"}]}],\"metric_values\":[{\"start_epoch_millis\":1783191530920,\"values\":[[0.4],[0.0],[null,null,null,null,null]]}]}"
+    }
+  ],
+  "structuredContent": {
+    "start_epoch_millis": 1783191530920,
+    "end_epoch_millis": 1783192430920,
+    "mode": "SUMMARY",
+    "metric_descriptors": [
+      {
+        "name": "baseten_replicas_active",
+        "unit_hint": "COUNT",
+        "kind": "GAUGE",
+        "label_sets": [
+          {}
+        ]
+      },
+      {
+        "name": "baseten_inference_requests_total",
+        "unit_hint": "COUNT",
+        "kind": "COUNTER",
+        "label_sets": [
+          {
+            "status": "200"
+          }
+        ]
+      },
+      {
+        "name": "baseten_end_to_end_response_time_seconds",
+        "unit_hint": "SECONDS",
+        "kind": "HISTOGRAM",
+        "label_sets": [
+          {
+            "quantile": "0.5"
+          },
+          {
+            "quantile": "0.9"
+          },
+          {
+            "quantile": "0.95"
+          },
+          {
+            "quantile": "0.99"
+          },
+          {
+            "stat": "avg"
+          }
+        ]
+      }
+    ],
+    "metric_values": [
+      {
+        "start_epoch_millis": 1783191530920,
+        "values": [
+          [
+            0.4
+          ],
+          [
+            0.0
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        ]
+      }
+    ]
+  },
+  "isError": false
+}

@@ -1,0 +1,12 @@
+alias,status,ttft_ms,tok_per_sec,cost_usd,completion_tokens,wall_ms,reasoning_only,answer
+deepseek-v4-pro,200,0.0,0.0,0.0,0,1347,False,The
+kimi-k2.5,200,0.0,0.0,0.0,0,991,False,"The fundamental challenge is that LLMs are memory-bound, autoregressive beasts requiring massive GPU memory fo"
+kimi-k2.6,200,0.0,0.0,0.0,0,1197,False,"The core challenge is efficiently batching and scheduling highly variable, memory-bound workloads across thous"
+kimi-k2.7-code,200,0.0,0.0,0.0,0,1484,False,"Serving LLMs at scale is hard because massive memory bandwidth, unpredictable request lengths, and strict late"
+nemotron-ultra,200,0.0,0.0,0.0,0,882,False,The quadratic memory growth of the KV cache with sequence length creates a fundamental tension between through
+nemotron-super,200,0.0,0.0,0.0,0,800,False,"Serving LLMs at scale is hard because they require massive memory and compute resources, suffer from high late"
+openai-gpt-120b,200,0.0,0.0,0.0,0,779,True,
+glm-4.7,200,0.0,0.0,0.0,0,1107,False,LLM serving is hard because the massive computational cost of generating text sequentially creates severe memo
+glm-5,200,0.0,0.0,0.0,0,3135,False,The primary challenge is balancing the massive memory requirements of model weights and KV caches with the nee
+glm-5.1,200,0.0,0.0,0.0,0,1581,False,"Serving LLMs at scale is hard because their enormous memory footprint, compute-intensive autoregressive decodi"
+glm-5.2,200,0.0,0.0,0.0,0,1206,False,"Serving LLMs at scale is hard because their enormous memory footprint, high computational cost, and unpredicta"
