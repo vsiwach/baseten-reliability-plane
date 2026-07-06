@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operate — Baseten Reliability Plane</title>
+<meta name="description" content="One glanceable operate screen: four declared policy objects, an SLO-driven incident agent, and certified cross-provider migration — every number measured or labeled simulated.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/console.css">
+</head>
+<body>
+<div class="wrap">
+
+<header class="topbar">
+  <div>
+    <div class="brand">RELIABILITY PLANE</div>
+    <h1>Operate — <span class="mono" style="color:var(--lime)">acme-inference</span>
+      <button id="sla-badge" class="badge operated" style="cursor:pointer"
+        data-tip="Operated: Baseten pools under declared policy, agent-run remediation. Click to cycle the ladder: observe → migrate → declare → operate." tabindex="0">MANAGED 99.9</button>
+    </h1>
+  </div>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="onboard.html">Onboard</a>
+    <a href="docs/index.html">Docs</a>
+    <span class="tag mono" id="sim-clock">t+0s</span>
+    <button id="btn-pause">⏸ Pause</button>
+  </nav>
+</header>
+
+<div class="honesty" role="note">
+  <b>honest numbers:</b> every figure is <span class="chip measured">MEASURED</span> (hover any chip for its committed source)
+  or <span class="chip simulated">SIMULATED</span> (seeded sim, <span class="mono">?seed=42</span>) ·
+  empty windows say "no data yet (lag)" — never zeros (friction #18) ·
+  try <a class="mono" href="operate.html?nodata=cost">?nodata=cost</a>
+</div>
+<div style="height:12px"></div>
+
+<!-- F0.4 hero -->
+<section id="hero" aria-label="Service level at a glance"></section>
+
+<div class="grid-main">
+  <div class="col">
+    <!-- pool grid -->
+    <div class="card" style="margin-bottom:12px">
+      <h3>POOLS — the multicloud portfolio, one console</h3>
+      <div id="pools"></div>
+      <div class="slo-strip-card">
+        <h3 style="margin-top:14px">SLO vs SLA — measured against published</h3>
+        <div id="slo-strip"></div>
+      </div>
+    </div>
+
+    <!-- release + migration -->
+    <div class="card" style="margin-bottom:12px">
+      <h3>RELEASE — canary, gated by probes (F1.2)</h3>
+      <div id="rollout"></div>
+      <div class="relctl">
+        <button id="btn-rollout" class="primary">Start rollout</button>
+        <button id="btn-regression" class="danger">Inject regression</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <h3>CERTIFIED MIGRATION — shadow → certify → promote (headline: IN, onto Baseten)</h3>
+      <div id="migration"></div>
+    </div>
+
+    <!-- incidents -->
+    <div class="card">
+      <h3>INCIDENTS — agent on the SLO, MTTR on the clock (F2.1–F2.2)</h3>
+      <div class="panel-actions">
+        <button id="btn-drill" class="primary">Run drill</button>
+        <button id="btn-rigged" class="danger" data-tip="Takes every other operated pool out first, then degrades the last one. The agent must refuse to quarantine it — the guard is the demo." tabindex="0">Run rigged drill (guard)</button>
+        <button id="btn-replay" data-tip="Replays a real recorded incident from data/recorded/episodes-live.jsonl verbatim — recorded 2026-07-04, MTTR 8.8s.">▶ Replay recorded episode</button>
+      </div>
+      <div id="incident"></div>
+    </div>
+  </div>
+
+  <div class="col">
+    <!-- policy rail -->
+    <div id="policy-rail" aria-label="Declared policy objects"></div>
+
+    <!-- placement feed -->
+    <div class="card" id="feed-card">
+      <h3>PLACEMENT &amp; DECISION FEED — every decision carries its reason (F0.2)
+        <button id="feed-pause" class="mini" style="float:right">Pause</button></h3>
+      <div class="table-scroll">
+        <table class="data" aria-label="Decision feed"><tbody id="feed"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="note" style="margin-top:16px">
+  Reference implementation of the <a href="docs/index.html">Reliability Plane PRD</a> ·
+  sim is deterministic (<span class="mono">?seed=42</span> twice → identical streams, asserted in tests) ·
+  patterns ported from <span class="mono">ai-native-pipeline</span> (release engine, measured-cost ledger) and
+  <span class="mono">baseten-mvp</span> (incident agent, recorded evidence) ·
+  <a href="onboard.html">onboard your own endpoints in one prompt →</a>
+</p>
+</div>
+
+<!-- classic scripts (not ES modules) so the console opens from file:// with
+     zero console errors in every browser; each file also exports CJS for
+     node --test. Order = dependency order. -->
+<script src="js/sim/prng.js"></script>
+<script src="js/sim/costs.js"></script>
+<script src="js/sim/yaml-lite.js"></script>
+<script src="js/sim/placement.js"></script>
+<script src="js/sim/incidents.js"></script>
+<script src="js/sim/agent.js"></script>
+<script src="js/sim/release.js"></script>
+<script src="js/sim/migration.js"></script>
+<script src="js/sim/engine.js"></script>
+<script src="js/data/policies.js"></script>
+<script src="js/data/recorded.js"></script>
+<script src="js/ui/format.js"></script>
+<script src="js/ui/hero.js"></script>
+<script src="js/ui/pools.js"></script>
+<script src="js/ui/policy-rail.js"></script>
+<script src="js/ui/feed.js"></script>
+<script src="js/ui/release-panel.js"></script>
+<script src="js/ui/incident-panel.js"></script>
+<script src="js/ui/console.js"></script>
+</body>
+</html>
