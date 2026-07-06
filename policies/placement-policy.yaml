@@ -1,0 +1,57 @@
+# Placement policy — WHERE workloads may land: region, compliance regime,
+# capacity preference, and right-of-way for compliance-bound work (F1.3, F1.4).
+# Baseten default — override in the console (capacity_preference toggle).
+capacity_preference: [reserved, cheapest, lowest_latency]
+
+compliance:
+  regimes: [hipaa, pci]
+  sensitive_capacity_tags: [sensitive]
+
+# The multi-cloud pool set this console operates over. `control` is the trust
+# ladder: operated = full control surface; monitor-only = read-only telemetry
+# plus exactly one affordance (Migrate route).
+pools:
+  - id: baseten-dedicated
+    provider: baseten
+    instance: T4x8x32
+    region: us-east-1
+    control: operated
+    cold_start_s: 148          # measured, BDN weights cache (friction #17; 360s before)
+    cost_rank: 2
+    tags: [reserved]
+  - id: baseten-model-api
+    provider: baseten
+    instance: serverless
+    region: us-east-1
+    control: operated
+    cold_start_s: 0            # always-on shared capacity
+    cost_rank: 1
+    tags: []
+    hazards: [rate-limit-coupling]   # friction #10: per-model-per-workspace 429 quota
+  - id: modal-dedicated
+    provider: modal
+    instance: A10G
+    region: us-east-1
+    control: monitor-only      # external cloud: telemetry in, no control out
+    cold_start_s: 4            # simulated from Modal's published GPU-snapshot cold starts
+    cost_rank: 3
+    tags: []
+  - id: hipaa-eu-pool
+    provider: baseten
+    instance: L4x2x24
+    region: eu-west-1
+    control: operated
+    cold_start_s: 60           # simulated; exists to demo right-of-way (F1.4)
+    cost_rank: 4
+    tags: [sensitive]
+    compliance_regimes: [hipaa]
+  # Worked example: attach any OpenAI-compatible endpoint read-only.
+  # Uncomment, add url + read key in your own deployment of this console.
+  # - id: runpod-community
+  #   provider: runpod
+  #   instance: RTX4090
+  #   region: eu-west-1
+  #   control: monitor-only
+  #   cold_start_s: 120
+  #   cost_rank: 1
+  #   tags: []

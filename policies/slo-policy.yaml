@@ -1,0 +1,17 @@
+# SLO policy — the targets every other policy is judged against (F1.1).
+# Baseten default — override in the console; the slider edits ttft_p99_ms live.
+slo:
+  route: qwen3-chat
+  ttft_p99_ms: 500        # first token; agent probes are streaming-TTFT judged HERE
+  tpot_p99_ms: 50         # per-token cadence, ms/token
+  goodput_target: 0.99    # fraction of requests meeting BOTH gates
+  window_s: 15            # rolling window feeding breach detection
+
+# Agent detection thresholds (ported from the recorded live incidents)
+agent:
+  breach_rate_threshold: 0.5
+  min_samples: 4
+  probe_interval_s: 3
+  probes_to_reinstate: 2
+  cooldown_s: 30
+  escalate_after_failures: 5

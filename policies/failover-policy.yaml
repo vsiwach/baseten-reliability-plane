@@ -1,0 +1,20 @@
+# Failover policy — where traffic spills when a pool is quarantined or down (F1.5).
+# Baseten default — override in the console (spill-target toggle).
+failover:
+  spill_target: baseten-model-api   # serverless Model APIs absorb quarantined traffic
+  spill_on: [quarantine, pool_down, capacity_wait]
+  drain_before_stop: true           # a draining replica stops only at 0 in-flight
+
+# Known hazards the placement scorer must price in — real failure classes
+# from the friction log, never invented ones.
+hazards:
+  - id: rate-limit-coupling
+    pool: baseten-model-api
+    friction: 10
+    note: per-model-per-workspace 429 quota; spilled traffic and recovery
+      probes spend the SAME budget, so a spill can starve verification
+  - id: capacity-wait
+    pool: baseten-dedicated
+    friction: 6
+    note: scarce SKUs can sit DEPLOYING with no queue position; placement
+      must surface WAITING_FOR_CAPACITY with an alternative, never hang silent

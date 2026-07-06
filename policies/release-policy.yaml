@@ -1,0 +1,19 @@
+# Release policy — declarative, safe rollouts (F1.2).
+# Baseten default — override in the console (canary steps toggle).
+rollouts:
+  default:
+    mode: canary            # canary | shadow | ab
+    steps: [5, 25, 100]     # candidate traffic % per gated step
+    warmup: true            # pre-warm candidate before shifting traffic
+    drain: true             # drain stable without cutting in-flight generations
+    probe:                  # success gate evaluated before each step advances
+      metric: ttft_p99_ms
+      max_ms: 500
+      window: 20
+    auto_rollback: true     # a failed probe rolls back automatically
+
+  shadow-eval:
+    mode: shadow            # mirror traffic to candidate; client sees stable
+    steps: [0]
+    warmup: true
+    drain: false
