@@ -12,6 +12,18 @@
   const qs = new URLSearchParams(location.search);
   const SEED = Number(qs.get('seed')) || 42;
 
+  /* Mode selection: if the local live bridge is running (live/bridge.py) and
+     ?sim=1 wasn't forced, the console operates the REAL clouds; otherwise it
+     boots the seeded demo workspace. */
+  async function bootMode() {
+    if (qs.get('sim') !== '1' && RP.live) {
+      const status = await RP.live.detect();
+      if (status) { RP.live.boot(); return; }
+    }
+    startSim();
+  }
+
+  function startSim() {
   // ---- boot ------------------------------------------------------------------
   const policies = {
     slo: RP.yaml.parse(RP.policyText.slo),
@@ -122,4 +134,7 @@
 
   renderAll();
   setInterval(tick, 700);
+  }
+
+  bootMode();
 })(globalThis);

@@ -67,7 +67,10 @@
 
   function render(el, stripEl, pools, profiles) {
     el.innerHTML = pools.map(card).join('');
-    stripEl.innerHTML = strip(pools, profiles);
+    // the SLO/SLA strip compares recorded profiles; live mode has no
+    // profiles — its numbers ARE the comparison
+    stripEl.innerHTML = profiles ? strip(pools, profiles)
+      : '<div class="note">LIVE mode: every number above is measured from real requests this session — $/Mtok = instance $/hr ÷ live tok/s.</div>';
   }
 
   /* The monitor agent's own status line — what it scores, against which
