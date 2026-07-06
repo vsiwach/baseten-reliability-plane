@@ -1,8 +1,8 @@
 # SLO policy — the targets every other policy is judged against (F1.1).
 # Baseten default — override in the console; the slider edits ttft_p99_ms live.
 slo:
-  route: qwen3-chat
-  ttft_p99_ms: 500        # first token; agent probes are streaming-TTFT judged HERE
+  route: voice-agent
+  ttft_p99_ms: 500        # first syllable of a voice turn; probes judged HERE
   tpot_p99_ms: 50         # per-token cadence, ms/token
   goodput_target: 0.99    # fraction of requests meeting BOTH gates
   window_s: 15            # rolling window feeding breach detection

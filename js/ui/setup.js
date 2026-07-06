@@ -14,7 +14,7 @@
       { n: 2, title: 'Baseten clusters provisioned', state: 'done',
         sub: '2× T4x8x32 (serving + declared failover) · qwen3-8b-awq loaded on both' },
       { n: 3, title: 'Deploy your workload', state: deployed ? 'done' : 'now',
-        sub: deployed ? 'same workload on both clouds — your competitor cloud keeps serving voice-agent, your Baseten cluster runs chat-prod'
+        sub: deployed ? 'same workload on both clouds — your competitor cloud keeps serving voice-agent, your Baseten cluster runs voice-prod'
                       : 'nothing is measured until your traffic flows',
         action: deployed ? null : { id: 'deploy', label: '▶ Deploy workload' } },
       { n: 4, title: 'Watch the SLO evidence', state: !deployed ? 'todo' : (samples > 30 ? 'done' : 'now'),

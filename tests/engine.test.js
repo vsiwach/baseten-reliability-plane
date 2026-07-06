@@ -96,22 +96,22 @@ test('win-back card appears for the external route that is cheaper at equal SLO'
 test('failover: quarantining cluster-1 moves its route to cluster-2, and recovery returns it', () => {
   const eng = boot(42);
   for (let i = 0; i < 6; i++) eng.tick(1);
-  assert.strictEqual(eng.routesServingView().find(r => r.id === 'chat-prod').serving,
+  assert.strictEqual(eng.routesServingView().find(r => r.id === 'voice-prod').serving,
     'baseten-dedicated', 'declared pool serves while healthy');
   eng.operatorQuarantine('baseten-dedicated');
   for (let i = 0; i < 5; i++) eng.tick(1);
-  const r = eng.routesServingView().find(r => r.id === 'chat-prod');
+  const r = eng.routesServingView().find(r => r.id === 'voice-prod');
   assert.strictEqual(r.serving, 'baseten-dedicated-2',
     'traffic failed over to the second Baseten cluster per spill_order');
   const b2 = eng.poolsView().find(p => p.id === 'baseten-dedicated-2');
   assert.ok(b2.serving && b2.rps > 0, 'cluster-2 visibly carries the traffic');
   assert.ok(eng.eventsView().some(e => e.kind === 'failover' &&
-    e.text.includes('chat-prod → baseten-dedicated-2')), 'failover is an event, not an inference');
+    e.text.includes('voice-prod → baseten-dedicated-2')), 'failover is an event, not an inference');
   eng.operatorReinstate('baseten-dedicated');
   for (let i = 0; i < 3; i++) eng.tick(1);
-  assert.strictEqual(eng.routesServingView().find(r => r.id === 'chat-prod').serving,
+  assert.strictEqual(eng.routesServingView().find(r => r.id === 'voice-prod').serving,
     'baseten-dedicated', 'recovery returns traffic to the declared pool');
-  assert.ok(eng.eventsView().some(e => e.text.startsWith('recovery: chat-prod')));
+  assert.ok(eng.eventsView().some(e => e.text.startsWith('recovery: voice-prod')));
 });
 
 test('failover disabled by policy: traffic stays on the declared pool', () => {
@@ -120,7 +120,7 @@ test('failover disabled by policy: traffic stays on the declared pool', () => {
   eng.setOverride('spill_enabled', false);
   eng.operatorQuarantine('baseten-dedicated');
   for (let i = 0; i < 4; i++) eng.tick(1);
-  assert.strictEqual(eng.routesServingView().find(r => r.id === 'chat-prod').serving,
+  assert.strictEqual(eng.routesServingView().find(r => r.id === 'voice-prod').serving,
     'baseten-dedicated', 'no spill when the policy toggle is off');
 });
 

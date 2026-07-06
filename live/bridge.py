@@ -59,7 +59,7 @@ POOLS = {
     },
 }
 ROUTES = {
-    "chat-prod": {"declared": "baseten-dedicated", "rps": 1.0},
+    "voice-prod": {"declared": "baseten-dedicated", "rps": 1.0},
     "voice-agent": {"declared": "competitor-cloud", "rps": 0.5},
 }
 SPILL_ORDER = ["baseten-dedicated-2"]     # failover-policy.yaml, live subset

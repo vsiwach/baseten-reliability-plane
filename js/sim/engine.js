@@ -58,7 +58,7 @@
     const byId = Object.fromEntries(pools.map(p => [p.id, p]));
 
     const routes = [
-      { id: 'chat-prod', pool: 'baseten-dedicated', rps: 2 },
+      { id: 'voice-prod', pool: 'baseten-dedicated', rps: 2 },
       { id: 'voice-agent', pool: 'competitor-cloud', rps: 1 },   // monitored external route
     ];
     // the routes the customer's SLO contract covers: declared on operated pools
@@ -387,7 +387,7 @@
       // machine, direction swapped.
       const [route, source, target] = direction === 'in'
         ? ['voice-agent', 'competitor-cloud', 'baseten-dedicated']
-        : ['chat-prod', 'baseten-dedicated', 'competitor-cloud'];
+        : ['voice-prod', 'baseten-dedicated', 'competitor-cloud'];
       migration = migrationMod.createMigration({
         route, source, target,
         slo: { ttft_p99_ms: overrides.slo_ttft_ms, tpot_p99_ms: slo.tpot_p99_ms },
