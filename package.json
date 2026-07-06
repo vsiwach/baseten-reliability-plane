@@ -1,0 +1,10 @@
+{
+  "name": "baseten-reliability-plane",
+  "version": "1.0.0",
+  "description": "Static operate console demonstrating the reliability-plane product thesis for Baseten. No build step; npm test runs the pure-simulator unit tests.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test 'tests/*.test.js'"
+  }
+}

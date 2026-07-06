@@ -1,0 +1,132 @@
+/* tokens.css — the one design language for every page on this site.
+   Inherited from the ai-native-pipeline demo console: dark ink, lime accent,
+   amber for warnings/holds, Archivo for prose, IBM Plex Mono for data. */
+
+@font-face{font-family:'Archivo';font-style:normal;font-weight:400;font-display:swap;src:url('../assets/fonts/archivo-latin-400-normal.woff2') format('woff2')}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:500;font-display:swap;src:url('../assets/fonts/archivo-latin-500-normal.woff2') format('woff2')}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:600;font-display:swap;src:url('../assets/fonts/archivo-latin-600-normal.woff2') format('woff2')}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:700;font-display:swap;src:url('../assets/fonts/archivo-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url('../assets/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url('../assets/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2')}
+
+:root{
+  --bg:#16160F; --panel:#1D1D15; --panel2:#2C2C24; --line:#3A3A32;
+  --txt:#F4F4EE; --mut:#A8A89E; --dim:#8A8A80;
+  --lime:#D5F26E; --amber:#E0A85B; --red:#E07A5B; --ink:#16160F;
+  --sans:'Archivo',-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;line-height:1.5}
+.mono{font-family:var(--mono)}
+a{color:var(--lime)}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+.wrap.narrow{max-width:860px}
+
+/* type */
+h1{font-size:22px;font-weight:600}
+h2{font-size:17px;font-weight:600}
+.brand{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--lime)}
+.lbl{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--dim);text-transform:uppercase}
+.note{font-size:12px;color:var(--dim);line-height:1.6}
+.muted{color:var(--mut)}
+
+/* cards */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.card h3{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--dim);letter-spacing:1px;margin-bottom:12px;text-transform:uppercase}
+
+/* buttons */
+button{font-family:var(--sans);font-size:13px;font-weight:600;border-radius:8px;padding:9px 15px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--mut)}
+button:hover{border-color:var(--dim);color:var(--txt)}
+button.primary{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+button.primary:hover{filter:brightness(1.06);color:var(--ink)}
+button.big{font-size:15px;padding:12px 20px}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.danger{border-color:var(--amber);color:var(--amber)}
+
+/* provenance chips — the honest-numbers rule made visible */
+.chip{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.5px;border-radius:4px;padding:1px 6px;vertical-align:middle;cursor:help}
+.chip.measured{border:1px solid var(--lime);color:var(--lime)}
+.chip.simulated{border:1px solid var(--line);color:var(--dim)}
+.chip.nodata{border:1px solid var(--amber);color:var(--amber)}
+
+/* control badges — the trust ladder made visible */
+.badge{display:inline-block;font-family:var(--mono);font-size:10px;border-radius:4px;padding:2px 8px;cursor:help}
+.badge.operated{background:var(--lime);color:var(--ink)}
+.badge.monitor{border:1px solid var(--line);color:var(--mut)}
+.badge.live{background:var(--lime);color:var(--ink)}
+.badge.idle{border:1px solid var(--line);color:var(--dim)}
+.badge.warn{border:1px solid var(--amber);color:var(--amber)}
+
+/* replica dots */
+.dots{display:flex;gap:4px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;border:1px solid var(--line)}
+.dot.warm{background:var(--lime);border-color:var(--lime)}
+.dot.cold{background:transparent}
+.dot.draining{background:var(--mut);border-color:var(--mut)}
+.dot.quarantined{background:var(--amber);border-color:var(--amber)}
+
+/* release / migration track */
+.track{display:flex;gap:6px;flex-wrap:wrap}
+.seg{flex:1 1 90px;text-align:center;padding:8px 4px;border-radius:6px;border:1px solid var(--line);font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--dim)}
+.seg.done{border-color:var(--lime);color:var(--lime)}
+.seg.active{background:var(--panel2);border-color:var(--lime);color:var(--lime);animation:pulse 1.6s infinite}
+.seg.fail{border-color:var(--amber);color:var(--amber)}
+@keyframes pulse{50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.seg.active{animation:none}}
+
+/* data tables */
+table.data{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px}
+table.data th{font-size:10px;letter-spacing:1px;color:var(--dim);text-align:left;font-weight:500;padding:6px 8px;border-bottom:1px solid var(--line);text-transform:uppercase}
+table.data td{padding:6px 8px;border-bottom:1px solid rgba(58,58,50,.5);color:var(--mut)}
+table.data td.num{text-align:right;color:var(--txt)}
+.table-scroll{overflow-x:auto}
+
+/* code / yaml blocks */
+pre.code{font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--mut);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;white-space:pre}
+pre.code .k{color:var(--lime)}
+
+/* top bar shared by console pages */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.topbar .tag{font-family:var(--mono);font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:5px;padding:5px 10px}
+.topbar nav{display:flex;gap:14px;align-items:center;font-size:13px}
+.topbar nav a{color:var(--mut);text-decoration:none}
+.topbar nav a:hover,.topbar nav a[aria-current]{color:var(--lime)}
+
+/* honesty banner */
+.honesty{font-family:var(--mono);font-size:10.5px;color:var(--dim);border:1px dashed var(--line);border-radius:6px;padding:6px 10px}
+.honesty b{color:var(--mut);font-weight:500}
+
+/* sparkline */
+svg.spark{display:block}
+svg.spark polyline{fill:none;stroke:var(--dim);stroke-width:1.5}
+svg.spark polyline.lime{stroke:var(--lime)}
+
+/* prose pages (docs) */
+.prose{font-size:14.5px;color:var(--mut);line-height:1.75}
+.prose h1{color:var(--txt);margin:26px 0 12px;font-size:24px}
+.prose h2{color:var(--txt);margin:26px 0 10px;font-size:18px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.prose h3{color:var(--txt);margin:22px 0 8px;font-size:15px}
+.prose p{margin:10px 0}
+.prose ul,.prose ol{margin:10px 0 10px 22px}
+.prose li{margin:5px 0}
+.prose strong{color:var(--txt);font-weight:600}
+.prose code{font-family:var(--mono);font-size:.9em;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.prose blockquote{border-left:2px solid var(--lime);padding-left:14px;color:var(--dim)}
+.prose hr{border:0;border-top:1px solid var(--line);margin:22px 0}
+.prose table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.prose th,.prose td{border:1px solid var(--line);padding:6px 10px;text-align:left}
+.prose th{color:var(--txt);font-weight:600}
+
+/* tooltips via title attr are fine; visible tooltip helper for badges */
+[data-tip]{position:relative}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{
+  content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);z-index:30;
+  width:max-content;max-width:280px;background:var(--panel2);color:var(--txt);
+  border:1px solid var(--line);border-radius:6px;padding:8px 10px;
+  font:11.5px/1.5 var(--sans);letter-spacing:0;text-transform:none;white-space:normal}
+
+@media(max-width:760px){.wrap{padding:20px 14px 40px}}
