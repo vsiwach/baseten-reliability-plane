@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Friction log — Baseten Reliability Plane</title>
+<title>Pain points — the friction log — Baseten Reliability Plane</title>
 <link rel="stylesheet" href="../css/tokens.css">
 </head>
 <body>
@@ -12,10 +12,19 @@
   <div class="brand">RELIABILITY PLANE</div>
   <nav aria-label="Site">
     <a href="../index.html">Home</a>
+    <a href="../onboard.html">Onboard</a>
+    <a href="strategy.html">Strategy</a>
+    <a href="prd.html">PRD</a>
     <a href="../operate.html">Console</a>
-    <a href="index.html" aria-current="page">Docs</a>
   </nav>
 </header>
+<nav class="flow" aria-label="The story in order">
+  <span class="cur">01 · PAIN POINTS</span>
+  <a href="../onboard.html">02 · THE TURN</a>
+  <a href="strategy.html">03 · STRATEGY</a>
+  <a href="prd.html">04 · PRD</a>
+  <a href="../operate.html">05 · THE MVP</a>
+</nav>
 <div class="honesty" style="margin-bottom:8px">16 first-hand Baseten entries, verbatim, each with committed evidence in <span class="mono">baseten-mvp/benchmarks/raw/</span> (key files copied to <a href="../data/recorded/PROVENANCE.md">data/recorded/</a>). Numbering preserved from the full 19-entry log in <a href="https://github.com/vsiwach/baseten-mvp">baseten-mvp</a>, which also covers the adjacent RunPod pool (#8, #9, #16 omitted here as off-topic).</div>
 <article class="prose">
 <h1>Friction Log — deploying on Baseten</h1>
@@ -55,7 +64,13 @@
 <h3>19. Metrics endpoint rate-limits a single dashboard user (429 on ~14 sequential GETs)</h3>
 <p><strong>Doing:</strong> console-live's live verification — two back-to-back full refreshes of one workspace (2 models → 7 GETs each: models + deployments + metrics), 2026-07-04. <strong>Happened:</strong> the second refresh tripped 429s on the metrics endpoint (beta). One human clicking Refresh twice is enough; there is no documented per-endpoint budget to design against (the page now pauses polling and backs off). <strong>Cost:</strong> a monitoring UI — the natural consumer of this endpoint — cannot poll a modest workspace at 60s intervals with headroom for a manual refresh; N deployments multiply it. <strong>Product could:</strong> publish the limit, return Retry-After consistently, and price GETs of pre-aggregated metrics far above one-per-second-ish.</p>
 </article>
-<p class="note" style="margin-top:26px"><a href="index.html">← All documents</a></p>
+<div class="nextcta">
+  <div>
+    <div class="lbl">NEXT · 02</div>
+    <div class="t">The turn — the same workspace onboarded cleanly through Baseten's own agent surface</div>
+  </div>
+  <a href="../onboard.html">See the agentic path →</a>
+</div>
 </div>
 </body>
 </html>

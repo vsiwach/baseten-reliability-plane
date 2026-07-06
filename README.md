@@ -14,6 +14,11 @@ measured from a committed recording or labeled simulated.
 drill (watch the guard refuse) → Inject regression (watch the canary roll
 back) → Migrate route (shadow → certify → promote, rollback held).
 
+**Read the story in order** (the site is one linear flow, no side hub):
+[pain points](docs/friction-log.html) → [the turn](onboard.html) →
+[strategy](docs/strategy.html) → [PRD](docs/prd.html) →
+[the MVP](operate.html).
+
 ## The story in three beats (why this repo looks like this)
 
 1. **We onboarded to Baseten by hand and logged every friction** — 16 Baseten

@@ -96,6 +96,20 @@ pre.code .k{color:var(--lime)}
 .topbar nav a{color:var(--mut);text-decoration:none}
 .topbar nav a:hover,.topbar nav a[aria-current]{color:var(--lime)}
 
+/* the story flow — one reading order, shown on every narrative page */
+.flow{display:flex;gap:6px;flex-wrap:wrap;margin:20px 0}
+.flow a,.flow span{flex:1 1 120px;text-align:center;padding:9px 6px;border-radius:6px;border:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--dim);text-decoration:none}
+.flow a:hover{border-color:var(--dim);color:var(--mut)}
+.flow .done{border-color:var(--line);color:var(--mut)}
+.flow .cur{background:var(--panel2);border-color:var(--lime);color:var(--lime)}
+.nextcta{display:flex;justify-content:space-between;align-items:center;gap:14px;border:1px solid var(--lime);border-radius:10px;padding:16px 18px;margin:30px 0 10px;flex-wrap:wrap}
+.nextcta .lbl{margin-bottom:4px}
+.nextcta .t{font-size:16px;font-weight:600;color:var(--txt)}
+.nextcta a{background:var(--lime);color:var(--ink);border-radius:8px;padding:11px 18px;font-weight:600;font-size:14px;text-decoration:none;white-space:nowrap}
+
+/* full-page document embed */
+object.docpdf{width:100%;height:78vh;border:1px solid var(--line);border-radius:10px;margin:14px 0}
+
 /* honesty banner */
 .honesty{font-family:var(--mono);font-size:10.5px;color:var(--dim);border:1px dashed var(--line);border-radius:6px;padding:6px 10px}
 .honesty b{color:var(--mut);font-weight:500}

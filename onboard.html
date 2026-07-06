@@ -28,14 +28,25 @@ svg text{font-family:'IBM Plex Mono',monospace}
   <div class="brand">RELIABILITY PLANE</div>
   <nav aria-label="Site">
     <a href="index.html">Home</a>
+    <a href="docs/strategy.html">Strategy</a>
+    <a href="docs/prd.html">PRD</a>
     <a href="operate.html">Console</a>
-    <a href="docs/index.html">Docs</a>
   </nav>
 </header>
 
-<h1>Onboard in one prompt</h1>
+<nav class="flow" aria-label="The story in order">
+  <a href="docs/friction-log.html">01 · PAIN POINTS</a>
+  <span class="cur">02 · THE TURN</span>
+  <a href="docs/strategy.html">03 · STRATEGY</a>
+  <a href="docs/prd.html">04 · PRD</a>
+  <a href="operate.html">05 · THE MVP</a>
+</nav>
+
+<h1>The turn — onboard in one prompt</h1>
 <p class="note" style="font-size:14px;margin-top:10px;max-width:680px">
-You don't install this product. You paste one prompt into the coding agent you already use —
+After six manual deploy attempts produced <a href="docs/friction-log.html">the pain points</a>, the
+same workspace onboarded cleanly through Baseten's own agent surface — that's the turn this page
+productizes. You don't install this product. You paste one prompt into the coding agent you already use —
 Claude Code, Cursor, any MCP client — and it attaches your existing endpoints <b>read-only</b>,
 baselines every route into your ledger, and proposes the first candidate.
 Nothing moves traffic until you've seen the evidence.</p>
@@ -138,7 +149,13 @@ MCP + skills path (evidence: <a href="docs/friction-log.html"><span class="mono"
 <div class="step"><div class="n">3</div><div><h2>A/B + shadow</h2><p>When the ledger finds a route that would hold its SLO cheaper on Baseten, a win-back card proposes a shadow: mirrored traffic, responses discarded, client untouched.</p></div></div>
 <div class="step"><div class="n">4</div><div><h2>Certify &amp; migrate</h2><p>Parity + SLO gates on the mirrored cohort, side by side. Traffic moves only on a passing certificate, and rollback stays armed for the route's life. A refusal is the system working.</p></div></div>
 
-<p class="note"><a href="operate.html">Open the console →</a> · <a href="index.html">Home</a></p>
+<div class="nextcta">
+  <div>
+    <div class="lbl">NEXT · 03</div>
+    <div class="t">The strategy — why the platform that fought us manually should sell this surface</div>
+  </div>
+  <a href="docs/strategy.html">Read the strategy →</a>
+</div>
 </div>
 </body>
 </html>
