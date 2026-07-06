@@ -32,6 +32,10 @@
 .tile .sub{font-size:10.5px;color:var(--dim);margin-top:3px}
 .tile svg.spark{margin-top:4px}
 
+/* who-acts-when line under panel headings */
+.who{font-size:12px;color:var(--mut);line-height:1.6;margin:-4px 0 12px;max-width:72ch}
+.who b{color:var(--txt)}
+
 /* monitor agent status line */
 .monitor{font-size:10.5px;color:var(--dim);line-height:1.9;border:1px dashed var(--line);border-radius:8px;padding:8px 12px;margin-bottom:12px}
 .monitor .mag{color:var(--lime)}

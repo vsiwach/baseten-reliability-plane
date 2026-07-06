@@ -61,6 +61,9 @@
       { id: 'chat-prod', pool: 'baseten-dedicated', rps: 2 },
       { id: 'voice-agent', pool: 'modal-dedicated', rps: 1 },   // monitored external route
     ];
+    // the routes the customer's SLO contract covers: declared on operated pools
+    const contractRoutes = new Set(
+      routes.filter(r => (byId[r.pool] || {}).control === 'operated').map(r => r.id));
 
     // ---- shared machinery ----------------------------------------------------
     let t = 0, seq = 0;
@@ -117,6 +120,13 @@
                   slo_met: ttft <= overrides.slo_ttft_ms && tpot <= slo.tpot_p99_ms };
       p.window.push(s);
       p.served_tokens += 40 + Math.floor(rand() * 120);
+      // the contract ledger: while an incident is live, every CUSTOMER route
+      // request (routes declared on operated pools) is scored against the
+      // gate — this is what "SLO contract intact" is computed from
+      if (drill && !drill.done && drill.contract && contractRoutes.has(route)) {
+        drill.contract.total += 1;
+        if (!s.slo_met) drill.contract.breached += 1;
+      }
       return s;
     }
 
@@ -167,8 +177,12 @@
 
     // ---- agent plumbing --------------------------------------------------------
     function signals() {
+      // detection burns fast: the agent judges breach over the FRESHEST 5s,
+      // not the full SLO window — every second of detection lag is degraded
+      // customer requests spending error budget
+      const BREACH_WINDOW_S = 5;
       const sigs = pools.map(p => {
-        const win = p.window;
+        const win = p.window.filter(s => s.t > t - BREACH_WINDOW_S);
         const breaches = win.filter(s => !s.slo_met).length;
         return {
           poolId: p.id, control: p.control,
@@ -242,7 +256,8 @@
       if (drill) return false;
       const p = byId['baseten-dedicated'];
       p.chaos = { latency_ms: 600, until: t + 12 };
-      drill = { kind: 'drill', pool: p.id, startedAt: t, evidence: null };
+      drill = { kind: 'drill', pool: p.id, startedAt: t, evidence: null,
+                contract: { breached: 0, total: 0 } };
       emit('chaos', `chaos: +600ms TTFT injected on ${p.id} for 12s (drill) — friction #10/#17 latency class`, 'warn');
       return true;
     }
@@ -260,7 +275,8 @@
       const p = byId['baseten-dedicated'];
       p.chaos = { latency_ms: 600, until: t + 12 };
       drill = { kind: 'rigged', pool: p.id, startedAt: t,
-                riggedPools: others.map(o => o.id), evidence: null };
+                riggedPools: others.map(o => o.id), evidence: null,
+                contract: { breached: 0, total: 0 } };
       emit('chaos', `chaos: +600ms TTFT injected on ${p.id} — it is now the LAST healthy operated pool`, 'warn');
       return true;
     }
@@ -274,6 +290,15 @@
       }
       guards.push('sticky quarantine: healthz alone never reinstates — verified probes did');
       guards.push('monitor-only pools untouched (structural, unit-tested)');
+      /* The contract verdict: degraded route requests during the incident,
+         priced against the monthly error budget the goodput target implies.
+         "Graceful" means the incident spent seconds of budget, not the
+         contract. */
+      const c = drill.contract;
+      const contractRps = routes.filter(r => contractRoutes.has(r.id))
+        .reduce((a, r) => a + r.rps, 0);
+      const monthlyBudget = Math.max(1,
+        Math.round((1 - slo.goodput_target) * contractRps * 86400 * 30));
       drill.evidence = {
         policy: `slo-policy: ttft_p99 ≤ ${overrides.slo_ttft_ms}ms, breach threshold ` +
           `${Math.round(agent.config.breach_rate_threshold * 100)}% over ≥${agent.config.min_samples} samples`,
@@ -282,6 +307,13 @@
         guards,
         allowlist: agentMod.ALLOWLIST,
         kind: drill.kind,
+        contract: {
+          breached: c.breached, total: c.total,
+          goodput_during: c.total ? Math.round((1 - c.breached / c.total) * 1000) / 10 : null,
+          budget_pct: Math.round(c.breached / monthlyBudget * 10000) / 100,
+          monthly_budget: monthlyBudget,
+          intact: c.breached < monthlyBudget,
+        },
       };
       // put the rigged pools back
       if (drill.riggedPools) {

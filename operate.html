@@ -41,9 +41,11 @@ Is Baseten more reliable for your workload — and can you prove it? Agents scor
 
 <div class="grid-main">
   <div class="col">
-    <!-- pool grid -->
+    <!-- agent 1: the monitor -->
     <div class="card" style="margin-bottom:12px">
-      <h3>CROSS-CLOUD SLO MONITOR — every attached cloud, scored against your declared SLO</h3>
+      <h3>AGENT 1 · CROSS-CLOUD SLO MONITOR</h3>
+      <p class="who">Always on, every attached cloud, read-only. It scores your declared benchmarks —
+      you never click anything here; you read it.</p>
       <div id="monitor" class="monitor mono" aria-live="polite"></div>
       <div id="pools"></div>
       <div class="slo-strip-card">
@@ -52,28 +54,35 @@ Is Baseten more reliable for your workload — and can you prove it? Agents scor
       </div>
     </div>
 
-    <!-- release + migration -->
-    <div class="card" style="margin-bottom:12px" id="panel-release">
+    <!-- agent 2: auto-remediation -->
+    <div class="card" style="margin-bottom:12px" id="panel-incidents">
+      <h3>AGENT 2 · AUTO-REMEDIATION — Baseten pools only</h3>
+      <p class="who">Activates itself when the monitor sees a pool degrade: quarantine → failover →
+      verify → reinstate, under a closed allowlist. The chaos buttons exist so you can watch it —
+      the goal is recovery <b>without ever breaching your SLO contract</b>.</p>
+      <div class="panel-actions">
+        <button id="btn-drill" class="primary" data-tip="Degrades cluster-1 with real chaos. The monitor flags the breach, the agent quarantines, traffic fails over to cluster-2 (watch the rps move), probes verify recovery, traffic returns — and the evidence card prices the incident against your error budget.">Inject chaos — degrade cluster-1</button>
+        <button id="btn-rigged" class="danger" data-tip="Takes every other operated pool out first, then degrades the last one. The agent must refuse to quarantine it — and say why." tabindex="0">Test the guard</button>
+      </div>
+      <div id="incident"></div>
+    </div>
+
+    <!-- your actions: migration, then release -->
+    <div class="card" style="margin-bottom:12px" id="panel-migration">
+      <h3>CERTIFIED MIGRATION — shadow → certify → promote</h3>
+      <p class="who"><b>You</b> click this — when the win-back evidence appears (or any time you
+      choose): move a route between clouds, reversibly.</p>
+      <div id="migration"></div>
+    </div>
+    <div class="card" id="panel-release">
       <h3>RELEASE — canary, gated by probes (F1.2)</h3>
+      <p class="who"><b>You</b> click this — when you ship a new model version or config to a
+      Baseten pool. Not for moving between clouds (that's migration); for changing what a pool runs.</p>
       <div id="rollout"></div>
       <div class="relctl">
         <button id="btn-rollout" class="primary">Start rollout</button>
         <button id="btn-regression" class="danger">Inject regression</button>
       </div>
-    </div>
-    <div class="card" style="margin-bottom:12px" id="panel-migration">
-      <h3>CERTIFIED MIGRATION — shadow → certify → promote (headline: IN, onto Baseten)</h3>
-      <div id="migration"></div>
-    </div>
-
-    <!-- auto-remediation -->
-    <div class="card" id="panel-incidents">
-      <h3>AUTO-REMEDIATION — the agent on your Baseten pools (closed allowlist, guards that refuse)</h3>
-      <div class="panel-actions">
-        <button id="btn-drill" class="primary" data-tip="Degrades cluster-1 with real chaos. The agent detects the SLO breach from live samples, quarantines, and traffic fails over to cluster-2 (watch the rps move) — then probes verify recovery and traffic returns. MTTR on the clock.">Test remediation (drill)</button>
-        <button id="btn-rigged" class="danger" data-tip="Takes every other operated pool out first, then degrades the last one. The agent must refuse to quarantine it — and say why." tabindex="0">Test the guard</button>
-      </div>
-      <div id="incident"></div>
     </div>
   </div>
 

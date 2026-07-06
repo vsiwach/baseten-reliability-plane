@@ -29,6 +29,10 @@ test('Run drill: quarantine → probes → reinstate → resolve, MTTR + evidenc
   assert.ok(drill.evidence.did.some(a => a.includes('reinstated')), 'agent reinstated');
   assert.deepStrictEqual(drill.evidence.allowlist,
     ['quarantine', 'probe', 'reinstate', 'resolve', 'escalate']);
+  const c = drill.evidence.contract;
+  assert.ok(c && c.total > 0, 'contract ledger scored the route during the incident');
+  assert.ok(c.intact, 'SLO contract intact — budget spent, contract held');
+  assert.ok(c.budget_pct < 1, `incident consumed a sliver of the monthly error budget (${c.budget_pct}%)`);
 });
 
 test('Rigged drill: the guard refuses to orphan the last healthy pool', () => {
