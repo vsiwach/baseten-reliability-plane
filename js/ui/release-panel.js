@@ -43,10 +43,11 @@
     const wbCard = wb ? `
       <div class="winback card" data-tip="">
         <h3>WIN-BACK — the ledger found a better home for a monitored route</h3>
-        <div class="wbline"><span class="mono">${esc(wb.route)}</span> on <span class="mono">${esc(wb.from)}</span> would hold its SLO
-          (p99 TTFT ${Math.round(wb.ttft_to)}ms ≤ ${wb.slo_ttft}ms) at
-          <b>${fmt.usd(wb.usd_to)}/Mtok vs ${fmt.usd(wb.usd_from)}/Mtok</b> on <span class="mono">${esc(wb.to)}</span>
-          — <b class="delta">−${wb.delta_pct}%</b> measured.</div>
+        <div class="wbline"><span class="mono">${esc(wb.route)}</span> runs on
+          <span class="mono">${esc(wb.from)}</span> today at <b>${fmt.usd(wb.usd_from)}/Mtok</b>.
+          On <span class="mono">${esc(wb.to)}</span> it would hold your SLO
+          (measured p99 TTFT ${Math.round(wb.ttft_to)}ms ≤ your ${wb.slo_ttft}ms gate)
+          at <b>${fmt.usd(wb.usd_to)}/Mtok</b> — <b class="delta">−${wb.delta_pct}%, measured</b>.</div>
         <button class="primary" data-act="migrate">Shadow it now →</button>
         <div class="guardrail mono">recommendation from rerunnable measured evidence · your ledger, exportable · external legs zero markup</div>
       </div>` : '';
