@@ -40,9 +40,9 @@
       },
       {
         name: 'failover-policy', title: 'Failover',
-        summary: 'Quarantined traffic spills to the Model API pool — priced with its real #10 hazard.',
+        summary: 'A quarantined pool\'s traffic fails over in declared order: your second Baseten cluster first, then the Model API pool (priced with its real #10 hazard).',
         controls: `
-          <label class="ctl"><input type="checkbox" id="spill-toggle" ${overrides.spill_enabled ? 'checked' : ''}> spill to <span class="mono">baseten-model-api</span></label>`,
+          <label class="ctl"><input type="checkbox" id="spill-toggle" ${overrides.spill_enabled ? 'checked' : ''}> failover per <span class="mono">spill_order</span> (cluster-2 → model-api)</label>`,
       },
     ];
     el.innerHTML = cards.map(c => `

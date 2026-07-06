@@ -250,9 +250,10 @@ API key, and install the Baseten agent skills (basetenlabs/baseten-skills).
   <h2>The console opens where you'd actually start.</h2>
   <div class="door">
     <p class="scen">Your setup is done: <b>your existing cloud is attached in shadow</b> (Modal,
-    read-only) and <b>your Baseten dedicated cluster is provisioned</b> (T4x8x32, Qwen3-8B).
-    Deploy your workload, watch the SLO evidence accumulate per cloud, and migrate traffic when
-    it holds — at the cheaper measured price.</p>
+    read-only) and <b>two Baseten clusters are provisioned</b> (T4x8x32 — serving + declared
+    failover, Qwen3-8B on both). Deploy your workload, watch the SLO evidence accumulate per
+    cloud, migrate traffic when it holds at the cheaper measured price — and if a cluster
+    degrades, watch remediation move traffic before your SLO breaks.</p>
     <a class="go" href="operate.html">Open the console →</a>
     <p class="thesis">The question it answers: <b>is Baseten more reliable for your workload — and
     can you prove it?</b> Agents score the benchmarks you declared on every cloud you run, and

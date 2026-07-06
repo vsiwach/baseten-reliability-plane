@@ -19,6 +19,14 @@ pools:
     cold_start_s: 148          # measured, BDN weights cache (friction #17; 360s before)
     cost_rank: 2
     tags: [reserved]
+  - id: baseten-dedicated-2
+    provider: baseten
+    instance: T4x8x32
+    region: us-west-2
+    control: operated
+    cold_start_s: 148          # same config as cluster 1
+    cost_rank: 3
+    tags: [reserved]           # the failover cluster the FailoverPolicy declares
   - id: baseten-model-api
     provider: baseten
     instance: serverless
@@ -34,17 +42,8 @@ pools:
     region: us-east-1
     control: monitor-only      # external cloud: telemetry in, no control out
     cold_start_s: 4            # simulated from Modal's published GPU-snapshot cold starts
-    cost_rank: 3
-    tags: []
-  - id: hipaa-eu-pool
-    provider: baseten
-    instance: L4x2x24
-    region: eu-west-1
-    control: operated
-    cold_start_s: 60           # simulated; exists to demo right-of-way (F1.4)
     cost_rank: 4
-    tags: [sensitive]
-    compliance_regimes: [hipaa]
+    tags: []
   # Worked example: attach any OpenAI-compatible endpoint read-only.
   # Uncomment, add url + read key in your own deployment of this console.
   # - id: runpod-community

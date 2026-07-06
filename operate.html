@@ -44,6 +44,7 @@ Is Baseten more reliable for your workload — and can you prove it? Agents scor
     <!-- pool grid -->
     <div class="card" style="margin-bottom:12px">
       <h3>CROSS-CLOUD SLO MONITOR — every attached cloud, scored against your declared SLO</h3>
+      <div id="monitor" class="monitor mono" aria-live="polite"></div>
       <div id="pools"></div>
       <div class="slo-strip-card">
         <h3 style="margin-top:14px">SLO vs SLA — what we measure against what they publish</h3>
@@ -69,7 +70,7 @@ Is Baseten more reliable for your workload — and can you prove it? Agents scor
     <div class="card" id="panel-incidents">
       <h3>AUTO-REMEDIATION — the agent on your Baseten pools (closed allowlist, guards that refuse)</h3>
       <div class="panel-actions">
-        <button id="btn-drill" class="primary" data-tip="Injects real chaos into a Baseten pool. The agent detects the SLO breach from live samples, quarantines, verifies with streaming probes, reinstates. MTTR on the clock.">Test remediation (drill)</button>
+        <button id="btn-drill" class="primary" data-tip="Degrades cluster-1 with real chaos. The agent detects the SLO breach from live samples, quarantines, and traffic fails over to cluster-2 (watch the rps move) — then probes verify recovery and traffic returns. MTTR on the clock.">Test remediation (drill)</button>
         <button id="btn-rigged" class="danger" data-tip="Takes every other operated pool out first, then degrades the last one. The agent must refuse to quarantine it — and say why." tabindex="0">Test the guard</button>
       </div>
       <div id="incident"></div>

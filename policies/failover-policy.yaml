@@ -1,11 +1,13 @@
-# Failover policy — where traffic spills when a pool is quarantined or down (F1.5).
-# Baseten default — override in the console (spill-target toggle).
+# Failover policy — where traffic goes when a pool is quarantined or down (F1.5).
+# Baseten default — override in the console (failover toggle).
 failover:
-  spill_target: baseten-model-api   # serverless Model APIs absorb quarantined traffic
+  # ordered: the second dedicated cluster takes over first (same SKU, same
+  # model, no cold surprise); the serverless Model APIs absorb anything left
+  spill_order: [baseten-dedicated-2, baseten-model-api]
   spill_on: [quarantine, pool_down, capacity_wait]
   drain_before_stop: true           # a draining replica stops only at 0 in-flight
 
-# Known hazards the placement scorer must price in — real failure classes
+# Known hazards the failover path must price in — real failure classes
 # from the friction log, never invented ones.
 hazards:
   - id: rate-limit-coupling

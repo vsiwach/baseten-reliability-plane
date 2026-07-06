@@ -64,6 +64,7 @@
 
     // ---- shared machinery ----------------------------------------------------
     let t = 0, seq = 0;
+    const lastServing = {};              // route.id -> pool actually serving it
     const events = [];
     const incidents = incidentsMod.createIncidentStore({ clock: () => t });
     const agent = agentMod.createAgentLogic(agentCfg);
@@ -86,6 +87,26 @@
     function effectiveTtft(p) {
       const chaosMs = p.chaos && t < p.chaos.until ? p.chaos.latency_ms : 0;
       return p.ttft_ms + chaosMs;
+    }
+
+    /* Failover as declared policy: when a route's pool is unusable, traffic
+       moves to the first usable pool in failover.spill_order (the second
+       Baseten cluster first, then the serverless Model APIs). This is what
+       keeps the SLO held while a pool is quarantined. */
+    function spillTarget(excludeId) {
+      const order = failover.spill_order || [];
+      for (const id of order) {
+        const p = byId[id];
+        if (p && p.id !== excludeId && operated(p) && usable(p)) return p;
+      }
+      return null;
+    }
+    function effectivePoolId(route) {
+      const p = byId[route.pool];
+      if (!p || usable(p) || !operated(p)) return route.pool;
+      if (!overrides.spill_enabled) return route.pool;   // policy off: degrade in place
+      const s = spillTarget(route.pool);
+      return s ? s.id : route.pool;
     }
 
     // ---- sampling ------------------------------------------------------------
@@ -177,11 +198,13 @@
           case 'act':
             if (incIds.has(e.poolId)) incidents.act(incIds.get(e.poolId), e.action, e.phase);
             break;
-          case 'quarantine':
+          case 'quarantine': {
             p.quarantined = true; setReplicas(p, 'quarantined');
-            emit('agent', `agent: quarantine ${e.poolId} — traffic spills to ` +
-              `${overrides.spill_enabled ? failover.spill_target : 'remaining pools'}`, 'warn');
+            const next = overrides.spill_enabled && spillTarget(e.poolId);
+            emit('agent', `agent: quarantine ${e.poolId} — traffic fails over to ` +
+              `${next ? next.id : 'remaining pools'} per failover-policy`, 'warn');
             break;
+          }
           case 'probe': {
             // streaming-TTFT probe against the sick pool, judged at the SLO gate
             const ms = effectiveTtft(p) * prng.latencyJitter(rand) * 0.8;
@@ -420,9 +443,21 @@
         emit('chaos', `chaos cleared on ${p.id}`, 'info');
       }
       trimWindows();
-      // route traffic: each route generates samples on its serving pool
+      // route traffic lands on the pool that ACTUALLY serves it: the declared
+      // pool, or the failover target while the declared pool is out. Traffic
+      // movement is an event — the operator watches it, never infers it.
       for (const r of routes) {
-        const p = byId[r.pool];
+        const eff = effectivePoolId(r);
+        if (lastServing[r.id] && lastServing[r.id] !== eff) {
+          if (eff !== r.pool) {
+            emit('failover', `failover: ${r.id} → ${eff} (${r.pool} out of rotation) — ` +
+              'per failover-policy spill_order, SLO held', 'warn');
+          } else {
+            emit('failover', `recovery: ${r.id} back on ${r.pool}`, 'ok');
+          }
+        }
+        lastServing[r.id] = eff;
+        const p = byId[eff];
         if (!p) continue;
         const n = Math.max(1, Math.round(r.rps * dt * (0.7 + rand() * 0.6)));
         for (let i = 0; i < n; i++) sample(p, r.id);
@@ -430,19 +465,15 @@
       // internal workload arrivals through the placement scorer
       const arrivals = rand() < 0.75 ? 1 : 2;
       for (let i = 0; i < arrivals; i++) {
-        const w = { id: `wl-${seq}-${i}`, region: 'us-east-1' };
-        if (rand() < 0.12) { w.compliance = 'hipaa'; w.region = 'eu-west-1'; }
-        placeWorkload(w);
+        placeWorkload({ id: `wl-${seq}-${i}`, region: 'us-east-1' });
       }
-      // spill traffic while a pool is quarantined
-      const quarantinedServing = pools.filter(p => p.quarantined && routes.some(r => r.pool === p.id));
-      if (overrides.spill_enabled) {
-        for (const qp of quarantinedServing) {
-          const spill = byId[failover.spill_target];
-          if (spill && usable(spill)) {
-            sample(spill, 'spill:' + qp.id);
-          }
-        }
+      // the monitor speaks: a periodic scored summary in the feed
+      if (t % 12 === 0 && pools.some(p => p.window.length)) {
+        const line = pools.filter(p => p.window.length).map(p => {
+          const p99 = costs.percentile(p.window.map(s => s.ttft), 99);
+          return `${p.id.replace('baseten-', 'bt-')} ${Math.round(p99)}ms ${p99 <= overrides.slo_ttft_ms ? '✓' : '✗'}`;
+        }).join(' · ');
+        emit('monitor', `monitor: p99 TTFT vs ${overrides.slo_ttft_ms}ms gate — ${line}`, 'info');
       }
       // agent
       const { sigs, healthy } = signals();
@@ -464,7 +495,8 @@
           compliance_regimes: p.compliance_regimes || [],
           replicas: p.replicas.map(r => r.state),
           quarantined: p.quarantined, healthy: p.healthy,
-          serving: routes.some(r => r.pool === p.id),
+          serving: routes.some(r => effectivePoolId(r) === p.id),
+          rps: Math.round(p.window.filter(s => s.t > t - 5).length / 5 * 10) / 10,
           usd_per_mtok: p.usd_per_mtok, usd_hr: p.usd_hr,
           cold_start_s: p.cold_start_s, cold_mitigation: p.cold_mitigation,
           sla: p.sla,
@@ -495,6 +527,24 @@
       get t() { return t; },
       // views
       heroMetrics, poolsView, winbackView,
+      /* The cross-cloud SLO monitor's own status: what it scores, against
+         which gates, and the per-cloud verdict — the agent made visible. */
+      monitorView: () => ({
+        gate_ttft_ms: overrides.slo_ttft_ms,
+        gate_tpot_ms: slo.tpot_p99_ms,
+        window_s: WINDOW_S,
+        pools: pools.map(p => {
+          const ttft = costs.percentile(p.window.map(s => s.ttft), 99);
+          const tpot = costs.percentile(p.window.map(s => s.tpot), 99);
+          return { id: p.id, control: p.control, samples: p.window.length,
+                   ttft_p99_ms: ttft,
+                   ok: ttft == null ? null
+                     : ttft <= overrides.slo_ttft_ms && tpot <= slo.tpot_p99_ms };
+        }),
+      }),
+      routesServingView: () => routes.map(r => ({
+        id: r.id, declared: r.pool, serving: effectivePoolId(r),
+      })),
       eventsView: () => [...events],
       sparksView: () => ({ goodput: [...sparks.goodput], ttft: [...sparks.ttft],
                            tpot: [...sparks.tpot], cost: [...sparks.cost] }),

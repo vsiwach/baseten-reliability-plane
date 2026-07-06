@@ -37,6 +37,7 @@
     });
     RP.ui.hero.render($('hero'), engine.heroMetrics(), engine.sparksView(),
       RP.recorded.mttr, engine.incidentsView().find(i => !i.live)?.mttr_s ?? null);
+    RP.ui.pools.renderMonitor($('monitor'), engine.monitorView());
     RP.ui.pools.render($('pools'), $('slo-strip'), engine.poolsView(), profiles);
     RP.ui.feed.render($('feed'), engine.eventsView(), { paused: feedPaused });
     RP.ui.releasePanel.renderRollout($('rollout'), engine.releaseView(), engine.overrides.canary_steps);

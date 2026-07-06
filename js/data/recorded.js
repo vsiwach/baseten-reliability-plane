@@ -54,16 +54,18 @@
         'Record real numbers with bench/ against any OpenAI-compatible Modal endpoint ' +
         'and drop the CSV in data/recorded/.',
     },
-    'hipaa-eu-pool': {
-      replicas: 2,
-      ttft_ms: 380, tpot_ms: 40,
-      usd_hr: 2.40,               // L4:2x24x96 $0.04002/min, published price
-      usd_per_mtok: 26.7,
-      cold_start_s: 60, cold_mitigation: 'none (demo pool)',
+    'baseten-dedicated-2': {
+      replicas: 4,
+      ttft_ms: 330, tpot_ms: 34,
+      usd_hr: 0.9024,             // same T4x8x32 SKU as cluster 1
+      usd_per_mtok: 8.53,
+      cold_start_s: 148, cold_mitigation: 'BDN weights cache (same config as cluster 1)',
       sla: '99.9% (published)',
-      source: 'simulated',
-      provenance: 'SIMULATED — exists to demo compliance right-of-way (F1.4) without pretending ' +
-        'to real HIPAA capacity. Instance price is Baseten’s published L4:2x24x96 rate.',
+      source: 'measured',
+      provenance: 'Second cluster of the same deployment config as baseten-dedicated (T4x8x32, ' +
+        'vLLM, Qwen3-8B-AWQ, BDN weights): operating point from the same committed deployment ' +
+        'logs (FRICTION_LOG #15/#17); $/Mtok = published $0.9024/hr ÷ measured 29.4 tok/s. ' +
+        'Declared as the failover cluster in failover-policy.yaml.',
     },
   };
 

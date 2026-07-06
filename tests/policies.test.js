@@ -38,18 +38,21 @@ test('yaml-lite parses release-policy (nested maps, inline lists, bools)', () =>
 test('yaml-lite parses placement-policy (block list of maps, comments)', () => {
   const p = yaml.parse(file('placement'));
   assert.deepStrictEqual(p.capacity_preference, ['reserved', 'cheapest', 'lowest_latency']);
-  assert.strictEqual(p.pools.length, 4, 'exactly the four fixed pools (RunPod row stays commented)');
+  assert.strictEqual(p.pools.length, 4, 'exactly the four pools (RunPod row stays commented)');
   const ids = p.pools.map(x => x.id);
-  assert.deepStrictEqual(ids, ['baseten-dedicated', 'baseten-model-api', 'modal-dedicated', 'hipaa-eu-pool']);
-  const hipaa = p.pools[3];
-  assert.deepStrictEqual(hipaa.tags, ['sensitive']);
-  assert.deepStrictEqual(hipaa.compliance_regimes, ['hipaa']);
-  assert.strictEqual(p.pools[2].control, 'monitor-only');
+  assert.deepStrictEqual(ids, ['baseten-dedicated', 'baseten-dedicated-2',
+                               'baseten-model-api', 'modal-dedicated']);
+  const cluster2 = p.pools[1];
+  assert.strictEqual(cluster2.control, 'operated');
+  assert.deepStrictEqual(cluster2.tags, ['reserved'], 'the declared failover cluster');
+  assert.strictEqual(p.pools[3].control, 'monitor-only');
 });
 
 test('yaml-lite parses failover-policy (folded multi-line values)', () => {
   const p = yaml.parse(file('failover'));
-  assert.strictEqual(p.failover.spill_target, 'baseten-model-api');
+  assert.deepStrictEqual(p.failover.spill_order,
+    ['baseten-dedicated-2', 'baseten-model-api'],
+    'second cluster first, serverless absorbs the rest');
   assert.strictEqual(p.hazards[0].friction, 10);
   assert.ok(p.hazards[0].note.includes('SAME budget'), 'folded lines joined');
 });

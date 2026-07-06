@@ -32,6 +32,14 @@
 .tile .sub{font-size:10.5px;color:var(--dim);margin-top:3px}
 .tile svg.spark{margin-top:4px}
 
+/* monitor agent status line */
+.monitor{font-size:10.5px;color:var(--dim);line-height:1.9;border:1px dashed var(--line);border-radius:8px;padding:8px 12px;margin-bottom:12px}
+.monitor .mag{color:var(--lime)}
+.monitor .mv{border:1px solid var(--line);border-radius:4px;padding:1px 7px;white-space:nowrap}
+.monitor .mv.ok{color:var(--lime);border-color:rgba(213,242,110,.4)}
+.monitor .mv.bad{color:var(--amber);border-color:var(--amber)}
+.monitor .mv.dim{color:var(--dim)}
+
 /* pool grid */
 #pools{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:640px){#pools{grid-template-columns:1fr}}
