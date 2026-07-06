@@ -29,22 +29,6 @@
 .theme .refs{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-top:10px}
 .actfoot{font-size:12.5px;color:var(--dim);margin-top:14px}
 
-/* act 2 — one click unfolds the prompt */
-.unfold{margin-top:22px;border:1px solid var(--lime);border-radius:12px;background:linear-gradient(0deg,rgba(213,242,110,.04),var(--panel) 65%)}
-.unfold summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px;padding:20px 22px}
-.unfold summary::-webkit-details-marker{display:none}
-.unfold summary .btn{background:var(--lime);color:var(--ink);border-radius:8px;padding:13px 22px;font-weight:700;font-size:15px;white-space:nowrap}
-.unfold summary .hint{font-size:13px;color:var(--mut);line-height:1.6}
-.unfold[open] summary .btn{background:transparent;color:var(--lime);border:1px solid var(--lime)}
-.unfold .body{padding:0 22px 22px}
-pre.prompt{font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--txt);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;white-space:pre}
-pre.prompt .c{color:var(--dim)}
-.proof{font-size:12.5px;color:var(--mut);line-height:1.7;border-left:2px solid var(--lime);padding-left:14px;margin-top:14px}
-.steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
-@media(max-width:760px){.steps4{grid-template-columns:1fr 1fr}}
-.steps4 div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--mut);line-height:1.5}
-.steps4 b{display:block;font-family:var(--mono);font-size:10px;color:var(--lime);margin-bottom:4px;font-weight:500}
-
 /* act 3 — the thought process */
 .chapters{display:flex;flex-direction:column;gap:10px;margin-top:22px}
 .chapter{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px;text-decoration:none}
@@ -54,15 +38,6 @@ pre.prompt .c{color:var(--dim)}
 .chapter .cd{font-size:12.5px;color:var(--mut);margin-top:3px;line-height:1.55}
 .chapter .go{font-family:var(--mono);font-size:12px;color:var(--lime);white-space:nowrap}
 @media(max-width:640px){.chapter{grid-template-columns:1fr}.chapter .go{display:none}}
-
-/* the mvp diagram */
-.mvpfig{margin-top:22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px}
-.mvpfig .fl{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--lime);margin-bottom:14px}
-svg text{font-family:'IBM Plex Mono',monospace}
-.commit{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-@media(max-width:760px){.commit{grid-template-columns:1fr}}
-.commit div{border:1px solid var(--line);border-radius:8px;padding:11px 13px;font-size:11.5px;color:var(--mut);line-height:1.6}
-.commit b{color:var(--txt)}
 
 /* act 4 — the console */
 .door{border:1px solid var(--lime);border-radius:12px;background:#101009;padding:26px;margin-top:22px}
@@ -87,6 +62,15 @@ footer.ev{margin-top:56px}
   moves only on that evidence.</p>
   <a class="down" href="#act1">↓ THE STORY — how we got here</a>
 </div>
+
+<nav class="flow" aria-label="The story in order" style="margin:0 0 8px">
+  <a href="docs/friction-log.html">01 · PAIN POINTS</a>
+  <a href="#act2">02 · THE TURN</a>
+  <a href="docs/strategy.html">03 · STRATEGY</a>
+  <a href="docs/prd.html">04 · PRD</a>
+  <a href="docs/mvp.html">05 · THE MVP</a>
+  <a href="operate.html">06 · THE CONSOLE</a>
+</nav>
 
 <!-- ACT 1 -->
 <section class="act" id="act1">
