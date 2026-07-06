@@ -44,15 +44,6 @@ POOLS = {
         "url": None,  # derived: model-{model_id}.api.baseten.co
         "usd_hr": 0.9024, "control": "operated",
     },
-    "baseten-dedicated-2": {
-        # the REAL second cluster: deployment-4 (qrpv7y0), truss-pushed from
-        # the same source as the working build — same model, BDN, pinned deps
-        "kind": "baseten-predict",
-        "model_id": os.environ.get("BT2_MODEL", "3ydn1e43"),
-        "deployment_id": os.environ.get("BT2_DEPLOYMENT", "w6p1dg5"),
-        "url": None,
-        "usd_hr": 0.9024, "control": "operated",
-    },
     "baseten-model-api": {
         # the failover target failover-policy declares: real Baseten
         # serverless capacity, zero provisioning. (The L4:2 pool sat 40min
@@ -74,7 +65,7 @@ ROUTES = {
     "voice-prod": {"declared": "baseten-dedicated", "rps": 1.0},
     "voice-agent": {"declared": "competitor-cloud", "rps": 0.5},
 }
-SPILL_ORDER = ["baseten-dedicated-2", "baseten-model-api"]   # failover-policy.yaml, verbatim
+SPILL_ORDER = ["baseten-model-api"]   # the dedicated twin lost the deploy lottery (see friction appendix)
 
 PROMPTS = [
     "In one sentence, what makes GPU inference latency hard to keep stable?",

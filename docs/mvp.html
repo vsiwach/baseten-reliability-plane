@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The MVP — Baseten Reliability Plane</title>
+<meta name="description" content="The operate console, explained: two agentic workflows (cross-cloud SLO monitoring, auto-remediation), one-prompt onboarding on Baseten's rails, the live-run evidence vs a competitor A100, and complete instructions to run it on real Baseten clusters.">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/doc.css">
+</head>
+<body>
+<div class="wrap">
+
+<header class="topbar">
+  <a class="brand" href="../index.html">RELIABILITY PLANE</a>
+</header>
+
+<nav class="flow" aria-label="The story in order">
+  <a href="friction-log.html">01 · PAIN POINTS</a>
+  <a href="../index.html#act2">02 · THE TURN</a>
+  <a href="strategy.html">03 · STRATEGY</a>
+  <a href="prd.html">04 · PRD</a>
+  <span class="cur">05 · THE MVP</span>
+  <a href="../operate.html">06 · THE CONSOLE</a>
+</nav>
+
+<div class="docbar">
+  <p class="note">The reference implementation of <a href="prd.html">the PRD</a> — every panel below names its F-number.
+  Code: <a href="https://github.com/vsiwach/baseten-reliability-plane">github.com/vsiwach/baseten-reliability-plane</a></p>
+</div>
+
+<article class="sheet">
+  <div class="masthead"><b>BASETEN</b><span>RELIABILITY PLANE · MVP · JULY 2026</span></div>
+  <div class="rule"></div>
+
+  <h1>One console,<br><span class="hl">two data planes</span></h1>
+  <p class="standfirst">The operate console for a latency-critical workload (a voice agent — the
+  first syllable must land within 500ms, every time). The same console runs in two modes:
+  a <b>hosted demo workspace</b> anyone can drive safely, and a <b>live mode</b> that operates
+  real Baseten clusters when the repo's bridge runs beside it. We ran the live mode ourselves —
+  §6 is what it measured.</p>
+
+  <div class="thesis">
+    <div class="tl">WHAT THE CONSOLE PROVES</div>
+    <p>Agents continuously score the benchmarks <b>you declared</b> on every cloud you run, and
+    traffic moves only on that evidence — shadow → certify → promote, rollback held, in either
+    direction. Reliability you can watch, priced in measured $/Mtok.</p>
+  </div>
+
+  <div class="byline"><span>VIKRAM SIWACH · JULY 2026</span><span>LIVE CONSOLE: BASETEN-RELIABILITY-PLANE.VERCEL.APP/OPERATE</span><span>LIVE-RUN EVIDENCE: DATA/RECORDED/LIVE_RUN_20260706.JSON</span></div>
+
+  <div class="sec"><span class="n">01</span><h2>Two data planes, one code path</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:18%">SURFACE</th><th style="width:44%">WHAT FEEDS IT</th><th>WHY IT EXISTS</th></tr></thead>
+    <tbody>
+      <tr><td><b>Demo workspace</b><span class="sub">the hosted console</span></td>
+        <td>A deterministic simulation anchored on this repo's committed measurements — same panels, same agent code, same gates. Every button is safe to press, chaos included.</td>
+        <td>A static public site can hold no secrets and must never expose real control (the chaos button deactivates a production deployment). Anyone evaluates the product surface in two minutes.</td></tr>
+      <tr><td><b>LIVE mode</b><span class="sub">bridge beside the console</span></td>
+        <td>A local control plane (<code>live/bridge.py</code>) that activates real Baseten deployments over the management API, streams real requests to every attached cloud, mirrors traffic for certification, and executes the agent's decisions on real pools.</td>
+        <td>Keys and control stay where credentials live. The console auto-detects the bridge and flips its badge to <code>LIVE</code> — identical UI, real consequences. Instructions in §7.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec"><span class="n">02</span><h2>What's on the screen</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:24%">PANEL</th><th style="width:56%">WHAT IT DOES</th><th>PRD</th></tr></thead>
+    <tbody>
+      <tr><td><b>Your setup</b> (stepper)</td><td>The console's narrative state: existing cloud attached in shadow → Baseten cluster provisioned → deploy your workload → watch evidence → migrate on evidence. Nothing is measured until <em>you</em> deploy — every number on screen is a consequence of an action you took. When evidence qualifies, step 5 flips to <b>YOUR MOVE</b> and directs the migrate click.</td><td><code>F0.4</code></td></tr>
+      <tr><td><b>Hero tiles</b></td><td>Goodput at SLO, p99 TTFT, p99 TPOT, blended $/Mtok (= instance $/hr ÷ measured tok/s — never estimated), MTTR. Empty windows say "awaiting workload," never zeros.</td><td><code>F0.4, F2.4</code></td></tr>
+      <tr><td><b>Agent 1 · cross-cloud SLO monitor</b></td><td>Always on, every attached cloud, read-only. A visible status strip shows what it scores, against which gates, with per-cloud verdicts; a scored summary lands in the decision feed. External pools carry a SHADOW badge and exactly one affordance: Migrate route.</td><td><code>F0.4, F2.5</code></td></tr>
+      <tr><td><b>Agent 2 · auto-remediation</b></td><td>Baseten pools only. Detects breach from live samples (never just healthz), quarantines, fails traffic over per declared <code>spill_order</code>, verifies recovery with streaming-TTFT probes, reinstates — under a closed allowlist with guards that refuse (never orphan the last pool; sticky quarantine; escalate once, then slow-poll). The incident ends with an SLO-contract verdict priced against your error budget.</td><td><code>F2.1, F2.2</code></td></tr>
+      <tr><td><b>Certified migration</b></td><td>The win-back card appears only when the ledger's live evidence shows a route would hold your SLO cheaper on Baseten. Shadow (mirrored traffic, responses discarded) → certify (side-by-side p99 + parity vs your gates) → promote. Rollback armed for the route's life; migrate-out is one click too.</td><td><code>F1.2, F2.5</code></td></tr>
+      <tr><td><b>Release</b></td><td>For shipping a new model version to a Baseten pool: canary steps gated by probes, auto-rollback, zero-drop drain. Not for moving between clouds — that's migration.</td><td><code>F1.2</code></td></tr>
+      <tr><td><b>Policy rail + decision feed</b></td><td>The four declared objects (SLO, Release, Placement, Failover) as YAML with live toggles — defaults-with-override. Every placement, failover, gate, and agent action lands in the feed with its reason.</td><td><code>F1.1–F1.5, F0.2</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec"><span class="n">03</span><h2>Workflow 1 — migrate on SLO evidence</h2><span class="meta">agentic monitoring · your click moves traffic</span></div>
+  <p>On the <a href="../operate.html">hosted console</a> (identical flow live):</p>
+  <div class="callouts">
+    <div class="callout"><b>1 · Deploy your workload</b> (step 3). Traffic starts flowing to both clouds — the same prompts, streamed. The monitor begins scoring p99 TTFT/TPOT, goodput, and measured $/Mtok per cloud against your declared 500ms voice gate.</div>
+    <div class="callout"><b>2 · Watch the evidence.</b> Pool cards fill with live rps and percentiles; the monitor strip shows per-cloud verdicts. The route ledger continuously prices every route on every eligible pool.</div>
+    <div class="callout"><b>3 · YOUR MOVE.</b> When a monitored route would hold your SLO at lower measured $/Mtok on Baseten, the win-back card appears (sticky — evidence doesn't flicker) and step 5 grows a "Migrate now" button. The recommendation is automatic; the movement is deliberately yours.</div>
+    <div class="callout"><b>4 · Shadow → certify → promote.</b> Mirrored requests fill a cohort; the certify gate judges it side-by-side against your gates; on PASS the route promotes — watch the rps physically move between pool cards. Rollback stays armed forever. A HOLD refusal is the system working.</div>
+  </div>
+
+  <div class="sec"><span class="n">04</span><h2>Workflow 2 — auto-remediation under chaos</h2><span class="meta">the agent acts · you only watch</span></div>
+  <div class="callouts">
+    <div class="callout"><b>1 · Press "Inject chaos — degrade cluster-1."</b> In the demo this degrades the pool's TTFT; live, it deactivates the real deployment via the management API.</div>
+    <div class="callout"><b>2 · The monitor flags the breach</b> from live samples within seconds (5-second burn window), and <b>Agent 2 quarantines</b> — an incident opens with the stopwatch running and a live error-budget line.</div>
+    <div class="callout"><b>3 · Failover per declared policy.</b> The quarantined pool's traffic moves down <code>spill_order</code> — watch the rps jump to the failover pool while the customer route stays green.</div>
+    <div class="callout"><b>4 · Verified recovery.</b> Streaming-TTFT probes judge the pool against your gate; two consecutive passes reinstate; traffic returns. The evidence card closes with the verdict: <b>SLO CONTRACT INTACT ✓</b> — degraded requests priced against the monthly error budget (recorded live runs of this loop: MTTR 8.8–9.2s).</div>
+    <div class="callout"><b>Try to break it:</b> "Test the guard" takes every other pool out first — the agent must refuse to quarantine the last one, and says why. Trust is earned by watching refusal.</div>
+  </div>
+
+  <div class="sec"><span class="n">05</span><h2>Onboarding rides Baseten's own rails</h2><span class="meta">why this is one prompt, not a project</span></div>
+  <p>Everything above assumes your clouds are attached — and that attachment is the strategy's
+  wedge (<a href="strategy.html">§5.2</a>): read-only monitoring first, control never asked for on
+  day one. Baseten already shipped the rails that make it one prompt: the <b>MCP server</b>
+  (workspace, deploys, autoscaling, logs — June 30, 2026) and <b>agent skills</b>. Credit where
+  due: Baseten made the platform agent-operable before this plane existed; this onboarding is the
+  product those rails deserve. We know the path works because we took it — the same workspace that
+  fought six manual deploys onboarded cleanly through it (<a href="../index.html#act2">the turn</a>).</p>
+  <figure class="fig">
+    <div class="fl">FIGURE 1 · THE PLANE IN ONE PICTURE — what the prompt sets up</div>
+    <img src="../assets/architecture.svg" alt="Architecture, left to right: your clouds (competitor in shadow, Baseten operated) feed the plane's workload runner; agent 1 scores SLOs across clouds, agent 2 remediates Baseten pools; the certify gate moves traffic to the cloud that earned it, reversibly." style="width:100%;border-radius:6px">
+  </figure>
+  <p>The prompt itself — paste into Claude Code, Cursor, or any MCP client:</p>
+  <div class="tw"><table><tbody><tr><td><pre style="font-family:var(--mono);font-size:10.5px;line-height:1.7;white-space:pre-wrap;margin:0">Connect the Baseten MCP server (https://api.baseten.co/mcp) with my workspace
+API key, and install the Baseten agent skills (basetenlabs/baseten-skills).
+
+1. ATTACH (read-only): register my OpenAI-compatible endpoints with a
+   read-scoped key each — do not request write access.
+2. BASELINE: 60-request streaming bench per route; record TTFT, tok/s,
+   status, billed cost. Compute p50/p99 TTFT, p99 TPOT, goodput at my SLO,
+   and measured $/Mtok. The results are my ledger — exportable, mine.
+3. PROPOSE: if a route would hold its SLO cheaper on Baseten capacity,
+   propose it as a SHADOW candidate with the side-by-side numbers.
+4. STOP. Do not move traffic. Promotion happens only through the certify
+   gate, with rollback held.</pre></td></tr></tbody></table></div>
+
+  <div class="sec"><span class="n">06</span><h2>What the live run measured — 2026-07-06</h2><span class="meta">real clusters, real traffic, real migration</span></div>
+  <p>We pointed the console at real infrastructure for one session: activated a Baseten T4
+  dedicated deployment (Qwen3-8B-AWQ, vLLM, BDN weights) and attached a competitor A100-80GB
+  serverless deployment of the same workload class, then streamed identical prompts to both.
+  The declared gate: p99 TTFT ≤ 500ms — the voice-agent contract.</p>
+  <div class="tw"><table>
+    <thead><tr><th>POOL</th><th>P50 TTFT</th><th>P99 TTFT VS GATE</th><th>TOK/S</th><th>$/MTOK MEASURED</th><th>COLD START</th></tr></thead>
+    <tbody>
+      <tr><td><b>baseten-dedicated</b><span class="sub">T4x8x32 · $0.90/hr</span></td>
+        <td>314ms</td><td><b>330ms ✓</b></td><td>47.2</td><td><b>$5.31</b></td><td>108.7s (BDN)</td></tr>
+      <tr><td><b>competitor-cloud</b><span class="sub">A100-80GB · ~$3.40/hr</span></td>
+        <td>256ms</td><td><b>22,863ms ✗</b></td><td>73.8</td><td>$12.79</td><td>31.0s</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>The reliability + cost story in one row pair:</b> the bigger, faster-per-token
+  A100 lost the workload. Its own cold boot landed inside the p99 window — a 23-second first
+  syllable is a dead voice call — while the smaller T4 held the gate with headroom at
+  <b>−58% measured $/Mtok</b> ($5.31 vs $12.79; $/Mtok = instance $/hr ÷ measured tok/s).
+  Score <em>your</em> benchmarks, not spec sheets.</div>
+  <p>The rest of the session, all real: the win-back card fired on this evidence; one click ran
+  <b>shadow (12 real mirrored pairs) → certify PASS → promoted</b>, rollback armed — and the
+  A100's request window drained to zero, the physical receipt of the move. A chaos drill then
+  became a genuine incident (the deactivate→reactivate cycle killed the production deployment
+  permanently) — and <b>declared failover held the customer route through a real, unplanned pool
+  loss</b>: 452 requests, 8 transition errors, SLO contract intact. The session also reproduced
+  friction #6, #12, #14 and #15 live, and discovered new ones (deploy nondeterminism: an
+  identical <code>truss push</code> succeeded once and failed twice within the hour, every failure
+  reason API-invisible). Raw evidence: <code>data/recorded/live_run_20260706.json</code>.</p>
+
+  <div class="sec"><span class="n">07</span><h2>Run it live on your Baseten workspace</h2></div>
+  <p>Any Baseten developer can reproduce the whole session. Keys never leave your machine; the
+  hosted site stays a demo. From the <a href="https://github.com/vsiwach/baseten-reliability-plane">repo</a>:</p>
+  <div class="tw"><table><tbody><tr><td><pre style="font-family:var(--mono);font-size:10.5px;line-height:1.7;white-space:pre-wrap;margin:0">git clone https://github.com/vsiwach/baseten-reliability-plane && cd baseten-reliability-plane
+export BASETEN_API_KEY=...        # management + inference auth (your workspace)
+# point the bridge at your deployments (defaults are ours):
+#   BT1_MODEL / BT1_DEPLOYMENT     — your dedicated cluster (production)
+#   COMPETITOR_URL                 — any OpenAI-compatible endpoint to attach in shadow
+python3 live/bridge.py            # terminal 1 — the control plane (127.0.0.1:8788)
+python3 -m http.server 8431       # terminal 2 — serve the console
+open http://localhost:8431/operate.html   # badge flips to LIVE</pre></td></tr></tbody></table></div>
+  <div class="callouts">
+    <div class="callout"><b>Drive it in order:</b> ▶ Deploy workload (real activations; cold starts measured and shown) → watch the monitor score your clouds → YOUR MOVE migrate when the evidence qualifies (Workflow 1) → Inject chaos for remediation (Workflow 2 — this deactivates a real deployment; the agent and declared failover carry the traffic).</div>
+    <div class="callout"><b>Cost:</b> a 20-minute session ≈ $2–3 across a T4 dedicated pool, the Model APIs failover, and an external A100. Everything scales to zero when idle; <code>live/README.md</code> has the explicit deactivate commands.</div>
+    <div class="callout"><b>Safety rails:</b> the bridge binds to 127.0.0.1 only; monitor-only pools structurally receive no control actions (same unit-tested rule as the sim); every request error is surfaced, never swallowed.</div>
+  </div>
+
+  <div class="sec"><span class="n">08</span><h2>Repo map</h2></div>
+  <p class="sources">js/sim/ — pure, seeded state machines (agent, release, migration, placement, costs; 48 node --test tests) ·
+  js/ui/ — renderers only · js/data/ — policy mirrors + measured anchors · policies/ — the four
+  declared YAML objects · data/recorded/ — committed evidence incl. live_run_20260706.json +
+  PROVENANCE.md · live/ — bridge.py + runbook · bench/ — stdlib evidence-refresh harness ·
+  docs/ — this document set. MIT.</p>
+
+  <div class="sheetfoot"><span>BASETEN · RELIABILITY PLANE MVP · JULY 2026</span><span>VIKRAM SIWACH · PREPARED FOR BASETEN</span></div>
+</article>
+
+<div class="nextcta" style="max-width:940px;margin-left:auto;margin-right:auto">
+  <div>
+    <div class="lbl">NEXT · 06</div>
+    <div class="t">The console — drive both workflows exactly as this document describes</div>
+  </div>
+  <a href="../operate.html">Open the console →</a>
+</div>
+
+</div>
+</body>
+</html>

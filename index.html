@@ -132,40 +132,15 @@ footer.ev{margin-top:56px}
   <p class="lede">Baseten had already shipped the rails: their MCP server and agent skills (June 30,
   2026). So onboarding stops being a form and becomes one click to your own coding agent.</p>
 
-  <details class="unfold">
-    <summary>
-      <span class="btn">▶ Onboard with one prompt</span>
-      <span class="hint">Click to unfold what the click does: your agent attaches your existing
-      clouds read-only, baselines every route, and proposes the first candidate — zero write
-      actions before you confirm.</span>
-    </summary>
-    <div class="body">
-      <div class="steps4">
-        <div><b>1 · ATTACH</b>your existing endpoints, read-only keys — any OpenAI-compatible endpoint, on any cloud</div>
-        <div><b>2 · BASELINE</b>real SLO percentiles + measured $/Mtok per route, into a ledger you own</div>
-        <div><b>3 · PROPOSE</b>the first shadow candidate, with side-by-side numbers</div>
-        <div><b>4 · STOP</b>no traffic moves until you've seen the evidence</div>
-      </div>
-      <pre class="prompt" id="pr"><span class="c"># Paste into Claude Code, Cursor, or any MCP client.</span>
-
-Connect the Baseten MCP server (https://api.baseten.co/mcp) with my workspace
-API key, and install the Baseten agent skills (basetenlabs/baseten-skills).
-
-1. ATTACH (read-only): register my OpenAI-compatible endpoints with a
-   read-scoped key each — do not request write access.
-2. BASELINE: 60-request streaming bench per route; record TTFT, tok/s,
-   status, billed cost. Compute p50/p99 TTFT, p99 TPOT, goodput at my SLO,
-   and measured $/Mtok. The results are my ledger — exportable, mine.
-3. PROPOSE: if a route would hold its SLO cheaper on Baseten capacity,
-   propose it as a SHADOW candidate with the side-by-side numbers.
-4. STOP. Do not move traffic. Promotion happens only through the certify
-   gate, with rollback held.</pre>
-      <button onclick="navigator.clipboard.writeText(document.getElementById('pr').innerText).then(()=>{this.textContent='✓ copied'})">Copy prompt</button>
-      <p class="proof">We know this works because we took this path: after six manual attempts
-      produced the friction log, this exact flow onboarded the same workspace cleanly —
-      evidence committed in <a href="data/recorded/PROVENANCE.md"><span class="mono">data/recorded/</span></a>.</p>
-    </div>
-  </details>
+  <div class="theme" style="max-width:760px">
+    <h3>One prompt did what six manual attempts couldn't</h3>
+    <p>We connected Baseten's MCP server and agent skills to our coding agent and asked it to
+    attach the workspace, baseline the routes, and deploy — and it just worked: the same
+    workspace, clean run, evidence committed. That experience is the turn: <b>if Baseten's own
+    rails make onboarding agent-easy, the missing product is what the agent onboards you
+    into.</b> The strategy makes that case next — and the exact onboarding prompt appears where
+    it belongs, in <a href="docs/mvp.html">the MVP doc</a>, after the thinking that explains it.</p>
+  </div>
   <p class="actfoot" style="margin-top:18px">Onboarding put us inside the workspace — and that's
   when we saw what was missing.</p>
 </section>
@@ -195,74 +170,16 @@ API key, and install the Baseten agent skills (basetenlabs/baseten-skills).
     </a>
   </div>
 
-  <div class="mvpfig" id="mvp">
-    <div class="fl">03·C — THE MVP: WHAT WE BUILT, IN ONE PICTURE</div>
-    <svg viewBox="0 0 900 330" role="img" aria-label="Architecture, left to right: your clouds feed the plane's load generator and SLO scorer; the incident agent monitors every cloud and remediates on Baseten; the certify gate moves traffic to whichever cloud earned it, reversibly.">
-      <text x="24" y="26" fill="#8A8A80" font-size="10" letter-spacing="1">YOUR CLOUDS</text>
-      <text x="300" y="26" fill="#D5F26E" font-size="10" letter-spacing="1">THE PLANE — AGENTS ON YOUR DECLARED SLO</text>
-      <text x="712" y="26" fill="#8A8A80" font-size="10" letter-spacing="1">OUTCOME</text>
-      <rect x="24" y="40" width="200" height="86" rx="8" fill="none" stroke="#3A3A32"/>
-      <text x="40" y="64" fill="#F4F4EE" font-size="11.5">competitor-cloud · qwen3</text>
-      <text x="40" y="84" fill="#E0A85B" font-size="9.5">SHADOW · attached read-only</text>
-      <text x="40" y="102" fill="#8A8A80" font-size="9.5">no control affordance, ever</text>
-      <rect x="24" y="140" width="200" height="86" rx="8" fill="none" stroke="#D5F26E"/>
-      <text x="40" y="164" fill="#F4F4EE" font-size="11.5">baseten-dedicated · qwen3</text>
-      <text x="40" y="184" fill="#C6E96A" font-size="9.5">OPERATED · your new cluster</text>
-      <text x="40" y="202" fill="#8A8A80" font-size="9.5">full policy + remediation surface</text>
-      <rect x="264" y="40" width="380" height="238" rx="8" fill="#16160F" stroke="#3A3A32"/>
-      <text x="286" y="68" fill="#F4F4EE" font-size="11.5">workload runner — same prompts, every cloud</text>
-      <text x="286" y="86" fill="#8A8A80" font-size="9.5">streaming TTFT/TPOT per request → your route ledger</text>
-      <text x="286" y="116" fill="#F4F4EE" font-size="11.5">cross-cloud SLO monitor (agent, feature 1)</text>
-      <text x="286" y="134" fill="#8A8A80" font-size="9.5">goodput · p99s · measured $/Mtok — scored per provider</text>
-      <text x="286" y="164" fill="#F4F4EE" font-size="11.5">auto-remediation (agent, feature 2 · Baseten-side)</text>
-      <text x="286" y="182" fill="#8A8A80" font-size="9.5">closed allowlist: quarantine·probe·reinstate·escalate</text>
-      <text x="286" y="200" fill="#8A8A80" font-size="9.5">guards: never orphan the last pool · MTTR 8.8s recorded</text>
-      <text x="286" y="230" fill="#F4F4EE" font-size="11.5">certify gate — parity + SLO, side by side</text>
-      <text x="286" y="248" fill="#8A8A80" font-size="9.5">traffic moves only on PASS · a refusal is the system working</text>
-      <rect x="684" y="40" width="192" height="238" rx="8" fill="none" stroke="#D5F26E" stroke-width="1.5"/>
-      <text x="702" y="70" fill="#C6E96A" font-size="11.5">traffic on the cloud</text>
-      <text x="702" y="88" fill="#C6E96A" font-size="11.5">that earned it</text>
-      <text x="702" y="118" fill="#F4F4EE" font-size="10">rollback held for the</text>
-      <text x="702" y="134" fill="#F4F4EE" font-size="10">route's life</text>
-      <text x="702" y="164" fill="#F4F4EE" font-size="10">⇄ migrate-out is one</text>
-      <text x="702" y="180" fill="#F4F4EE" font-size="10">click too — even when it</text>
-      <text x="702" y="196" fill="#F4F4EE" font-size="10">costs Baseten business.</text>
-      <text x="702" y="226" fill="#8A8A80" font-size="9.5">that reversibility is why</text>
-      <text x="702" y="242" fill="#8A8A80" font-size="9.5">attaching is safe</text>
-      <line x1="224" y1="83" x2="264" y2="110" stroke="#3A3A32"/>
-      <line x1="224" y1="183" x2="264" y2="160" stroke="#3A3A32"/>
-      <line x1="644" y1="159" x2="684" y2="159" stroke="#D5F26E"/>
-      <polygon points="682,154 682,164 690,159" fill="#D5F26E"/>
-      <text x="24" y="308" fill="#8A8A80" font-size="9" letter-spacing=".5">TRUST RAIL · shadow-only on external clouds · every number measured against a ledger you own and can export · zero markup on external legs · reversible by design</text>
-    </svg>
-    <div class="commit">
-      <div><b>One screen.</b> Goodput, p99 TTFT/TPOT, measured $/Mtok, MTTR — per cloud, against the SLO you declared. Glanceable in five seconds.</div>
-      <div><b>Two agent features.</b> The monitor scores every cloud; remediation acts only on Baseten pools, under a closed allowlist with guards that refuse.</div>
-      <div><b>One gate.</b> Shadow → certify → promote, rollback armed for the route's life — in either direction. Migration is the product; lock-in is not.</div>
-    </div>
-
-    <div class="fl" style="margin-top:26px">AND THEN WE RAN IT FOR REAL — LIVE RUN, 2026-07-06</div>
-    <p class="lede" style="margin-top:6px">The same console, pointed at real infrastructure for one
-    session: real activations over the management API, the same streaming prompts to both clouds,
-    and a certified migration on real mirrored traffic. What the run measured:</p>
-    <div class="table-scroll" style="margin-top:12px"><table class="data">
-      <thead><tr><th>pool</th><th>p50 TTFT</th><th>p99 TTFT vs 500ms gate</th><th>tok/s</th><th>$/Mtok measured</th><th>cold start</th></tr></thead>
-      <tbody>
-        <tr><td>baseten-dedicated <span style="color:var(--dim)">(T4, $0.90/hr)</span></td>
-          <td class="num">314ms</td><td class="num" style="color:var(--lime)">330ms ✓</td>
-          <td class="num">47.2</td><td class="num" style="color:var(--lime)">$5.31</td>
-          <td class="num">108.7s (BDN)</td></tr>
-        <tr><td>competitor-cloud <span style="color:var(--dim)">(A100-80GB, ~$3.40/hr)</span></td>
-          <td class="num">256ms</td><td class="num" style="color:var(--amber)">22,863ms ✗</td>
-          <td class="num">73.8</td><td class="num">$12.79</td>
-          <td class="num">31.0s</td></tr>
-      </tbody>
-    </table></div>
-    <div class="commit" style="margin-top:12px">
-      <div><b>The bigger GPU lost the workload.</b> The A100 is faster per token when warm — and its own cold boot blew the p99 to 23 seconds. For a voice agent that's a dead call. Score <em>your</em> benchmarks, not spec sheets.</div>
-      <div><b>−58% at equal SLO.</b> The win-back fired on live evidence; the operator clicked once; 12 real mirrored pairs passed the certify gate; the route promoted with rollback armed — and the A100's window drained to zero: the receipt.</div>
-      <div><b>The friction log reproduced itself.</b> A two-GPU SKU sat DEPLOYING for 40 minutes with no queue position (#6, live), and the BDN-vs-not cold-start gap was measured on the same model, same day (#17). Evidence: <span class="mono">data/recorded/live_run_20260706.json</span>.</div>
-    </div>
+  <div class="chapters" style="margin-top:10px" id="mvp">
+    <a class="chapter" href="docs/mvp.html">
+      <span class="cn">03·C</span>
+      <span><span class="ct">One console, two data planes — the MVP</span>
+      <span class="cd">The richest document: every console feature mapped to the PRD, both agentic
+      workflows step by step, the one-prompt onboarding on Baseten's rails, the live-run evidence
+      (Baseten p99 330ms ✓ at $5.31/Mtok vs a competitor A100's 23s ✗ at $12.79 — −58% at equal
+      SLO), and complete instructions to run it on real Baseten clusters.</span></span>
+      <span class="go">read →</span>
+    </a>
   </div>
 </section>
 
@@ -282,9 +199,9 @@ API key, and install the Baseten agent skills (basetenlabs/baseten-skills).
     traffic moves only on that evidence. In either direction — even when it costs Baseten
     business.</p>
     <p class="thesis" style="border-top:0;padding-top:0;margin-top:8px"><span class="mono" style="font-size:11px">
-    hosted = deterministic demo workspace, safe to click everything · LIVE mode = clone the repo,
-    run <span class="mono">live/bridge.py</span> with your API key — the same console then operates
-    real clouds (real activations, real traffic, real chaos).</span></p>
+    hosted = deterministic demo workspace, safe to click everything · want it on real Baseten
+    clusters? <a href="docs/mvp.html">the MVP doc</a> has the complete live instructions —
+    we ran it ourselves on 2026-07-06.</span></p>
   </div>
 </section>
 

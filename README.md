@@ -14,14 +14,51 @@ MCM turned inside out. It is a static, Vercel-deployable MVP: no framework, no
 build step, no backend, and a hard rule that every number on screen is either
 measured from a committed recording or labeled simulated.
 
-**Live tour:** open [`operate.html`](operate.html) → Run drill → Run rigged
-drill (watch the guard refuse) → Inject regression (watch the canary roll
-back) → Migrate route (shadow → certify → promote, rollback held).
+![Architecture — your clouds feed the plane; two agents score and remediate; the certify gate moves traffic to the cloud that earned it](assets/architecture.svg)
 
-**Read the story in order** (the site is one linear flow, no side hub):
+**Read the story in order** (one linear flow, no side hub):
 [pain points](docs/friction-log.html) → [the turn](index.html#act2) →
 [strategy](docs/strategy.html) → [PRD](docs/prd.html) →
-[the MVP](operate.html).
+[**the MVP doc**](docs/mvp.html) → [the console](operate.html).
+The MVP doc is the richest piece: every feature mapped to the PRD, both
+agentic workflows step by step, the live-run evidence, and complete
+instructions for running this against real Baseten clusters.
+
+## The two agentic workflows (how to drive them)
+
+**Workflow 1 — migrate on SLO evidence** (the monitor recommends, you move):
+open [the console](https://baseten-reliability-plane.vercel.app/operate) →
+**▶ Deploy workload** (step 3 — nothing is measured until your traffic flows)
+→ watch Agent 1's status strip score every cloud against the declared 500ms
+voice gate → when a monitored route would hold your SLO cheaper on Baseten,
+the win-back card appears and step 5 flips to **YOUR MOVE — Migrate now** →
+shadow (mirrored requests) → certify (side-by-side vs your gates) → promote,
+rollback armed for the route's life.
+
+**Workflow 2 — auto-remediation under chaos** (the agent acts, you watch):
+press **Inject chaos — degrade cluster-1** → Agent 2 detects the breach from
+live samples, quarantines, traffic fails over per declared `spill_order`
+(watch the rps move between pool cards), streaming probes verify recovery,
+reinstate — the evidence card closes with **SLO CONTRACT INTACT ✓** priced
+against your error budget. **Test the guard** proves it refuses to quarantine
+the last healthy pool.
+
+## We ran it live (2026-07-06) — real clusters, real migration
+
+| pool | p50 TTFT | p99 TTFT vs 500ms gate | tok/s | $/Mtok measured | cold start |
+| --- | --- | --- | --- | --- | --- |
+| baseten-dedicated (T4, $0.90/hr) | 314ms | **330ms ✓** | 47.2 | **$5.31** | 108.7s (BDN) |
+| competitor A100-80GB (~$3.40/hr) | 256ms | **22,863ms ✗** | 73.8 | $12.79 | 31.0s |
+
+The bigger GPU lost the workload: its own cold boot blew the p99 — a dead
+voice call — while the T4 held the gate at **−58% measured $/Mtok**. The
+win-back fired on this evidence, 12 real mirrored pairs passed the certify
+gate, the route promoted (rollback armed), and a chaos drill that became a
+*real* permanent pool loss was carried by declared failover — the customer
+route never went down. Raw evidence:
+[`data/recorded/live_run_20260706.json`](data/recorded/live_run_20260706.json);
+full write-up + run-it-yourself instructions: [docs/mvp.html](docs/mvp.html)
+and [live/README.md](live/README.md).
 
 ## The story in three beats (why this repo looks like this)
 
