@@ -17,7 +17,7 @@
 
 .sheet .thesis{background:#16160F;color:#F4F4EE;padding:18px 22px;margin:24px 0 0}
 .sheet .thesis .tl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#C6E96A;margin-bottom:7px}
-.sheet .thesis p{font-size:14px;line-height:1.55;font-weight:500;margin:0}
+.sheet .thesis p{font-size:14px;line-height:1.55;font-weight:500;margin:0;color:#F4F4EE}
 .sheet .thesis b{font-weight:700}
 
 .sheet .byline{display:flex;gap:22px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#8A8A80;margin:16px 0 0;flex-wrap:wrap}
@@ -30,6 +30,7 @@
 .sheet p{font-size:13px;line-height:1.62;margin:10px 0 0;color:#16160F}
 .sheet p.mut{color:#55554D}
 .sheet code{font-family:var(--mono);font-size:.92em;color:#6F8F1F}
+.sheet a{color:#6F8F1F;text-decoration:underline}
 
 .sheet .callout{font-size:13px;line-height:1.62;margin:12px 0 0;padding:10px 14px;background:#F2F2EA;border-left:3px solid #B7DB4A}
 .sheet .callouts .callout{margin-top:10px}
