@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documents — Baseten Reliability Plane</title>
+<meta name="description" content="The complete document set in reading order: strategy, PRD, due diligence, and the 19-entry friction log.">
+<link rel="stylesheet" href="../css/tokens.css">
+<style>
+.doc{margin-bottom:14px}
+.doc h2{font-size:16px}
+.doc h2 .order{font-family:var(--mono);color:var(--lime);font-size:12px;margin-right:8px}
+.doc p{font-size:13px;color:var(--mut);margin:6px 0 10px;line-height:1.6}
+.doc .links{display:flex;gap:12px;font-size:12.5px}
+object.pdf{width:100%;height:520px;border:1px solid var(--line);border-radius:8px;margin-top:10px}
+details summary{cursor:pointer;font-size:12.5px;color:var(--lime);padding:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap narrow">
+
+<header class="topbar">
+  <div class="brand">RELIABILITY PLANE</div>
+  <nav aria-label="Site">
+    <a href="../index.html">Home</a>
+    <a href="../operate.html">Console</a>
+    <a href="../onboard.html">Onboard</a>
+  </nav>
+</header>
+
+<h1>The document set</h1>
+<p class="note" style="font-size:13.5px;margin:10px 0 24px">In reading order. One product surface
+end to end: feature strategy → PRD → <a href="../operate.html">live MVP</a>.</p>
+
+<div class="doc card" id="strategy">
+  <h2><span class="order">01</span>Strategy — reliability as declared policy</h2>
+  <p>Why the reliability plane is Baseten's next act: MCM already enforces placement, failover,
+  releases and SLOs internally — the winning move is making them customer-declared policy objects,
+  operated by agents, sold as a productized SLA ladder.</p>
+  <div class="links"><a href="Baseten-Reliability-Strategy.pdf" download>Download PDF</a></div>
+  <details><summary>Read inline</summary>
+    <object class="pdf" data="Baseten-Reliability-Strategy.pdf" type="application/pdf" aria-label="Strategy PDF">
+      <p class="note">Your browser can't embed PDFs — <a href="Baseten-Reliability-Strategy.pdf">download it instead</a>.</p>
+    </object>
+  </details>
+</div>
+
+<div class="doc card" id="prd">
+  <h2><span class="order">02</span>PRD — the four policy objects + the operate console</h2>
+  <p>Feature-by-feature spec (F0–F2) for the surface this site implements: hero SLO tiles, the
+  policy rail, monitor-only vs operated pools, certified migration, the incident agent and its
+  closed allowlist. The console you can open here is its reference implementation.</p>
+  <div class="links"><a href="Baseten-Reliability-PRD.pdf" download>Download PDF</a> <a href="../operate.html">Open the implementation →</a></div>
+  <details><summary>Read inline</summary>
+    <object class="pdf" data="Baseten-Reliability-PRD.pdf" type="application/pdf" aria-label="PRD PDF">
+      <p class="note">Your browser can't embed PDFs — <a href="Baseten-Reliability-PRD.pdf">download it instead</a>.</p>
+    </object>
+  </details>
+</div>
+
+<div class="doc card" id="due-diligence">
+  <h2><span class="order">03</span>Due diligence — the evidence behind the thesis</h2>
+  <p>Every claim sourced: what Baseten has today (per capability), why the gap exists now, the
+  market check, and the honest counterarguments — including where the thesis might be wrong.</p>
+  <div class="links"><a href="due-diligence.html">Read →</a></div>
+</div>
+
+<div class="doc card" id="friction-log">
+  <h2><span class="order">04</span>Friction log — 19 first-hand entries</h2>
+  <p>The raw material: every friction hit deploying on Baseten (and the adjacent RunPod pool)
+  first-hand, each entry with committed evidence in <span class="mono">baseten-mvp/benchmarks/raw/</span>.
+  The simulator's failure classes come from here, cited by number — never invented.</p>
+  <div class="links"><a href="friction-log.html">Read →</a></div>
+</div>
+
+<p class="note" style="margin-top:24px"><a href="../index.html">← Home</a> · <a href="../operate.html">Open the console →</a></p>
+</div>
+</body>
+</html>

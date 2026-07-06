@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baseten Reliability Plane — declare reliability, let agents operate it</title>
+<meta name="description" content="One product surface end to end: feature strategy → PRD → live MVP. Four declared policy objects, an SLO-driven incident agent with recorded 8.8s MTTR, and certified cross-provider migration.">
+<link rel="stylesheet" href="css/tokens.css">
+<style>
+.heroblk{margin:40px 0 34px}
+.heroblk h1{font-size:34px;line-height:1.2;max-width:760px}
+.heroblk h1 em{color:var(--lime);font-style:normal}
+.heroblk .sub{font-size:16px;color:var(--mut);max-width:700px;margin-top:14px;line-height:1.65}
+.beats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0}
+@media(max-width:820px){.beats{grid-template-columns:1fr}}
+.beat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.beat .n{font-family:var(--mono);font-size:11px;color:var(--lime);letter-spacing:2px}
+.beat h2{font-size:16px;margin:8px 0 8px}
+.beat p{font-size:13px;color:var(--mut);line-height:1.65}
+.beat a{font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:26px 0 14px}
+@media(max-width:820px){.cards{grid-template-columns:1fr 1fr}}
+.cta{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;text-decoration:none;color:var(--txt)}
+.cta:hover{border-color:var(--lime)}
+.cta .t{font-weight:600;font-size:14px}
+.cta .d{font-size:12px;color:var(--dim);margin-top:6px;line-height:1.5}
+.cta.primary{border-color:var(--lime)}
+.cta.primary .t{color:var(--lime)}
+.shot{border:1px solid var(--line);border-radius:10px;width:100%;display:block;margin:10px 0}
+.aud{font-size:13.5px;color:var(--mut);border-left:2px solid var(--lime);padding-left:14px;line-height:1.7;margin:22px 0}
+</style>
+</head>
+<body>
+<div class="wrap narrow">
+
+<header class="topbar">
+  <div class="brand">RELIABILITY PLANE</div>
+  <nav aria-label="Site">
+    <a href="operate.html">Console</a>
+    <a href="onboard.html">Onboard</a>
+    <a href="docs/index.html">Docs</a>
+  </nav>
+</header>
+
+<div class="heroblk">
+  <h1>Reliability you <em>declare</em>. Agents that <em>operate</em> it. Evidence you can <em>rerun</em>.</h1>
+  <p class="sub">One product surface end to end — feature strategy → PRD → live MVP — for
+  Baseten's inference platform: four declared policy objects (Placement, Failover, Release, SLO),
+  one glanceable operate screen, an SLO-driven incident agent, and certified cross-provider migration.</p>
+</div>
+
+<div class="beats">
+  <div class="beat">
+    <div class="n">01 · THE FRICTION</div>
+    <h2>We onboarded to Baseten by hand and logged every friction</h2>
+    <p>19 entries, each with committed evidence: a deploy that sat 30 minutes in <span class="mono">DEPLOYING</span>
+    then died silently, un-triageable <span class="mono">BUILD_FAILED</span>s, a production pointer left on a dead
+    deploy, 429s with no <span class="mono">Retry-After</span>, metrics that arrive as silent nulls.</p>
+    <p><a href="docs/friction-log.html">Read the friction log →</a></p>
+  </div>
+  <div class="beat">
+    <div class="n">02 · THE TURN</div>
+    <h2>Then we onboarded again through Baseten's own agent surface — and the path worked</h2>
+    <p>The same workspace that fought us manually attached, baselined, and deployed through Baseten's
+    MCP server and agent skills. Evidence: <span class="mono">evals/mcp-deploy</span>, MCP-read metrics CSVs
+    committed in <span class="mono">data/recorded/</span>.</p>
+    <p><a href="onboard.html">See the agentic path →</a></p>
+  </div>
+  <div class="beat">
+    <div class="n">03 · THE PRODUCT</div>
+    <h2>This gives that same technique to the customer</h2>
+    <p>One prompt onboards you into a console that measures the SLOs you care about — p99 TTFT/TPOT,
+    goodput, measured $/Mtok — across every cloud you run on, and migrates traffic to Baseten
+    reliably (shadow → certify → promote, rollback held) when the evidence says so.</p>
+    <p><a href="operate.html">Open the console →</a></p>
+  </div>
+</div>
+
+<p class="aud">Built for teams <b>evaluating Baseten dedicated inference</b>, and <b>existing Baseten
+customers running multicloud portfolios</b>. Same console, same trust ladder:
+<span class="mono">observe → migrate → declare → operate</span>. Monitoring is read-only on external
+clouds; control features apply only to Baseten-side pools — this is a migration play, not a platform ask.</p>
+
+<a href="operate.html" aria-label="Open the operate console">
+  <img class="shot" src="assets/operate-screenshot.png" alt="The operate console: hero SLO tiles, four-pool multicloud grid, policy rail, placement feed, incident timeline with MTTR stopwatch" width="1200" height="760" loading="lazy">
+</a>
+
+<div class="cards">
+  <a class="cta" href="docs/index.html#strategy"><span class="t">Read the strategy</span><span class="d">Why reliability-as-declared-policy is Baseten's next act — MCM turned inside out.</span></a>
+  <a class="cta" href="docs/index.html#prd"><span class="t">Read the PRD</span><span class="d">The four policy objects and the operate console, feature by feature (F0–F2).</span></a>
+  <a class="cta" href="onboard.html"><span class="t">Onboard in one prompt</span><span class="d">Your coding agent + Baseten's MCP server attach your endpoints read-only.</span></a>
+  <a class="cta primary" href="operate.html"><span class="t">Open the console →</span><span class="d">Run a drill. Inject a regression. Migrate a route. Watch the gate refuse.</span></a>
+</div>
+
+<p class="honesty"><b>evidence:</b> every number on this site is measured or labeled simulated;
+the MTTR 8.8–9.2s is real — recorded live-incident runs in
+<a href="https://github.com/vsiwach/baseten-mvp">baseten-mvp</a>, copied verbatim with
+<a href="data/recorded/PROVENANCE.md">provenance</a>.</p>
+
+</div>
+</body>
+</html>

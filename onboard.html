@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Onboard in one prompt — Baseten Reliability Plane</title>
+<meta name="description" content="One prompt to your own coding agent attaches your endpoints read-only, baselines every route, and proposes the first shadow candidate — on Baseten's own MCP server and agent skills.">
+<link rel="stylesheet" href="css/tokens.css">
+<style>
+.step{display:grid;grid-template-columns:44px 1fr;gap:14px;margin-bottom:18px}
+.step .n{font-family:var(--mono);font-size:15px;color:var(--lime);border:1px solid var(--line);border-radius:8px;width:38px;height:38px;display:flex;align-items:center;justify-content:center}
+.step h2{font-size:15px;margin-bottom:6px}
+.step p{font-size:13px;color:var(--mut);line-height:1.65}
+.credit{border:1px solid var(--lime);border-radius:10px;background:linear-gradient(0deg,rgba(213,242,110,.06),var(--panel) 65%);padding:18px;margin:26px 0 10px}
+.credit .t{color:var(--lime);font-family:var(--mono);font-size:11px;letter-spacing:2px;margin-bottom:8px}
+.credit p{font-size:14px;line-height:1.65;color:var(--txt)}
+.proof{font-size:12.5px;color:var(--mut);line-height:1.7;border-left:2px solid var(--line);padding-left:14px;margin:14px 0 26px}
+pre.prompt{font-family:var(--mono);font-size:11.5px;line-height:1.75;color:var(--txt);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;white-space:pre}
+pre.prompt .c{color:var(--dim)}
+.copybar{display:flex;justify-content:space-between;align-items:center;margin:24px 0 8px}
+svg text{font-family:'IBM Plex Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap narrow">
+
+<header class="topbar">
+  <div class="brand">RELIABILITY PLANE</div>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="operate.html">Console</a>
+    <a href="docs/index.html">Docs</a>
+  </nav>
+</header>
+
+<h1>Onboard in one prompt</h1>
+<p class="note" style="font-size:14px;margin-top:10px;max-width:680px">
+You don't install this product. You paste one prompt into the coding agent you already use —
+Claude Code, Cursor, any MCP client — and it attaches your existing endpoints <b>read-only</b>,
+baselines every route into your ledger, and proposes the first candidate.
+Nothing moves traffic until you've seen the evidence.</p>
+
+<div class="copybar">
+  <h3 class="lbl">THE ONBOARDING PROMPT — copy, paste, done</h3>
+  <button id="copy" onclick="navigator.clipboard.writeText(document.getElementById('pr').innerText).then(()=>{this.textContent='✓ copied'})">Copy prompt</button>
+</div>
+<pre class="prompt" id="pr"><span class="c"># Paste into your coding agent (Claude Code / Cursor / any MCP client).</span>
+
+Connect the Baseten MCP server (https://api.baseten.co/mcp) with my workspace
+API key, and install the Baseten agent skills (basetenlabs/baseten-skills).
+
+Then onboard this workspace into a reliability ledger:
+
+1. ATTACH (read-only): register these OpenAI-compatible endpoints with a
+   read-scoped key each — do not request write access:
+     - https://model-XXXXX.api.baseten.co/environments/production/sync/v1   (baseten-dedicated)
+     - https://inference.baseten.co/v1                                      (baseten-model-api)
+     - https://myorg--qwen3-serve.modal.run/v1                              (modal-dedicated)
+
+2. BASELINE: for each route, run a 60-request streaming bench (mix of short
+   and long prompts) and record per request: TTFT, tokens/sec, status, and
+   billed cost where the API reports it. Compute p50/p99 TTFT, p99 TPOT,
+   goodput at my SLO (p99 TTFT ≤ 500ms, TPOT ≤ 50ms/tok), and measured
+   $/Mtok = instance $/hr ÷ measured tok/s (list price for dedicated,
+   billed cost for per-token APIs). Write one CSV per pool into
+   data/recorded/ — these are my ledger, exportable, mine.
+
+3. PROPOSE: rank every route × eligible-pool pair by measured $/Mtok at
+   equal-or-better SLO. If an external route would hold its SLO cheaper on
+   a Baseten pool, propose it as a SHADOW candidate (mirrored traffic,
+   responses discarded) — with the side-by-side numbers.
+
+4. STOP. Do not shift any traffic. Show me the ledger and the proposal;
+   promotion happens only through the certify gate, with rollback held.</pre>
+
+<h3 class="lbl" style="margin:30px 0 10px">HOW IT FLOWS — the PRD's Figure 2</h3>
+<svg viewBox="0 0 920 470" role="img" aria-label="Architecture: one prompt from the customer's coding agent rides Baseten's MCP server and agent skills into the reliability plane, which monitors external clouds read-only and operates Baseten pools; traffic moves only after the certify gate." style="width:100%;height:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px">
+  <!-- top: the 1 click -->
+  <rect x="330" y="18" width="260" height="46" rx="8" fill="none" stroke="#D5F26E"/>
+  <text x="460" y="37" text-anchor="middle" fill="#D5F26E" font-size="12">THE 1 CLICK</text>
+  <text x="460" y="53" text-anchor="middle" fill="#F4F4EE" font-size="11">your coding agent · one prompt</text>
+  <line x1="460" y1="64" x2="460" y2="92" stroke="#3A3A32"/>
+  <polygon points="456,90 464,90 460,98" fill="#3A3A32"/>
+  <!-- baseten rails -->
+  <rect x="250" y="98" width="420" height="52" rx="8" fill="#2C2C24" stroke="#D5F26E"/>
+  <text x="460" y="118" text-anchor="middle" fill="#D5F26E" font-size="12">★ BASETEN'S RAILS — MCP server + agent skills</text>
+  <text x="460" y="136" text-anchor="middle" fill="#A8A89E" font-size="10.5">workspace · deploys · autoscaling · logs · metrics — already shipped by Baseten</text>
+  <line x1="460" y1="150" x2="460" y2="178" stroke="#3A3A32"/>
+  <polygon points="456,176 464,176 460,184" fill="#3A3A32"/>
+  <!-- middle lanes -->
+  <rect x="24" y="184" width="200" height="176" rx="8" fill="none" stroke="#3A3A32"/>
+  <text x="124" y="208" text-anchor="middle" fill="#A8A89E" font-size="11">YOUR CURRENT CLOUDS</text>
+  <text x="124" y="228" text-anchor="middle" fill="#8A8A80" font-size="10">modal · runpod · anywhere</text>
+  <rect x="52" y="244" width="144" height="22" rx="4" fill="none" stroke="#3A3A32"/>
+  <text x="124" y="259" text-anchor="middle" fill="#E0A85B" font-size="10">MONITOR-ONLY</text>
+  <text x="124" y="290" text-anchor="middle" fill="#8A8A80" font-size="10">telemetry out, read key in —</text>
+  <text x="124" y="306" text-anchor="middle" fill="#8A8A80" font-size="10">no control surface, ever</text>
+  <rect x="264" y="184" width="392" height="176" rx="8" fill="#1D1D15" stroke="#3A3A32"/>
+  <text x="460" y="208" text-anchor="middle" fill="#F4F4EE" font-size="11">RELIABILITY PLANE</text>
+  <text x="284" y="238" fill="#A8A89E" font-size="10.5">1 · Attach — read-only, any OpenAI-compatible URL</text>
+  <text x="284" y="264" fill="#A8A89E" font-size="10.5">2 · Baseline — real SLO + measured $/Mtok → route ledger</text>
+  <text x="284" y="290" fill="#A8A89E" font-size="10.5">3 · A/B + shadow — mirrored traffic, responses discarded</text>
+  <text x="284" y="316" fill="#D5F26E" font-size="10.5">4 · Certify &amp; migrate — traffic moves ONLY after the gate</text>
+  <text x="284" y="342" fill="#8A8A80" font-size="9.5">policy objects: placement · failover · release · slo</text>
+  <rect x="696" y="184" width="200" height="176" rx="8" fill="none" stroke="#D5F26E"/>
+  <text x="796" y="208" text-anchor="middle" fill="#D5F26E" font-size="11">BASETEN</text>
+  <text x="796" y="228" text-anchor="middle" fill="#8A8A80" font-size="10">dedicated · model APIs</text>
+  <rect x="736" y="244" width="120" height="22" rx="4" fill="#D5F26E"/>
+  <text x="796" y="259" text-anchor="middle" fill="#16160F" font-size="10">OPERATED</text>
+  <text x="796" y="290" text-anchor="middle" fill="#8A8A80" font-size="10">declared policy, agent-run,</text>
+  <text x="796" y="306" text-anchor="middle" fill="#8A8A80" font-size="10">rollback always armed</text>
+  <line x1="224" y1="272" x2="264" y2="272" stroke="#3A3A32"/>
+  <polygon points="262,268 262,276 270,272" fill="#3A3A32"/>
+  <line x1="656" y1="272" x2="696" y2="272" stroke="#D5F26E"/>
+  <polygon points="694,268 694,276 702,272" fill="#D5F26E"/>
+  <text x="676" y="262" text-anchor="middle" fill="#D5F26E" font-size="9">certify</text>
+  <!-- trust rail -->
+  <rect x="24" y="390" width="872" height="52" rx="8" fill="none" stroke="#3A3A32" stroke-dasharray="4 4"/>
+  <text x="460" y="412" text-anchor="middle" fill="#A8A89E" font-size="10.5">THE TRUST RAIL</text>
+  <text x="460" y="430" text-anchor="middle" fill="#8A8A80" font-size="10">monitor-only · measured-or-labeled · ledger exportable · zero markup on external legs · rollback held for the route's life</text>
+</svg>
+
+<div class="credit">
+  <div class="t">★ CREDIT WHERE IT'S DUE</div>
+  <p>This onboarding rides on <b>Baseten's own agent surface</b> — the Baseten MCP server and
+  agent skills (shipped June 30, 2026) made the platform agent-operable before this plane existed.
+  Baseten built the rails; this MVP shows the product those rails deserve.</p>
+</div>
+<p class="proof">We know this path works because we took it — after six manual deploy attempts produced
+<a href="docs/friction-log.html">the friction log</a>, the same workspace onboarded cleanly through the
+MCP + skills path (evidence: <a href="docs/friction-log.html"><span class="mono">evals/mcp-deploy</span>,
+<span class="mono">benchmarks/raw/live_mcp_metrics_*</span></a>, copied into
+<span class="mono">data/recorded/</span> with provenance).</p>
+
+<h3 class="lbl" style="margin:10px 0 14px">WHAT HAPPENS NEXT</h3>
+<div class="step"><div class="n">1</div><div><h2>Attach — read-only</h2><p>Any OpenAI-compatible URL plus a read-scoped key. External clouds get a <span class="mono">MONITOR-ONLY</span> badge and zero control affordances — structurally, not cosmetically: the agent's decision core refuses actions on them (unit-tested).</p></div></div>
+<div class="step"><div class="n">2</div><div><h2>Baseline → route ledger</h2><p>Real SLO percentiles and measured $/Mtok per route, from streaming benches you can rerun (<span class="mono">bench/</span>). The ledger is yours and exports as CSV.</p></div></div>
+<div class="step"><div class="n">3</div><div><h2>A/B + shadow</h2><p>When the ledger finds a route that would hold its SLO cheaper on Baseten, a win-back card proposes a shadow: mirrored traffic, responses discarded, client untouched.</p></div></div>
+<div class="step"><div class="n">4</div><div><h2>Certify &amp; migrate</h2><p>Parity + SLO gates on the mirrored cohort, side by side. Traffic moves only on a passing certificate, and rollback stays armed for the route's life. A refusal is the system working.</p></div></div>
+
+<p class="note"><a href="operate.html">Open the console →</a> · <a href="index.html">Home</a></p>
+</div>
+</body>
+</html>

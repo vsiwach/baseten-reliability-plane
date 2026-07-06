@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Due diligence — Baseten Reliability Plane</title>
+<link rel="stylesheet" href="../css/tokens.css">
+</head>
+<body>
+<div class="wrap narrow">
+<header class="topbar">
+  <div class="brand">RELIABILITY PLANE</div>
+  <nav aria-label="Site">
+    <a href="../index.html">Home</a>
+    <a href="../operate.html">Console</a>
+    <a href="index.html" aria-current="page">Docs</a>
+  </nav>
+</header>
+
+<article class="prose">
+<h1>Due diligence — the evidence behind the Baseten strategy thesis</h1>
+<p><strong>Thesis under examination:</strong> <em>Reliability at Baseten is something the platform does FOR customers (MCM, internal). The winning move is making it something customers DECLARE and OPERATE — four policy objects (Placement, Failover, Release, SLO) enforced by MCM, operated by agents, sold as a productized 99.99% SLA.</em></p>
+<p>Every claim below carries its source. Items marked ⚠ could not be fully verified. Read §1–§4 as "what is true," §5 as "what we measured ourselves," §6 as "why the thesis follows," §7 as "why it might be wrong."</p>
+<hr>
+<h2>1 · What the job is actually asking for (verbatim)</h2>
+<p>From the live posting (jobs.ashbyhq.com/baseten — "Product Manager, Inference Platform," $165K–$330K + equity):</p>
+<ul>
+<li>"autoscaling to demand (up under load, down to zero when idle) and <strong>a single placement policy</strong> expressing region, compliance regime, and capacity preference, with <strong>compliance-bound workloads given right-of-way</strong> on sensitive capacity"</li>
+<li>"region-aware routing with <strong>multi-region / active-active and fallback as first-class policy</strong>"</li>
+<li>"the traffic-shifting that powers <strong>canary/shadow/A/B</strong>, warm-ups, drain, and probes"</li>
+<li>"a <strong>measurable decline in MTTR through self-serve incident management</strong>"</li>
+</ul>
+<p>The JD is written in policy language: "placement policy," "first-class policy," "right-of-way." Baseten is telling candidates the destination. The due-diligence question is whether the gap is real — i.e., whether these things genuinely don't exist as customer surfaces today.</p>
+<h2>2 · What Baseten has today (per capability, sourced)</h2>
+<p><strong>Autoscaling — mature, self-serve.</strong> Seven parameters (min/max replica, window, scale-down delay, max scale-down rate, concurrency target, target utilization), settable via UI or PATCH API; scale-to-zero; wake endpoints; request parking at the router. Source: docs.baseten.co/deployment/autoscaling/overview. Token-based autoscaling (<code>target_in_flight_tokens</code>) exists <strong>only on BIS-LLM</strong> (their v2 engine): docs.baseten.co/engines/performance-concepts/autoscaling-engines. Gap inside the strength: the docs' own traffic-pattern guide tells users to <strong>pre-warm via cron jobs hitting the autoscaling API</strong> (docs.baseten.co/deployment/autoscaling/traffic-patterns) — no scheduled or predictive scaling.</p>
+<p><strong>Placement / multi-region — capable engine, no customer surface.</strong> MCM (Multi-cloud Capacity Management) is a hub-and-spoke global scheduler over Kubernetes workload planes across "20+ clouds," doing placement on geography, priority, and customer constraints, with active-active across clusters and automatic scale-out of failing regions. Sources: baseten.co/blog/how-we-built-multi-cloud-capacity-management/, baseten.co/products/multi-cloud-capacity-management/. Two load-bearing facts from their own material:</p>
+<ul>
+<li>Region/provider-locking constraints are <strong>"manually encoded for each customer"</strong> (MCM blog). Placement is a ticket, not a policy object.</li>
+<li>Regional environments <strong>"require initial configuration by Baseten — contact support"</strong> and standard endpoints explicitly do NOT guarantee regional routing (docs.baseten.co/deployment/regional-environments).</li>
+</ul>
+<p><strong>Priority / right-of-way — nothing customer-visible.</strong> The only priority primitive found anywhere in the docs is "sync gets priority over async" (docs.baseten.co/concepts/howbasetenworks). No workload priority classes, no preemption of flexible workloads off compliance-eligible capacity, no notion of "sensitive capacity" pools.</p>
+<p><strong>Traffic shifting — promotion-scoped only.</strong> Rolling deployments ship (surge/unavailable modes, stabilization windows, pause/resume/cancel/force-complete) but are <strong>disabled by default, exist only during a promotion, and are not supported for Chains</strong> (docs.baseten.co/deployment/rolling-deployments). The environments docs <em>mention</em> "canary" and "shadow serving" as workflows but there is <strong>no standing traffic split, no shadow/mirror primitive, no A/B, no metric-gated auto-rollback</strong> anywhere in the docs index (verified against docs.baseten.co/llms.txt).</p>
+<p><strong>Warm-up / drain / probes — exists, conservatively tuned.</strong> Startup/readiness/liveness probes every 10s with a custom <code>is_healthy()</code> hook; but all three thresholds default to <strong>1800s (30 minutes)</strong> — docs call this "deliberately conservative" (docs.baseten.co/development/model/health-checks). A stuck replica can take traffic for up to 30 minutes unless the customer knows to tune it. No declarative warm-up traffic spec; no GPU state snapshots (Modal ships these: modal.com/blog/truly-serverless-gpus).</p>
+<p><strong>Observability — metrics yes, operations no.</strong> Dashboard metrics + Prometheus export (rate-limited to 6 req/min/org), logs with 7-day export, tracing, audit logs (docs.baseten.co/observability/<em>). <strong>No alerting, no SLO objects, no burn-rate rules, no paging integration</strong> — absence verified against the full docs index. No per-request cost attribution; request/response </em>size* serves as the token proxy on non-BIS deployments.</p>
+<p><strong>Incident management — status page and support.</strong> status.baseten.co, restart-tracking graph (June 2026 changelog), SSH into replicas. Customer-triggered remediation = liveness restarts + support tickets. No incident timeline per deployment, no self-serve remediations (replace replica / evacuate region / rollback) as products.</p>
+<p><strong>The SLA gap.</strong> Marketing: "99.99% uptime for mission-critical workloads," "no downtime, no manual failover" (MCM product page); a customer case study claims "100% uptime" (Rime). Contract: the published SLA commits to <strong>99.9% monthly</strong>, and explicitly <strong>excludes throttling/queuing on non-reserved capacity and anything beyond provisioned capacity</strong> (baseten.co/service-level-agreement/). The engineering appears to over-deliver the contract; nobody has productized the difference.</p>
+<h2>3 · Why this gap exists now (and why it's the next act, not a criticism)</h2>
+<p>Baseten built MCM because GPU scarcity forced them to aggregate capacity across clouds — SemiAnalysis reports on-demand rental capacity "sold out across virtually all GPU types" (March 2026, newsletter.semianalysis.com), CoWoS allocated through mid-2027. MCM was built operator-first because that's how you survive scarcity. The Series F blog itself frames what's next: revenue grew 20x, inference volume 40x in a year, &gt;1B calls/day (baseten.co/blog/announcing-our-series-f/; ⚠ "87 clusters / 18 clouds" appears only in secondary press, Baseten's own pages say "20+ clouds"). At that scale, white-glove placement (a human encoding constraints per customer) stops scaling — <strong>the manual encoding IS the bottleneck the PM is being hired to productize.</strong></p>
+<p>Meanwhile the engine layer is commoditizing upward: NVIDIA Dynamo 1.0 GA'd disaggregated serving and KV-aware routing as open source (developer.nvidia.com/blog/nvidia-dynamo-1-production-ready/), and the Kubernetes Gateway API Inference Extension is standardizing inference-aware routing (docs.nvidia.com/dynamo/integrations). When routing and disaggregation are open standards, differentiation moves up-stack — to placement, capacity, and reliability <em>policy</em>. Compliance regimes harden on the same clock: EU AI Act high-risk obligations fully applicable <strong>August 2, 2026</strong> (digital-strategy.ec.europa.eu), and Baseten's marquee vertical is healthcare (Abridge, OpenEvidence — Series F blog), which makes "compliance-bound right-of-way" existential for their own customer base, not hypothetical.</p>
+<h2>4 · Market check — is anyone already selling this?</h2>
+<ul>
+<li><strong>AWS Bedrock</strong> is the closest: cross-region inference profiles (geographic + global) that keep traffic inside a US/EU/APAC boundary with automatic burst routing (docs.aws.amazon.com/bedrock/.../cross-region-inference.html). But it's profile <em>selection</em>, not policy — no capacity preference, no priority classes, on-demand only.</li>
+<li><strong>Fireworks</strong> sells multi-region dedicated deployments with guaranteed capacity (fireworks.ai) — capacity as a SKU, not an operable policy.</li>
+<li><strong>Together</strong> — SLA-backed enterprise tiers, VPC options; no placement/failover policy surface.</li>
+<li><strong>Modal</strong> — best cold starts (GPU memory snapshots), fine autoscaling primitives; limited region control, no multi-cloud failover story.</li>
+<li><strong>SageMaker</strong> — has alarm-gated auto-rollback on deployments (the one release-engine feature ahead of Baseten), at the cost of heavy operational burden.</li>
+<li><strong>CoreWeave/Anyscale</strong> — substrate; the customer owns reliability policy themselves.</li>
+</ul>
+<p><strong>Conclusion:</strong> nobody sells a customer-operable placement/failover/release/SLO policy layer over multi-cloud capacity. Baseten is uniquely positioned because MCM already <em>enforces</em> all of this internally — the missing piece is the declaration surface and the console. This is "Cloud Infrastructure mid-2000s" (the JD's own analogy): AWS won that era by turning ops into APIs.</p>
+<h2>5 · First-hand evidence (your own committed artifacts)</h2>
+<p>This is what makes your application different from a well-researched outsider's. From <code>baseten-mvp</code> (github.com/vsiwach/baseten-mvp):</p>
+<p><strong>The friction log — 19 real entries, each with evidence</strong> (docs/FRICTION_LOG.md, raw CSVs in benchmarks/raw/):</p>
+<ul>
+<li><strong>#6</strong> First deploy sat 30 min in <code>DEPLOYING</code> with zero logs, then flipped <code>INACTIVE</code> — no "waiting for capacity," no queue position, no reason. You cannot tell slow from stuck from doomed.</li>
+<li><strong>#7</strong> T4 SKU bundles 16 GiB host RAM — an 8B model OOM-crash-loops on load; no pre-flight warning; the crash loop bills.</li>
+<li><strong>#12</strong> <code>BUILD_FAILED</code> with <strong>zero API-visible build logs</strong> — un-triageable programmatically; 3 dedicated-deploy attempts hit 3 distinct failure layers while Model APIs served the same workload the same day.</li>
+<li><strong>#15</strong> A failed first deploy <strong>held the production environment pointer</strong>; the healthy fix served 500s until a manual promote.</li>
+<li><strong>#10</strong> 28/40 requests 429'd at ~1.3 rps with <strong>no Retry-After, no X-RateLimit-\</strong>* headers; per-model-per-workspace limits secretly couple "independent" pools.</li>
+<li><strong>#17</strong> Adding one BDN <code>weights:</code> stanza cut cold start <strong>360s → 148s (2.4×, measured)</strong> — the fast path exists but nothing at push time suggests it.</li>
+<li><strong>#18/#19</strong> Deployment metrics lag 1–3 min and arrive as <strong>silent nulls</strong> (no data-completeness timestamp), and the metrics endpoint 429s a single dashboard user on ~14 sequential GETs — exactly the surface a reliability console must poll.</li>
+</ul>
+<p><strong>The MTTR result</strong> (README.md, learning/, benchmarks/): an SLO-driven incident agent — quarantine → streaming-TTFT probes → verified reinstatement, closed action allowlist, never-orphan-last-pool guard — took cross-deployment MTTR from <em>unbounded</em> (agent-off control never recovered) to <strong>8.8–9.2 seconds, measured and replayable</strong>, using only Baseten's public surfaces. That is the JD's MTTR bullet, demonstrated on their own platform before the first interview.</p>
+<p><strong>Signal they're already leaning agentic:</strong> Baseten shipped an MCP server + agent skill to manage workspaces from coding agents (changelog, June 30, 2026). The operate-console-with-agents concept extends a direction they've already committed to.</p>
+<h2>6 · Why the thesis follows</h2>
+<p>The logic chain, stated so it can be attacked:</p>
+<p>1. The JD's four outcome areas (placement, active-active/fallback, release engine, MTTR) are all <strong>policy-and-console problems</strong>, not engine problems — MCM already enforces the behaviors internally (§2). 2. What's missing in every case is the same thing: a <strong>customer-visible declaration + observation surface</strong> (placement is a ticket, failover is invisible, canary exists only inside promotions, incidents are support cases). 3. Nobody in the market sells that surface (§4); the nearest primitive (Bedrock profiles) is coarse; the engine layer below is commoditizing (§3) — so the surface is where durable differentiation lives. 4. Baseten's contract (99.9%, capacity-scoped) under-promises what MCM's engineering already delivers (99.99% claimed) — a productized SLA converts existing engineering into pricing power. 5. Your own evidence (§5) shows both the pain (friction log) and the payoff (9s MTTR) end-to-end.</p>
+<p>Hence the four policy objects — <strong>PlacementPolicy</strong> (region, compliance regime, capacity preference, right-of-way), <strong>FailoverPolicy</strong> (multi-region topology, fallback order, drills), <strong>ReleasePolicy</strong> (canary/shadow/A-B steps, probes, auto-rollback), <strong>SLOPolicy</strong> (targets that drive scaling, alerting, and agent remediation) — plus the <strong>Operate console</strong> where those policies and every enforcement decision are visible, and agents execute a closed allowlist of remediations against them.</p>
+<p><strong>Why the console is the right first feature (and the right MVP for your application):</strong> it's the surface where all four policies become legible; it demos in one screen; it exercises the exact API gaps your friction log documents (#12, #18, #19), so the prototype doubles as evidence; and it maps to the JD's "how customers configure and observe them — end to end."</p>
+<h2>7 · What could be wrong (counterarguments, honestly)</h2>
+<ul>
+<li><strong>"Customers don't want to operate; they pay Baseten so they don't have to."</strong> Partially true — the answer is defaults-with-override (policy objects ship with today's white-glove behavior as default), not raw knobs. The console must be glanceable, not a pager duty.</li>
+<li><strong>Enterprise-gating may be deliberate margin strategy</strong> (BIS-LLM advanced features are sales-gated). Making placement self-serve could cannibalize a high-touch sales motion. Counter: at 20x revenue growth the white-glove path is the bottleneck, and self-serve policy <em>expands</em> the reserved-capacity upsell (capacity preference is a buying surface).</li>
+<li><strong>MCM internals may not cleanly expose per-customer policy</strong> — hub-and-spoke schedulers built operator-first can resist multi-tenancy of intent. This is an engineering-cost risk the PRD must gate with a discovery phase.</li>
+<li><strong>The 99.99% SLA may be legally hard</strong> (capacity exclusions exist because GPU supply is genuinely scarce). Mitigation: SLA tiering bound to reserved capacity + declared multi-region policy — you earn the 9's you configured for.</li>
+<li>⚠ Evidence caveats: complaint corpus beyond your own friction log is thin (mostly competitor-authored comparisons); "87 clusters/18 clouds" unverified; Fireworks' rumored $15B round is press talk; the friction log is n=1 workspace on a non-enterprise tier — some walls (A10G org-gating, 10-replica cap) may not exist for paid enterprise accounts.</li>
+</ul>
+<hr>
+<p><em>Prepared July 6, 2026. Companion to: Modular Strategy/PRD (prior work), baseten-mvp friction log &amp; MTTR evidence, and the forthcoming Baseten Strategy + PRD + Operate-console build prompt.</em></p>
+</article>
+<p class="note" style="margin-top:26px"><a href="index.html">← All documents</a></p>
+</div>
+</body>
+</html>
