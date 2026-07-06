@@ -1,0 +1,88 @@
+{
+  "kind": "reliability-plane/live-run",
+  "recorded_at": "2026-07-06T18:05:00-04:00",
+  "workload": "voice-agent \u2014 streaming chat, Qwen 8B/14B class, ~1.5 rps aggregate, real requests",
+  "slo_gate": {
+    "ttft_p99_ms": 500,
+    "tpot_p99_ms": 80
+  },
+  "comparison_window_pre_migration": {
+    "note": "60s rolling window logged by the run watcher immediately before the operator's migrate click",
+    "baseten-dedicated": {
+      "ttft_p50_ms": 314,
+      "ttft_p99_ms": 330,
+      "tokps_p50": 47.2,
+      "samples": 11,
+      "errors": 0,
+      "usd_hr": 0.9024,
+      "usd_per_mtok": 5.31,
+      "gate": "PASS (330 <= 500)"
+    },
+    "competitor-cloud": {
+      "ttft_p50_ms": 256,
+      "ttft_p99_ms": 22863,
+      "tokps_p50": 73.8,
+      "samples": 11,
+      "errors": 0,
+      "usd_hr_class": 3.4,
+      "usd_per_mtok": 12.79,
+      "gate": "FAIL \u2014 its own cold boot landed in the p99 window (the voice kill condition)"
+    },
+    "delta": "-58% $/Mtok at equal-or-better SLO adherence"
+  },
+  "cold_starts_measured": {
+    "baseten-dedicated (BDN build qvm1v4e)": {
+      "activation_to_first_token_s": 108.7,
+      "warm_reverify_s": [
+        1.5,
+        1.6,
+        2.0
+      ]
+    },
+    "competitor-cloud (A100 serverless)": {
+      "wake_s": [
+        31.0,
+        0.9
+      ]
+    },
+    "baseten-dedicated-2 (pre-BDN build w52yvzr)": "in progress at capture \u2014 friction #17's 'before' case"
+  },
+  "migration": {
+    "route": "voice-agent",
+    "from": "competitor-cloud",
+    "to": "baseten-dedicated",
+    "shadow_pairs": 12,
+    "verdict": "PROMOTE_ELIGIBLE on the real mirrored cohort",
+    "outcome": "PROMOTED \u2014 rollback armed; serving change observed at the request level",
+    "post_migration_receipt": {
+      "competitor_window_samples": 0,
+      "note": "the drained window IS the receipt: the route physically left the A100"
+    }
+  },
+  "frictions_reproduced_live": {
+    "#6": "L4:2 (two-GPU SKU) sat DEPLOYING ~40min, no queue position, no ETA \u2014 benched for a second T4 deployment",
+    "#17": "BDN vs pre-BDN cold start measured on the same model, same day"
+  },
+  "status_at_capture": {
+    "traffic": {
+      "running": true,
+      "rps": 1.5,
+      "sent": 28,
+      "errors": 0
+    },
+    "deploy": {
+      "baseten-dedicated": {
+        "phase": "ready",
+        "cold_start_s": 2.0
+      },
+      "baseten-dedicated-2": {
+        "phase": "waking (cold start)",
+        "cold_start_s": null
+      },
+      "competitor-cloud": {
+        "phase": "waking (snapshot)",
+        "cold_start_s": null
+      }
+    }
+  }
+}

@@ -45,11 +45,14 @@ POOLS = {
         "usd_hr": 0.9024, "control": "operated",
     },
     "baseten-dedicated-2": {
+        # second deployment of the SAME working model (T4, pre-BDN build —
+        # its cold start demonstrates friction #17 live). The L4:2 pool sat
+        # in DEPLOYING for 40min (friction #6) and was benched.
         "kind": "baseten-predict",
-        "model_id": os.environ.get("BT2_MODEL", "qrj78jv3"),
-        "deployment_id": os.environ.get("BT2_DEPLOYMENT", "wno2dv0"),
+        "model_id": os.environ.get("BT2_MODEL", "3ydn1e43"),
+        "deployment_id": os.environ.get("BT2_DEPLOYMENT", "w52yvzr"),
         "url": None,
-        "usd_hr": 2.4012, "control": "operated",   # L4:2x24x96 published
+        "usd_hr": 0.9024, "control": "operated",   # T4x8x32 published
     },
     "competitor-cloud": {
         "kind": "openai",
@@ -111,9 +114,11 @@ def stream_request(pool_id, prompt, max_tokens=80, timeout=60):
     start = time.monotonic()
     ttft = None
     chars = 0
+    chunks = 0
     try:
         if p["kind"] == "baseten-predict":
-            url = f"https://model-{p['model_id']}.api.baseten.co/environments/production/predict"
+            path = p.get("path") or "/environments/production/predict"
+            url = f"https://model-{p['model_id']}.api.baseten.co{path}"
             body = {"messages": [{"role": "user", "content": prompt}],
                     "max_tokens": max_tokens, "stream": True}
             headers = {"Authorization": f"Api-Key {BASETEN_KEY}",
@@ -139,14 +144,26 @@ def stream_request(pool_id, prompt, max_tokens=80, timeout=60):
                         except Exception:
                             pass
                 else:
-                    chars += len(line)
+                    chunks += 1
         total = time.monotonic() - start
         decode_s = max(total - (ttft or 0) / 1000, 0.05)
-        tokps = (chars / 4) / decode_s if chars else None
+        if p["kind"] == "openai":
+            tokps = (chars / 4) / decode_s if chars else None
+        else:
+            tokps = chunks / decode_s if chunks > 1 else None
         return True, ttft, tokps
     except Exception as exc:
         ms = (time.monotonic() - start) * 1000
+        _err_event(pool_id, exc)
         return False, ms, None
+
+
+_last_err = {}
+def _err_event(pool_id, exc):
+    now = time.time()
+    if now - _last_err.get(pool_id, 0) > 30:
+        _last_err[pool_id] = now
+        emit("error", f"{pool_id}: request failed — {type(exc).__name__}: {str(exc)[:140]}")
 
 
 _model_cache = {}
@@ -160,7 +177,7 @@ def pool_state_model(pool_id):
             data = json.loads(r.read().decode())
         _model_cache[pool_id] = data["data"][0]["id"]
     except Exception:
-        _model_cache[pool_id] = "default"
+        return "default"     # NOT cached — retry on the next call
     return _model_cache[pool_id]
 
 
@@ -193,6 +210,19 @@ def deploy_baseten(pool_id):
             emit("deploy", f"{pool_id}: never went ACTIVE in 600s (last {status})")
             return
         time.sleep(5)
+    # non-production deployments answer on a deployment-scoped path — resolve
+    # it once by trying the documented forms (docs: /{deployment_id}/{endpoint})
+    if p["deployment_id"] and pool_id != "baseten-dedicated":
+        for cand in (f"/deployment/{p['deployment_id']}/predict",
+                     f"/{p['deployment_id']}/predict",
+                     f"/deployments/{p['deployment_id']}/predict"):
+            p["path"] = cand
+            ok, ms, _ = stream_request(pool_id, "path probe", max_tokens=2, timeout=90)
+            if ok:
+                emit("deploy", f"{pool_id}: invoke path resolved → {cand}")
+                break
+        else:
+            p["path"] = None
     # first real request proves serving end-to-end (and measures true cold path)
     ok, ms, _ = stream_request(pool_id, "warmup: say ok", max_tokens=4, timeout=300)
     cold = round(time.monotonic() - t0, 1)
@@ -227,10 +257,11 @@ def do_deploy():
     for th in threads:
         th.join()
     with state_lock:
-        state["deployed"] = all(
-            state["deploy"][p]["phase"] == "ready" for p in POOLS)
-    emit("deploy", "deploy complete" if state["deployed"]
-         else "deploy finished with failures — see per-pool phase")
+        # the PRIMARY serving pool gates the workload; the failover cluster
+        # joins whenever its (slow, 2-GPU SKU — friction #6) node lands
+        state["deployed"] = state["deploy"]["baseten-dedicated"]["phase"] == "ready"
+    emit("deploy", "deploy complete — primary serving; failover cluster joins when ready"
+         if state["deployed"] else "deploy finished with failures — see per-pool phase")
 
 
 # ---- traffic -----------------------------------------------------------------
@@ -255,6 +286,10 @@ def traffic_loop(route_id):
             emit("failover", f"{route_id}: {last_serving} → {pool}"
                  + ("" if pool == declared else " (failover per spill_order)"))
         last_serving = pool
+        if state["pools"][pool]["health"] == "down" and i % 5 != 0:
+            i += 1
+            time.sleep(2)
+            continue     # occasional probe only — recovery detection without hammering
         ok, ttft, tokps = stream_request(pool, PROMPTS[i % len(PROMPTS)])
         samples[pool].append({"t": time.time(), "ttft_ms": ttft,
                               "tokps": tokps, "ok": ok, "route": route_id})

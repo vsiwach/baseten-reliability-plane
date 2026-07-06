@@ -15,6 +15,7 @@ carries a `SIMULATED` chip.
 | `migration_drills.csv` | `benchmarks/raw/migration_drills.csv` | Graceful vs immediate migration drills: TTFT before/during/after, re-prefills, drain seconds. Grounds the zero-drop drain story on the release panel. |
 | `live_mcp_metrics_summary_20260704-191352.json` + `_191613.json` | `benchmarks/raw/` | The friction #18 pair, read through Baseten's own MCP server: the first call (~35s after traffic) returns counter 0.0 and all-null histograms; the same call ~2 min later returns the true values (counter 7.0, full quantiles). Why this console renders "no data yet (lag)" instead of zeros. |
 | `live_mcp_activation_20260704-191318.csv` | `benchmarks/raw/` | The agentic-onboarding proof: deployment activated and observed end-to-end through the Baseten MCP surface (evals/mcp-deploy in baseten-mvp). |
+| `live_run_20260706.json` | recorded by `live/bridge.py` during this repo's own live run, 2026-07-06 | The full live session: real activations (T4 activation→first-token 108.7s BDN; A100 wake 31.0s), the pre-migration side-by-side (Baseten p99 330ms ✓ at $5.31/Mtok vs A100 p99 22,863ms ✗ at $12.79/Mtok — −58% at equal SLO), and the certified migration on 12 real mirrored pairs (PROMOTE_ELIGIBLE → promoted, rollback armed). Console pool profiles anchor on this file. |
 
 Numbers quoted from the friction log (warm TTFT ~330ms, TPOT ~34ms/tok on
 `T4x8x32`; cold start 360.4s → 148.2s after the BDN `weights:` block) come from

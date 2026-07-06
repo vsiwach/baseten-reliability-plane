@@ -18,16 +18,16 @@
   const profiles = {
     'baseten-dedicated': {
       replicas: 4,
-      ttft_ms: 330, tpot_ms: 34,
+      ttft_ms: 315, tpot_ms: 21,
       usd_hr: 0.9024,             // T4x8x32 $0.01504/min, docs.baseten.co published price
-      usd_per_mtok: 8.53,         // 0.9024/hr ÷ 29.4 tok/s measured (TPOT 34 ms/tok)
-      cold_start_s: 148, cold_mitigation: 'BDN weights cache (360s before — friction #17)',
+      usd_per_mtok: 5.31,         // 0.9024/hr ÷ 47.2 tok/s MEASURED live 2026-07-06
+      cold_start_s: 109, cold_mitigation: 'BDN weights cache — activation→first-token 108.7s measured live',
       sla: '99.9% (published)',
       source: 'measured',
-      provenance: 'Live T4x8x32 vLLM Qwen3-8B-AWQ deployment (baseten-mvp deploy/baseten/vllm-truss, ' +
-        'deployment w52yvzr): warm TTFT ~330ms, TPOT ~34ms/tok from committed deployment logs ' +
-        '(FRICTION_LOG #15); cold start 148.2s post-BDN vs 360.4s (#17); $/Mtok = published ' +
-        '$0.9024/hr ÷ measured 29.4 tok/s.',
+      provenance: 'MEASURED — live run 2026-07-06 (data/recorded/live_run_20260706.json): the real ' +
+        'T4x8x32 vLLM Qwen3-8B-AWQ deployment under the voice workload. p50 TTFT 314ms, p99 330ms ' +
+        '(inside the 500ms gate), 47.2 tok/s → $0.9024/hr ÷ 47.2 = $5.31/Mtok. ' +
+        'Cold start: activation→first-token 108.7s (BDN; the pre-BDN build measured 360s-class).',
     },
     'baseten-model-api': {
       replicas: 4,
@@ -43,16 +43,17 @@
     },
     'competitor-cloud': {
       replicas: 2,
-      ttft_ms: 280, tpot_ms: 33,
-      usd_hr: 1.10,               // representative A10G on-demand rate
-      usd_per_mtok: 10.19,        // 1.10/hr ÷ 30 tok/s assumed at the same model family
-      cold_start_s: 4, cold_mitigation: 'GPU memory snapshot (provider-published)',
+      ttft_ms: 256, tpot_ms: 13.6,
+      usd_hr: 3.40,               // A100-80GB serverless class rate
+      usd_per_mtok: 12.79,        // 3.40/hr ÷ 73.8 tok/s MEASURED live 2026-07-06
+      cold_start_s: 31, cold_mitigation: 'serverless wake, measured 31.0s cold / 0.9s warm',
       sla: '99.95% (published)',
-      source: 'simulated',
-      provenance: 'SIMULATED — representative of a competitor dedicated cloud (no recorded ' +
-        'bench CSV in data/recorded/ yet). Record real numbers with bench/ against any ' +
-        'OpenAI-compatible endpoint and drop the CSV in data/recorded/ — the pool then ' +
-        'reads MEASURED.',
+      source: 'measured',
+      provenance: 'MEASURED — live run 2026-07-06 (data/recorded/live_run_20260706.json): ' +
+        'real streaming requests to an A100-80GB serverless deployment of the same workload. ' +
+        'p50 TTFT 256ms, 73.8 tok/s, $/Mtok = $3.40/hr class rate ÷ measured tok/s. ' +
+        'Its p99 hit 22,863ms — the provider’s own cold boot inside the window, the voice-agent ' +
+        'kill condition.',
     },
     'baseten-dedicated-2': {
       replicas: 4,

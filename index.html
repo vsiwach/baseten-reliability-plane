@@ -240,6 +240,29 @@ API key, and install the Baseten agent skills (basetenlabs/baseten-skills).
       <div><b>Two agent features.</b> The monitor scores every cloud; remediation acts only on Baseten pools, under a closed allowlist with guards that refuse.</div>
       <div><b>One gate.</b> Shadow → certify → promote, rollback armed for the route's life — in either direction. Migration is the product; lock-in is not.</div>
     </div>
+
+    <div class="fl" style="margin-top:26px">AND THEN WE RAN IT FOR REAL — LIVE RUN, 2026-07-06</div>
+    <p class="lede" style="margin-top:6px">The same console, pointed at real infrastructure for one
+    session: real activations over the management API, the same streaming prompts to both clouds,
+    and a certified migration on real mirrored traffic. What the run measured:</p>
+    <div class="table-scroll" style="margin-top:12px"><table class="data">
+      <thead><tr><th>pool</th><th>p50 TTFT</th><th>p99 TTFT vs 500ms gate</th><th>tok/s</th><th>$/Mtok measured</th><th>cold start</th></tr></thead>
+      <tbody>
+        <tr><td>baseten-dedicated <span style="color:var(--dim)">(T4, $0.90/hr)</span></td>
+          <td class="num">314ms</td><td class="num" style="color:var(--lime)">330ms ✓</td>
+          <td class="num">47.2</td><td class="num" style="color:var(--lime)">$5.31</td>
+          <td class="num">108.7s (BDN)</td></tr>
+        <tr><td>competitor-cloud <span style="color:var(--dim)">(A100-80GB, ~$3.40/hr)</span></td>
+          <td class="num">256ms</td><td class="num" style="color:var(--amber)">22,863ms ✗</td>
+          <td class="num">73.8</td><td class="num">$12.79</td>
+          <td class="num">31.0s</td></tr>
+      </tbody>
+    </table></div>
+    <div class="commit" style="margin-top:12px">
+      <div><b>The bigger GPU lost the workload.</b> The A100 is faster per token when warm — and its own cold boot blew the p99 to 23 seconds. For a voice agent that's a dead call. Score <em>your</em> benchmarks, not spec sheets.</div>
+      <div><b>−58% at equal SLO.</b> The win-back fired on live evidence; the operator clicked once; 12 real mirrored pairs passed the certify gate; the route promoted with rollback armed — and the A100's window drained to zero: the receipt.</div>
+      <div><b>The friction log reproduced itself.</b> A two-GPU SKU sat DEPLOYING for 40 minutes with no queue position (#6, live), and the BDN-vs-not cold-start gap was measured on the same model, same day (#17). Evidence: <span class="mono">data/recorded/live_run_20260706.json</span>.</div>
+    </div>
   </div>
 </section>
 
