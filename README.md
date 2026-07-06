@@ -16,10 +16,11 @@ back) → Migrate route (shadow → certify → promote, rollback held).
 
 ## The story in three beats (why this repo looks like this)
 
-1. **We onboarded to Baseten by hand and logged every friction** — 19 entries
-   with committed evidence ([docs/friction-log.html](docs/friction-log.html)):
+1. **We onboarded to Baseten by hand and logged every friction** — 16 Baseten
+   entries with committed evidence ([docs/friction-log.html](docs/friction-log.html)):
    silent capacity waits, un-triageable build failures, a production pointer
-   left on a dead deploy.
+   left on a dead deploy. (The full 19-entry log in baseten-mvp also covers an
+   adjacent RunPod pool; those entries are off-topic here.)
 2. **Then we onboarded again through Baseten's own MCP server and agent
    skills — agentically — and the path worked** (evidence: `evals/mcp-deploy`
    in [baseten-mvp](https://github.com/vsiwach/baseten-mvp), MCP-read metrics
