@@ -43,7 +43,7 @@ reinstate — the evidence card closes with **SLO CONTRACT INTACT ✓** priced
 against your error budget. **Test the guard** proves it refuses to quarantine
 the last healthy pool.
 
-## We ran it live (2026-07-06) — real clusters, real migration
+## I ran it live (2026-07-06) — real clusters, real migration
 
 | pool | p50 TTFT | p99 TTFT vs 500ms gate | tok/s | $/Mtok measured | cold start |
 | --- | --- | --- | --- | --- | --- |
@@ -62,12 +62,12 @@ and [live/README.md](live/README.md).
 
 ## The story in three beats (why this repo looks like this)
 
-1. **We onboarded to Baseten by hand and logged every friction** — 16 Baseten
+1. **I onboarded to Baseten by hand and logged every friction** — 16 Baseten
    entries with committed evidence ([docs/friction-log.html](docs/friction-log.html)):
    silent capacity waits, un-triageable build failures, a production pointer
    left on a dead deploy. (The full 19-entry log in baseten-mvp also covers an
    adjacent RunPod pool; those entries are off-topic here.)
-2. **Then we onboarded again through Baseten's own MCP server and agent
+2. **Then I onboarded again through Baseten's own MCP server and agent
    skills — agentically — and the path worked** (evidence: `evals/mcp-deploy`
    in [baseten-mvp](https://github.com/vsiwach/baseten-mvp), MCP-read metrics
    CSVs in [`data/recorded/`](data/recorded/PROVENANCE.md)).
@@ -115,7 +115,9 @@ Measured (chip → tooltip → committed file; see
 - **baseten-dedicated** (T4x8x32, vLLM, Qwen3-8B-AWQ): warm TTFT ~330ms, TPOT
   ~34ms/tok, cold start 360.4s → 148.2s after one BDN `weights:` stanza
   (friction #15/#17); $/Mtok = published $0.9024/hr ÷ measured 29.4 tok/s =
-  **$8.53**.
+  **$8.53**. (The 2026-07-06 live run above measured higher warm throughput —
+  47.2 tok/s → **$5.31/Mtok**; both are committed. The figure moves with
+  measured tok/s, which is why every $/Mtok on screen carries its run.)
 - **baseten-model-api**: p50 TTFT 299ms, billed **$2.78/Mtok** (glm-4.7 sweep
   CSVs); the #10 hazard (28/40 requests 429'd, no `Retry-After`) is rendered
   as a placement risk on its pool card.
@@ -153,7 +155,7 @@ would ship: console anywhere, control plane where credentials live.
 ```bash
 open operate.html                 # works from file:// — no server needed
 # or: python3 -m http.server 8431   → http://localhost:8431/operate.html
-npm test                          # 46 unit tests for the pure sim core
+npm test                          # 48 unit tests for the pure sim core
 ```
 
 Useful URLs: `operate.html?seed=42` (any seed is deterministic — same seed,
