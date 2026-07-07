@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # >=21 so `node --test` expands the tests/*.test.js glob in package.json
+          node-version: '22'
       - name: Unit tests (pure sim core — determinism + agent guards)
         run: npm test
