@@ -1,0 +1,20 @@
+name: ci
+
+# The repo's thesis is that every enforcement decision is checkable and the
+# simulator is deterministic (tests/determinism.test.js). Gate that promise on
+# every push and PR — the pure sim core is stdlib Node, no build step.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Unit tests (pure sim core — determinism + agent guards)
+        run: npm test
